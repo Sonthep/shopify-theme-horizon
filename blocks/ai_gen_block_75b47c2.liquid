@@ -1,0 +1,675 @@
+{% doc %}
+  @prompt
+    Create a professional document download section that displays downloadable PDF files in a clean table format. The section should:
+    
+    - Display a table with three columns: File type, File name, and Action (download button)
+    - Support adding multiple PDF files with customizable file names (e.g., "Spec Sheet", "Installation Manual", "Parts Manual")
+    - Each row shows "PDF" as file type, custom file name, and a "Download" link/button
+    - Table should have a clean header row with labels: "File type", "File name", "Action"
+    - Include a customizable section heading (default: "Download" or "Documents")
+    - Allow merchants to upload PDF files and set custom display names for each
+    - Download links should be styled consistently (blue/teal color as shown)
+    - Table should be responsive and mobile-friendly
+    - Use clean borders and spacing for professional B2B appearance
+    - Support reordering of files
+    - Optional: Show file size next to file name
+    - Maintain accessibility with proper table markup
+    
+    The design should be clean, minimal, and professional - suitable for technical documentation and product manuals for commercial equipment.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-doc-download-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-doc-download__heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    color: {{ block.settings.heading_color }};
+  }
+
+  .ai-doc-download__table-wrapper-{{ ai_gen_id }} {
+    overflow-x: auto;
+    border: {{ block.settings.table_border_width }}px solid {{ block.settings.table_border_color }};
+    border-radius: {{ block.settings.table_border_radius }}px;
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: {{ block.settings.table_background }};
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} thead {
+    background-color: {{ block.settings.header_background }};
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} th {
+    padding: {{ block.settings.cell_padding }}px;
+    text-align: left;
+    font-weight: 600;
+    font-size: {{ block.settings.header_font_size }}px;
+    color: {{ block.settings.header_text_color }};
+    border-bottom: {{ block.settings.header_border_width }}px solid {{ block.settings.table_border_color }};
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} td {
+    padding: {{ block.settings.cell_padding }}px;
+    font-size: {{ block.settings.cell_font_size }}px;
+    color: {{ block.settings.cell_text_color }};
+    border-bottom: {{ block.settings.row_border_width }}px solid {{ block.settings.row_border_color }};
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ai-doc-download__table-{{ ai_gen_id }} tbody tr:hover {
+    background-color: {{ block.settings.row_hover_background }};
+  }
+
+  .ai-doc-download__file-type-{{ ai_gen_id }} {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: {{ block.settings.file_type_color }};
+  }
+
+  .ai-doc-download__file-name-{{ ai_gen_id }} {
+    font-weight: 500;
+  }
+
+  .ai-doc-download__file-size-{{ ai_gen_id }} {
+    font-size: {{ block.settings.file_size_font_size }}px;
+    color: {{ block.settings.file_size_color }};
+    margin-left: 8px;
+  }
+
+  .ai-doc-download__download-link-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ block.settings.link_color }};
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .ai-doc-download__download-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.link_hover_color }};
+    text-decoration: underline;
+  }
+
+  .ai-doc-download__empty-state-{{ ai_gen_id }} {
+    padding: 40px 20px;
+    text-align: center;
+    color: {{ block.settings.empty_state_color }};
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-doc-download__table-{{ ai_gen_id }} th,
+    .ai-doc-download__table-{{ ai_gen_id }} td {
+      padding: {{ block.settings.cell_padding | times: 0.75 }}px;
+      font-size: {{ block.settings.cell_font_size | minus: 2 }}px;
+    }
+
+    .ai-doc-download__table-{{ ai_gen_id }} th {
+      font-size: {{ block.settings.header_font_size | minus: 2 }}px;
+    }
+
+    .ai-doc-download__heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-doc-download-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h2 class="ai-doc-download__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+  {% endif %}
+
+  {% liquid
+    assign has_files = false
+    for i in (1..10)
+      assign file_key = 'file_' | append: i
+      assign file = block.settings[file_key]
+      if file != blank
+        assign has_files = true
+        break
+      endif
+    endfor
+  %}
+
+  {% if has_files %}
+    <div class="ai-doc-download__table-wrapper-{{ ai_gen_id }}">
+      <table class="ai-doc-download__table-{{ ai_gen_id }}">
+        <thead>
+          <tr>
+            <th>{{ block.settings.column_1_label }}</th>
+            <th>{{ block.settings.column_2_label }}</th>
+            <th>{{ block.settings.column_3_label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in (1..10) %}
+            {% liquid
+              assign file_key = 'file_' | append: i
+              assign name_key = 'file_name_' | append: i
+              assign size_key = 'file_size_' | append: i
+              
+              assign file = block.settings[file_key]
+              assign file_name = block.settings[name_key]
+              assign file_size = block.settings[size_key]
+            %}
+
+            {% if file != blank %}
+              <tr>
+                <td>
+                  <span class="ai-doc-download__file-type-{{ ai_gen_id }}">PDF</span>
+                </td>
+                <td>
+                  <span class="ai-doc-download__file-name-{{ ai_gen_id }}">
+                    {% if file_name != blank %}
+                      {{ file_name }}
+                    {% else %}
+                      Document {{ i }}
+                    {% endif %}
+                  </span>
+                  {% if block.settings.show_file_size and file_size != blank %}
+                    <span class="ai-doc-download__file-size-{{ ai_gen_id }}">({{ file_size }})</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a 
+                    href="{{ file }}" 
+                    class="ai-doc-download__download-link-{{ ai_gen_id }}"
+                    download
+                    target="_blank"
+                  >
+                    {{ block.settings.download_label }}
+                  </a>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="ai-doc-download__table-wrapper-{{ ai_gen_id }}">
+      <div class="ai-doc-download__empty-state-{{ ai_gen_id }}">
+        Next, add PDF files to display in the table
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Document downloads",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Documents"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Table columns"
+    },
+    {
+      "type": "text",
+      "id": "column_1_label",
+      "label": "Column 1 label",
+      "default": "File type"
+    },
+    {
+      "type": "text",
+      "id": "column_2_label",
+      "label": "Column 2 label",
+      "default": "File name"
+    },
+    {
+      "type": "text",
+      "id": "column_3_label",
+      "label": "Column 3 label",
+      "default": "Action"
+    },
+    {
+      "type": "header",
+      "content": "Download settings"
+    },
+    {
+      "type": "text",
+      "id": "download_label",
+      "label": "Download button text",
+      "default": "Download"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_file_size",
+      "label": "Show file size",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "File 1"
+    },
+    {
+      "type": "url",
+      "id": "file_1",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_1",
+      "label": "Display name",
+      "default": "Spec Sheet"
+    },
+    {
+      "type": "text",
+      "id": "file_size_1",
+      "label": "File size",
+      "default": "2.4 MB"
+    },
+    {
+      "type": "header",
+      "content": "File 2"
+    },
+    {
+      "type": "url",
+      "id": "file_2",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_2",
+      "label": "Display name",
+      "default": "Installation Manual"
+    },
+    {
+      "type": "text",
+      "id": "file_size_2",
+      "label": "File size",
+      "default": "5.1 MB"
+    },
+    {
+      "type": "header",
+      "content": "File 3"
+    },
+    {
+      "type": "url",
+      "id": "file_3",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_3",
+      "label": "Display name",
+      "default": "Parts Manual"
+    },
+    {
+      "type": "text",
+      "id": "file_size_3",
+      "label": "File size",
+      "default": "3.8 MB"
+    },
+    {
+      "type": "header",
+      "content": "File 4"
+    },
+    {
+      "type": "url",
+      "id": "file_4",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_4",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_4",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 5"
+    },
+    {
+      "type": "url",
+      "id": "file_5",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_5",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_5",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 6"
+    },
+    {
+      "type": "url",
+      "id": "file_6",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_6",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_6",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 7"
+    },
+    {
+      "type": "url",
+      "id": "file_7",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_7",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_7",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 8"
+    },
+    {
+      "type": "url",
+      "id": "file_8",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_8",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_8",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 9"
+    },
+    {
+      "type": "url",
+      "id": "file_9",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_9",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_9",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "File 10"
+    },
+    {
+      "type": "url",
+      "id": "file_10",
+      "label": "PDF file"
+    },
+    {
+      "type": "text",
+      "id": "file_name_10",
+      "label": "Display name"
+    },
+    {
+      "type": "text",
+      "id": "file_size_10",
+      "label": "File size"
+    },
+    {
+      "type": "header",
+      "content": "Table style"
+    },
+    {
+      "type": "color",
+      "id": "table_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "table_border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "table_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "table_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Header row"
+    },
+    {
+      "type": "color",
+      "id": "header_background",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "header_border_width",
+      "label": "Bottom border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Table rows"
+    },
+    {
+      "type": "color",
+      "id": "cell_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "cell_font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "cell_padding",
+      "label": "Cell padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "row_border_color",
+      "label": "Row border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "row_border_width",
+      "label": "Row border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "row_hover_background",
+      "label": "Row hover background",
+      "default": "#fafafa"
+    },
+    {
+      "type": "header",
+      "content": "File type and size"
+    },
+    {
+      "type": "color",
+      "id": "file_type_color",
+      "label": "File type color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "file_size_color",
+      "label": "File size color",
+      "default": "#999999"
+    },
+    {
+      "type": "range",
+      "id": "file_size_font_size",
+      "label": "File size font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Download link"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#0891b2"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover color",
+      "default": "#0e7490"
+    },
+    {
+      "type": "color",
+      "id": "empty_state_color",
+      "label": "Empty state text color",
+      "default": "#999999"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Document downloads"
+    }
+  ]
+}
+{% endschema %}

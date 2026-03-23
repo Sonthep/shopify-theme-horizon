@@ -1,0 +1,206 @@
+{% comment %} sections/brand-directory.liquid {% endcomment %}
+
+{% assign all_vendors = collections.all.products | map: 'vendor' | uniq | sort %}
+
+<div class="brand-directory">
+  <h1 class="brand-title">Brand</h1>
+
+  {%- comment -%} Build A-Z index from actual vendors {%- endcomment -%}
+  {% assign letters_used = "" %}
+  {% for vendor in all_vendors %}
+    {% assign first_letter = vendor | slice: 0 | upcase %}
+    {% unless letters_used contains first_letter %}
+      {% assign letters_used = letters_used | append: first_letter | append: "," %}
+    {% endunless %}
+  {% endfor %}
+
+  {%- comment -%} Filter Bar {%- endcomment -%}
+  {% assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," %}
+
+  <div class="brand-filter">
+    <button class="filter-btn active" data-filter="all">All Brand</button>
+    {% for letter in alphabet %}
+      <button class="filter-btn" data-filter="{{ letter }}">{{ letter }}</button>
+    {% endfor %}
+  </div>
+
+  {%- comment -%} Brand Groups {%- endcomment -%}
+  {% assign current_letter = "" %}
+  {% for vendor in all_vendors %}
+    {% assign first_letter = vendor | slice: 0 | upcase %}
+
+    {% if first_letter != current_letter %}
+      {% unless current_letter == "" %}
+        </div></div> {%- comment -%} close previous group {%- endcomment -%}
+      {% endunless %}
+      {% assign current_letter = first_letter %}
+      <div class="brand-group" data-letter="{{ current_letter }}">
+        <div class="brand-group__letter">{{ current_letter }}</div>
+        <div class="brand-group__logos">
+    {% endif %}
+
+    {%- comment -%} Find collection matching this vendor {%- endcomment -%}
+    {% assign vendor_handle = vendor | handleize %}
+    {% assign vendor_collection = collections[vendor_handle] %}
+
+    <a class="brand-logo-card"
+       href="{% if vendor_collection %}{{ vendor_collection.url }}{% else %}/collections/all?sort_by=title&vendor={{ vendor | url_encode }}{% endif %}"
+       title="{{ vendor }}">
+      {% if vendor_collection and vendor_collection.image %}
+        <img src="{{ vendor_collection.image | image_url: width: 300 }}"
+             alt="{{ vendor }}"
+             loading="lazy"
+             width="150" height="80">
+      {% else %}
+        <span class="brand-logo-card__text">{{ vendor }}</span>
+      {% endif %}
+    </a>
+
+  {% endfor %}
+  </div></div> {%- comment -%} close last group {%- endcomment -%}
+</div>
+
+<style>
+.brand-directory {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.brand-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+/* Filter Bar */
+.brand-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 48px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: #999;
+}
+
+.filter-btn.active {
+  border-color: #b8960c;
+  color: #b8960c;
+  font-weight: 600;
+}
+
+/* Brand Groups */
+.brand-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 40px;
+  transition: opacity 0.2s;
+}
+
+.brand-group.hidden {
+  display: none;
+}
+
+.brand-group__letter {
+  font-size: 1.4rem;
+  font-weight: 700;
+  min-width: 32px;
+  padding-top: 8px;
+}
+
+.brand-group__logos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  flex: 1;
+}
+
+/* Logo Card */
+.brand-logo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fff;
+  min-height: 80px;
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+}
+
+.brand-logo-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.brand-logo-card img {
+  max-width: 100%;
+  max-height: 70px;
+  object-fit: contain;
+}
+
+.brand-logo-card__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .brand-group__logos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .brand-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-group__logos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const brandGroups = document.querySelectorAll('.brand-group');
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      brandGroups.forEach(function (group) {
+        if (filter === 'all') {
+          group.classList.remove('hidden');
+        } else if (group.dataset.letter === filter) {
+          group.classList.remove('hidden');
+        } else {
+          group.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+</script>
