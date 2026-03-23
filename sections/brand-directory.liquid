@@ -1,66 +1,19 @@
 {% comment %} sections/brand-directory.liquid {% endcomment %}
 
-{%- assign all_vendors = all_products | map: 'vendor' | uniq | sort -%}
-{%- assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," -%}
-{%- assign alpha_only = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z" | split: "," -%}
-
 <div class="brand-directory">
   <h1 class="brand-title">Brand</h1>
 
   <div class="brand-filter">
     <button class="filter-btn active" data-filter="all">All Brand</button>
-    {%- for letter in alphabet -%}
+    {% assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," %}
+    {% for letter in alphabet %}
       <button class="filter-btn" data-filter="{{ letter }}">{{ letter }}</button>
-    {%- endfor -%}
+    {% endfor %}
   </div>
 
-  {%- for letter in alphabet -%}
-    {%- assign has_brands = false -%}
-    {%- for vendor in all_vendors -%}
-      {%- assign v_letter = vendor | slice: 0 | upcase -%}
-      {%- if letter == "#" -%}
-        {%- unless alpha_only contains v_letter -%}{%- assign has_brands = true -%}{%- endunless -%}
-      {%- elsif v_letter == letter -%}
-        {%- assign has_brands = true -%}
-      {%- endif -%}
-    {%- endfor -%}
-    {%- if has_brands -%}
-      <div class="brand-group" data-letter="{{ letter }}">
-        <div class="brand-group__letter">{{ letter }}</div>
-        <div class="brand-group__logos">
-          {%- for vendor in all_vendors -%}
-            {%- assign v_letter = vendor | slice: 0 | upcase -%}
-            {%- assign show_vendor = false -%}
-            {%- if letter == "#" -%}
-              {%- unless alpha_only contains v_letter -%}{%- assign show_vendor = true -%}{%- endunless -%}
-            {%- elsif v_letter == letter -%}
-              {%- assign show_vendor = true -%}
-            {%- endif -%}
-            {%- if show_vendor -%}
-              {%- assign vendor_handle = vendor | handleize -%}
-              {%- assign vendor_collection = collections[vendor_handle] -%}
-              <a class="brand-logo-card"
-                 href="{% if vendor_collection %}{{ vendor_collection.url }}{% else %}/collections/all?sort_by=title&vendor={{ vendor | url_encode }}{% endif %}"
-                 title="{{ vendor }}">
-                {%- if vendor_collection and vendor_collection.image -%}
-                  <img src="{{ vendor_collection.image | image_url: width: 300 }}"
-                       alt="{{ vendor }}"
-                       loading="lazy"
-                       width="150" height="80">
-                {%- else -%}
-                  <span class="brand-logo-card__text">{{ vendor }}</span>
-                {%- endif -%}
-              </a>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      </div>
-    {%- endif -%}
-  {%- endfor -%}
-
-  {%- if all_vendors.size == 0 -%}
-    <p class="brand-directory__empty">No brands found.</p>
-  {%- endif -%}
+  <div id="brand-groups-container">
+    <div class="brand-loading">Loading brands...</div>
+  </div>
 </div>
 
 <style>
@@ -69,22 +22,18 @@
   margin: 0 auto;
   padding: 40px 20px;
 }
-
 .brand-title {
   text-align: center;
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 32px;
 }
-
-/* Filter Bar */
 .brand-filter {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 48px;
 }
-
 .filter-btn {
   padding: 6px 12px;
   border: 1px solid #ddd;
@@ -94,45 +43,30 @@
   font-size: 0.85rem;
   transition: all 0.2s;
 }
-
-.filter-btn:hover {
-  border-color: #999;
-}
-
 .filter-btn.active {
   border-color: #b8960c;
   color: #b8960c;
   font-weight: 600;
 }
-
-/* Brand Groups */
 .brand-group {
   display: flex;
   align-items: flex-start;
   gap: 32px;
   margin-bottom: 40px;
-  transition: opacity 0.2s;
 }
-
-.brand-group.hidden {
-  display: none;
-}
-
+.brand-group.hidden { display: none; }
 .brand-group__letter {
   font-size: 1.4rem;
   font-weight: 700;
   min-width: 32px;
   padding-top: 8px;
 }
-
 .brand-group__logos {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   flex: 1;
 }
-
-/* Logo Card */
 .brand-logo-card {
   display: flex;
   align-items: center;
@@ -145,67 +79,165 @@
   text-decoration: none;
   transition: box-shadow 0.2s;
 }
-
-.brand-logo-card:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
+.brand-logo-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 .brand-logo-card img {
   max-width: 100%;
   max-height: 70px;
   object-fit: contain;
 }
-
 .brand-logo-card__text {
   font-size: 0.85rem;
   font-weight: 600;
   color: #333;
   text-align: center;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .brand-group__logos {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .brand-group {
-    flex-direction: column;
-    gap: 12px;
-  }
+.brand-loading {
+  text-align: center;
+  padding: 40px;
+  color: #999;
 }
-
+@media (max-width: 768px) {
+  .brand-group__logos { grid-template-columns: repeat(3, 1fr); }
+  .brand-group { flex-direction: column; gap: 12px; }
+}
 @media (max-width: 480px) {
-  .brand-group__logos {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .brand-group__logos { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const brandGroups = document.querySelectorAll('.brand-group');
+(async function () {
+  const STOREFRONT_TOKEN = '{{ section.settings.storefront_token }}';
+  const SHOP = '{{ shop.permanent_domain }}';
 
-  filterBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      // Update active button
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  // handles ของ vendor collections ทั้ง 131 อัน
+  const VENDOR_HANDLES = [
+    'absolute','adcraft','arcoroc','arcos','autata',
+    'bakers-pride','bartec','benchmark','berjaya','bertos',
+    'brew-rite','caddie','cambro','casadio','cecilware',
+    'chef-revival','cofrimell','colged','comida','cooktek',
+    'crown','ctx','cutlery-pro','dexter','diamond',
+    'dss','edlund','eka','electrolux','eloma',
+    'fagor','fama','firenace','firex','franke',
+    'friulinox','fujimaru','globe','gmi','gold-mendal',
+    'hamilton-beach','hatco','hobart','hosun','hoshizaki',
+    'houno','huayi','iwatani','jinli','josper',
+    'justa','kinox','kitchen-aid','kitchin','kleen-tex',
+    'koldtech','l-tellier','la-cimbali','lacor','lakeside',
+    'lincat','lkk','lloyd-pans','lucaris','maxximum',
+    'mbm','menumaster','middleby-marshall','mkn','myungse-cmk',
+    'nayati','new-ton','nieco','nordways','nts',
+    'oberglas','ocean','panasonic','pietroberto','pitco',
+    'polar-ware','power-flame','power-line','prince-castle',
+    'prisma-food','pro-chef','prochef','proluxe','pujadas',
+    'rancilio','rational','raven','renato','rheninghaus',
+    'rinnai','rj','roband','robot-coupe','roller-grill',
+    'rondo-doge','roundup','saeco','sammic','san-jamar',
+    'santos','sanyo','savory','sharp','sirman',
+    'skipio','southbend','star','t-s','tabco',
+    'table-craft','toastmaster','top-rinse','tri-star',
+    'turbo-air','turbochef','varimixer','veeetsan','vollrath',
+    'west-bend','winterhalter','wisco','wnk','wyott',
+    'zanussi','zanolli','primo','rj','berjaya',
+    'hamilton-beach','oberglas','cofrimell'
+  ];
 
-      const filter = btn.dataset.filter;
+  async function fetchCollections() {
+    let all = [];
+    let cursor = null;
 
-      brandGroups.forEach(function (group) {
-        if (filter === 'all') {
-          group.classList.remove('hidden');
-        } else if (group.dataset.letter === filter) {
-          group.classList.remove('hidden');
-        } else {
-          group.classList.add('hidden');
-        }
+    // แบ่ง handles เป็น batch ละ 20 เพราะ query string มี limit
+    const batchSize = 20;
+    for (let i = 0; i < VENDOR_HANDLES.length; i += batchSize) {
+      const batch = VENDOR_HANDLES.slice(i, i + batchSize);
+      const queryStr = batch.map(h => `handle:${h}`).join(' OR ');
+
+      const res = await fetch(`https://${SHOP}/api/2024-01/graphql.json`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN
+        },
+        body: JSON.stringify({
+          query: `{
+            collections(first: 20, query: "${queryStr}") {
+              edges {
+                node {
+                  title
+                  handle
+                  url
+                  image { url(transform: { maxWidth: 300, maxHeight: 150 }) }
+                }
+              }
+            }
+          }`
+        })
+      });
+
+      const json = await res.json();
+      const edges = json?.data?.collections?.edges || [];
+      all.push(...edges.map(e => e.node));
+    }
+
+    return all.sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  function renderBrands(collections) {
+    const container = document.getElementById('brand-groups-container');
+    container.innerHTML = '';
+
+    // Group by first letter
+    const groups = {};
+    collections.forEach(col => {
+      const letter = col.title[0].toUpperCase();
+      const key = /[A-Z]/.test(letter) ? letter : '#';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(col);
+    });
+
+    Object.keys(groups).sort().forEach(letter => {
+      const group = document.createElement('div');
+      group.className = 'brand-group';
+      group.dataset.letter = letter;
+
+      const logos = groups[letter].map(col => `
+        <a class="brand-logo-card" href="${col.url}" title="${col.title}">
+          ${col.image
+            ? `<img src="${col.image.url}" alt="${col.title}" loading="lazy">`
+            : `<span class="brand-logo-card__text">${col.title}</span>`
+          }
+        </a>
+      `).join('');
+
+      group.innerHTML = `
+        <div class="brand-group__letter">${letter}</div>
+        <div class="brand-group__logos">${logos}</div>
+      `;
+      container.appendChild(group);
+    });
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const filter = this.dataset.filter;
+        document.querySelectorAll('.brand-group').forEach(g => {
+          g.classList.toggle('hidden', filter !== 'all' && g.dataset.letter !== filter);
+        });
       });
     });
-  });
-});
+  }
+
+  try {
+    const collections = await fetchCollections();
+    renderBrands(collections);
+  } catch (err) {
+    document.getElementById('brand-groups-container').innerHTML =
+      '<p style="text-align:center;color:red">Failed to load brands</p>';
+    console.error(err);
+  }
+})();
 </script>
 
 {% schema %}
@@ -217,6 +249,12 @@ document.addEventListener('DOMContentLoaded', function () {
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "storefront_token",
+      "label": "Storefront API Token",
+      "info": "Shopify Storefront Access Token (public) — ตั้งค่าใน Theme Editor"
     }
   ],
   "presets": [
