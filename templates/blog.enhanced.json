@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "blog-listing": {
+      "type": "blog-listing",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Our Blog",
+        "heading": "",
+        "subheading": "",
+        "show_hero": true,
+        "show_tags": true,
+        "show_excerpt": true,
+        "show_author": false,
+        "articles_per_page": 9
+      }
+    }
+  },
+  "order": ["blog-listing"]
+}
