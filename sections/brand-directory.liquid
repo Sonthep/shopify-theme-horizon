@@ -1,63 +1,66 @@
 {% comment %} sections/brand-directory.liquid {% endcomment %}
 
-{% assign all_vendors = collections.all.products | map: 'vendor' | uniq | sort %}
+{%- assign all_vendors = all_products | map: 'vendor' | uniq | sort -%}
+{%- assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," -%}
+{%- assign alpha_only = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z" | split: "," -%}
 
 <div class="brand-directory">
   <h1 class="brand-title">Brand</h1>
 
-  {%- comment -%} Build A-Z index from actual vendors {%- endcomment -%}
-  {% assign letters_used = "" %}
-  {% for vendor in all_vendors %}
-    {% assign first_letter = vendor | slice: 0 | upcase %}
-    {% unless letters_used contains first_letter %}
-      {% assign letters_used = letters_used | append: first_letter | append: "," %}
-    {% endunless %}
-  {% endfor %}
-
-  {%- comment -%} Filter Bar {%- endcomment -%}
-  {% assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," %}
-
   <div class="brand-filter">
     <button class="filter-btn active" data-filter="all">All Brand</button>
-    {% for letter in alphabet %}
+    {%- for letter in alphabet -%}
       <button class="filter-btn" data-filter="{{ letter }}">{{ letter }}</button>
-    {% endfor %}
+    {%- endfor -%}
   </div>
 
-  {%- comment -%} Brand Groups {%- endcomment -%}
-  {% assign current_letter = "" %}
-  {% for vendor in all_vendors %}
-    {% assign first_letter = vendor | slice: 0 | upcase %}
-
-    {% if first_letter != current_letter %}
-      {% unless current_letter == "" %}
-        </div></div> {%- comment -%} close previous group {%- endcomment -%}
-      {% endunless %}
-      {% assign current_letter = first_letter %}
-      <div class="brand-group" data-letter="{{ current_letter }}">
-        <div class="brand-group__letter">{{ current_letter }}</div>
+  {%- for letter in alphabet -%}
+    {%- assign has_brands = false -%}
+    {%- for vendor in all_vendors -%}
+      {%- assign v_letter = vendor | slice: 0 | upcase -%}
+      {%- if letter == "#" -%}
+        {%- unless alpha_only contains v_letter -%}{%- assign has_brands = true -%}{%- endunless -%}
+      {%- elsif v_letter == letter -%}
+        {%- assign has_brands = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if has_brands -%}
+      <div class="brand-group" data-letter="{{ letter }}">
+        <div class="brand-group__letter">{{ letter }}</div>
         <div class="brand-group__logos">
-    {% endif %}
+          {%- for vendor in all_vendors -%}
+            {%- assign v_letter = vendor | slice: 0 | upcase -%}
+            {%- assign show_vendor = false -%}
+            {%- if letter == "#" -%}
+              {%- unless alpha_only contains v_letter -%}{%- assign show_vendor = true -%}{%- endunless -%}
+            {%- elsif v_letter == letter -%}
+              {%- assign show_vendor = true -%}
+            {%- endif -%}
+            {%- if show_vendor -%}
+              {%- assign vendor_handle = vendor | handleize -%}
+              {%- assign vendor_collection = collections[vendor_handle] -%}
+              <a class="brand-logo-card"
+                 href="{% if vendor_collection %}{{ vendor_collection.url }}{% else %}/collections/all?sort_by=title&vendor={{ vendor | url_encode }}{% endif %}"
+                 title="{{ vendor }}">
+                {%- if vendor_collection and vendor_collection.image -%}
+                  <img src="{{ vendor_collection.image | image_url: width: 300 }}"
+                       alt="{{ vendor }}"
+                       loading="lazy"
+                       width="150" height="80">
+                {%- else -%}
+                  <span class="brand-logo-card__text">{{ vendor }}</span>
+                {%- endif -%}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
 
-    {%- comment -%} Find collection matching this vendor {%- endcomment -%}
-    {% assign vendor_handle = vendor | handleize %}
-    {% assign vendor_collection = collections[vendor_handle] %}
-
-    <a class="brand-logo-card"
-       href="{% if vendor_collection %}{{ vendor_collection.url }}{% else %}/collections/all?sort_by=title&vendor={{ vendor | url_encode }}{% endif %}"
-       title="{{ vendor }}">
-      {% if vendor_collection and vendor_collection.image %}
-        <img src="{{ vendor_collection.image | image_url: width: 300 }}"
-             alt="{{ vendor }}"
-             loading="lazy"
-             width="150" height="80">
-      {% else %}
-        <span class="brand-logo-card__text">{{ vendor }}</span>
-      {% endif %}
-    </a>
-
-  {% endfor %}
-  </div></div> {%- comment -%} close last group {%- endcomment -%}
+  {%- if all_vendors.size == 0 -%}
+    <p class="brand-directory__empty">No brands found.</p>
+  {%- endif -%}
 </div>
 
 <style>
@@ -204,3 +207,23 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
+{% schema %}
+{
+  "name": "Brand Directory",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Directory",
+      "category": "Pages"
+    }
+  ]
+}
+{% endschema %}
