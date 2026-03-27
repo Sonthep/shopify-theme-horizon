@@ -297,7 +297,7 @@
               "blocks": {}
             },
             "ai_gen_block_75b47c2_h8kDzA": {
-              "type": "ai_gen_block_75b47c2",
+              "type": "document-specsheet",
               "name": "Document downloads",
               "settings": {
                 "heading": "Documents",

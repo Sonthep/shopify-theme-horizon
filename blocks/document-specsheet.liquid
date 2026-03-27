@@ -134,6 +134,13 @@
 
   {% liquid
     assign has_files = false
+    assign has_metafield_spec = false
+
+    if block.settings.use_metafield_spec and product.metafields.custom.spec_sheet != blank
+      assign has_metafield_spec = true
+      assign has_files = true
+    endif
+
     for i in (1..10)
       assign file_key = 'file_' | append: i
       assign file = block.settings[file_key]
@@ -155,6 +162,29 @@
           </tr>
         </thead>
         <tbody>
+          {% if has_metafield_spec %}
+            <tr>
+              <td>
+                <span class="ai-doc-download__file-type-{{ ai_gen_id }}">PDF</span>
+              </td>
+              <td>
+                <span class="ai-doc-download__file-name-{{ ai_gen_id }}">
+                  {{ block.settings.metafield_spec_label | default: 'Spec Sheet' }}
+                </span>
+              </td>
+              <td>
+                <a
+                  href="{{ product.metafields.custom.spec_sheet.value.url }}"
+                  class="ai-doc-download__download-link-{{ ai_gen_id }}"
+                  download
+                  target="_blank"
+                >
+                  {{ block.settings.download_label }}
+                </a>
+              </td>
+            </tr>
+          {% endif %}
+
           {% for i in (1..10) %}
             {% liquid
               assign file_key = 'file_' | append: i
@@ -296,6 +326,23 @@
       "id": "show_file_size",
       "label": "Show file size",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product metafield"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_metafield_spec",
+      "label": "Auto-load Spec Sheet from product metafield",
+      "info": "Pulls PDF from product metafield: custom.spec_sheet",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "metafield_spec_label",
+      "label": "Metafield spec sheet display name",
+      "default": "Spec Sheet"
     },
     {
       "type": "header",
