@@ -1,0 +1,28 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "blog-listing": {
+      "type": "blog-listing",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "eyebrow": "Our Blog",
+        "heading": "",
+        "subheading": "",
+        "show_hero": true,
+        "show_tags": true,
+        "show_excerpt": true,
+        "show_author": false,
+        "articles_per_page": 9
+      }
+    }
+  },
+  "order": ["blog-listing"]
+}

@@ -1,0 +1,1176 @@
+{% liquid
+  assign year_now = 'now' | date: '%Y'
+%}
+
+<section id="sparepart-landing-{{ section.id }}" class="sparepart-landing">
+  <div class="sp-bg sp-bg-1"></div>
+  <div class="sp-bg sp-bg-2"></div>
+  <div class="sp-dot-grid"></div>
+
+  <div class="sp-floating-chat">
+    <span class="sp-floating-chat__tooltip">{{ section.settings.floating_chat_text }}</span>
+    <a
+      href="{{ section.settings.line_url | default: '#' }}"
+      class="sp-floating-chat__button"
+      aria-label="Open chat"
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M8 10.5h8M8 14h5.5M6.8 19.2l-2.3 1.3.7-2.8A8 8 0 1112 20a8 8 0 01-5.2-.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="sp-container">
+    <div class="sp-live-badge">
+      <span class="sp-live-dot"></span>
+      <span>{{ section.settings.live_badge_text }}</span>
+    </div>
+
+    <h1 class="sp-hero-title">
+      {{ section.settings.hero_title_before }}
+      <span>{{ section.settings.hero_title_highlight }}</span>
+      {{ section.settings.hero_title_after }}
+    </h1>
+
+    <p class="sp-hero-subtitle">{{ section.settings.hero_subtitle }}</p>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="sp-search-form">
+      <input type="hidden" name="type" value="product">
+      <div class="sp-search-box">
+        <svg class="sp-search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+          <path d="M20 20L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input
+          id="SpSearchInput-{{ section.id }}"
+          class="sp-search-input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ section.settings.search_placeholder }}"
+        >
+        <button type="submit" class="sp-btn sp-btn--primary sp-search-submit">{{ section.settings.search_button_text }}</button>
+      </div>
+
+      <div class="sp-search-suggestions">
+        <span>Try:</span>
+        {% assign search_terms = section.settings.search_suggestions | split: ',' %}
+        {% for term in search_terms %}
+          {% assign cleaned_term = term | strip %}
+          {% if cleaned_term != blank %}
+            <button type="button" class="sp-suggestion" data-search-term="{{ cleaned_term | escape }}">{{ cleaned_term }}</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </form>
+
+    <div class="sp-hero-actions">
+      <a href="{{ section.settings.upload_url | default: '#' }}" class="sp-btn sp-btn--secondary">{{ section.settings.upload_button_text }}</a>
+      <a href="{{ section.settings.browse_categories_url | default: '#sp-categories' }}" class="sp-btn sp-btn--secondary">{{ section.settings.browse_button_text }}</a>
+    </div>
+
+    <div class="sp-trust-grid">
+      <div class="sp-trust-item">
+        <span class="sp-trust-icon">✓</span>
+        <span>{{ section.settings.trust_1 }}</span>
+      </div>
+      <div class="sp-trust-item">
+        <span class="sp-trust-icon">🛡</span>
+        <span>{{ section.settings.trust_2 }}</span>
+      </div>
+      <div class="sp-trust-item">
+        <span class="sp-trust-icon">⚡</span>
+        <span>{{ section.settings.trust_3 }}</span>
+      </div>
+      <div class="sp-trust-item">
+        <span class="sp-trust-icon">💬</span>
+        <span>{{ section.settings.trust_4 }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sp-categories" class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-section-head sp-section-head--split">
+      <div>
+        <div class="sp-eyebrow">Shop by Category</div>
+        <h2 class="sp-title">Find Parts by Type</h2>
+        <p class="sp-copy">Browse our most common spare part categories for commercial kitchen equipment.</p>
+      </div>
+      <a href="{{ section.settings.all_categories_url | default: '#' }}" class="sp-text-link">View all categories</a>
+    </div>
+
+    <div class="sp-category-grid">
+      {% assign categories = '
+Heating Parts|320+ parts|#|🔥,
+Motor & Fan|180+ parts|#|⚙,
+Gasket & Seal|450+ parts|#|🔒,
+Blade & Knife|210+ parts|#|✂,
+Electrical & PCB|290+ parts|#|⚡,
+Pump & Valve|160+ parts|#|💧,
+Bracket & Frame|240+ parts|#|🔧,
+Refrigeration|130+ parts|#|❄
+' | strip | split: ',' %}
+      {% for item in categories %}
+        {% assign parts = item | strip | split: '|' %}
+        <a href="{{ parts[2] }}" class="sp-card sp-card--category">
+          <div class="sp-card__icon">{{ parts[3] }}</div>
+          <div class="sp-card__title">{{ parts[0] }}</div>
+          <div class="sp-card__meta">{{ parts[1] }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="sp-section">
+  <div class="sp-container sp-center">
+    <div class="sp-eyebrow">Shop by Brand</div>
+    <h2 class="sp-title">Search by Equipment Brand</h2>
+    <p class="sp-copy sp-copy--center">We stock parts for all major commercial kitchen equipment manufacturers.</p>
+
+    <div class="sp-chip-list">
+      {% assign brands = 'Robot Coupe,Hamilton Beach,Sirman,Turbo Air,Waring,Hobart,Vitamix,Globe,True Refrigeration,Rational,Combi-King,Dito Electrolux,Blodgett,Manitowoc,Hoshizaki' | split: ',' %}
+      {% for brand in brands %}
+        <a href="{{ section.settings.brand_link_url | default: '#' }}" class="sp-chip"><span></span>{{ brand | strip }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="sp-cta-inline">
+      <a href="{{ section.settings.contact_url | default: '#' }}" class="sp-btn sp-btn--secondary">Don't see your brand? Contact us</a>
+    </div>
+  </div>
+</section>
+
+<section class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">Best Sellers</div>
+      <h2 class="sp-title">Frequently Ordered Parts</h2>
+      <p class="sp-copy sp-copy--center">High-demand replacement parts for commercial kitchens, with fast availability.</p>
+    </div>
+
+    <div class="sp-product-grid">
+      {% assign products = '
+Gasket & Seal|Door Gasket Seal – Prep Refrigerator|TRA-DGS-2204|Turbo Air MSR-23, MSR-49, TSR-23SD|In Stock|instock|🔒,
+Heating Parts|Heating Element 1500W – Commercial Oven|RAT-HE-1500K|Rational SCC 61, SCC 101, CPC 61|In Stock|instock|🔥,
+Blade & Knife|Bowl Blade Assembly – Food Processor|RC-BLD-R301S|Robot Coupe R301, R401, R602|Low Stock|limited|✂,
+Motor & Fan|Evaporator Fan Motor – Reach-In Cooler|HOB-FM-4580C|Hobart HGS-1CG, AM15, AM-15S|In Stock|instock|⚙,
+Electrical & PCB|Main Control Board PCB – Blender|VIT-PCB-VM0101|Vitamix VM0101, 5200, 5300|On Request|inquiry|⚡,
+Pump & Valve|Water Pump Assembly – Ice Machine|HOS-WP-B501|Hoshizaki KM-500M, KM-901M|In Stock|instock|💧
+' | strip | split: ',' %}
+
+      {% for item in products %}
+        {% assign p = item | strip | split: '|' %}
+        <article class="sp-product-card">
+          <div class="sp-product-card__media">
+            <div class="sp-product-card__media-icon">{{ p[6] }}</div>
+            <span class="sp-badge sp-badge--{{ p[5] }}">{{ p[4] }}</span>
+          </div>
+          <div class="sp-product-card__body">
+            <div class="sp-product-card__category">{{ p[0] }}</div>
+            <h3 class="sp-product-card__title">{{ p[1] }}</h3>
+            <div class="sp-product-card__part">Part No: {{ p[2] }}</div>
+            <p class="sp-product-card__compatible"><strong>Compatible:</strong> {{ p[3] }}</p>
+          </div>
+          <div class="sp-product-card__actions">
+            <a href="{{ section.settings.product_detail_url | default: '#' }}" class="sp-btn sp-btn--primary sp-btn--block">
+              {% if p[5] == 'inquiry' %}Request Quote{% else %}View Details{% endif %}
+            </a>
+            <a href="{{ section.settings.contact_url | default: '#' }}" class="sp-btn sp-btn--secondary">Contact</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="sp-cta-inline sp-center">
+      <a href="{{ section.settings.all_parts_url | default: '#' }}" class="sp-btn sp-btn--secondary">View All Spare Parts</a>
+    </div>
+  </div>
+</section>
+
+<section class="sp-section">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">We Solve It</div>
+      <h2 class="sp-title">Common Problems, Solved</h2>
+      <p class="sp-copy sp-copy--center">Identify your issue, find the right part, and get back to business fast.</p>
+    </div>
+
+    <div class="sp-problem-grid">
+      {% assign problems = '
+My refrigerator seal is worn out|Replace the door gasket to restore proper insulation and save energy costs. We have compatible seals for all major brands.|Shop Gaskets|#|⚠,
+Oven not heating properly|A faulty heating element is often the cause. Our OEM-compatible elements restore full performance quickly.|Shop Heating Parts|#|🌡,
+Ice machine not producing ice|Check the water pump assembly. We stock replacement pumps for Hoshizaki, Manitowoc, and more.|Shop Pumps|#|💧,
+Equipment showing error codes|PCB and control board issues are common. Get genuine replacement boards with warranty protection.|Shop Electronics|#|⚡
+' | strip | split: ',' %}
+      {% for item in problems %}
+        {% assign pr = item | strip | split: '|' %}
+        <div class="sp-problem-card">
+          <div class="sp-problem-card__icon">{{ pr[4] }}</div>
+          <h3>{{ pr[0] }}</h3>
+          <p>{{ pr[1] }}</p>
+          <a href="{{ pr[3] }}" class="sp-text-link">{{ pr[2] }}</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">How It Works</div>
+      <h2 class="sp-title">Getting Parts Has Never Been Easier</h2>
+      <p class="sp-copy sp-copy--center">From search to delivery, we make the process seamless.</p>
+    </div>
+
+    <div class="sp-steps-grid">
+      <div class="sp-step-card">
+        <div class="sp-step-card__bubble"><span>1</span>🔎</div>
+        <h3>Search or Browse</h3>
+        <p>Find your part by number, machine model, or category. Upload a photo if unsure.</p>
+      </div>
+      <div class="sp-step-card">
+        <div class="sp-step-card__bubble"><span>2</span>🛡</div>
+        <h3>Verify Compatibility</h3>
+        <p>Our team confirms the part matches your equipment. No guesswork needed.</p>
+      </div>
+      <div class="sp-step-card">
+        <div class="sp-step-card__bubble"><span>3</span>🚚</div>
+        <h3>Get Fast Delivery</h3>
+        <p>Order ships same-day with tracking. Installation support available on request.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sp-section sp-section--dark">
+  <div class="sp-dark-glow sp-dark-glow--1"></div>
+  <div class="sp-dark-glow sp-dark-glow--2"></div>
+  <div class="sp-container sp-center sp-dark-box">
+    <div class="sp-eyebrow sp-eyebrow--dark">Ready to Order?</div>
+    <h2 class="sp-title sp-title--dark">
+      Get the Parts You Need,
+      <span>When You Need Them</span>
+    </h2>
+    <p class="sp-copy sp-copy--dark">Contact our expert team for personalized assistance, bulk orders, or custom part requests.</p>
+
+    <div class="sp-hero-actions sp-hero-actions--center">
+      <a href="{{ section.settings.line_url | default: '#' }}" class="sp-btn sp-btn--primary">Chat on LINE</a>
+      <a href="tel:{{ section.settings.phone_number | replace: ' ', '' }}" class="sp-btn sp-btn--dark-alt">Call Us Now</a>
+    </div>
+
+    <div class="sp-reassurance-grid">
+      <div>✓ No minimum order</div>
+      <div>🕒 Same-day dispatch</div>
+      <div>🛡 Warranty included</div>
+      <div>🎧 Expert support</div>
+    </div>
+  </div>
+</section>
+
+<footer class="sp-footer">
+  <div class="sp-container">
+    <div class="sp-footer-grid">
+      <div class="sp-footer-brand">
+        <a href="{{ routes.root_url }}" class="sp-footer-logo">Kitchen<span>Parts</span></a>
+        <p>Your trusted source for commercial kitchen spare parts. OEM-compatible, warranty guaranteed, and shipped fast.</p>
+        <div class="sp-footer-contact">
+          <div>{{ section.settings.email }}</div>
+          <div>{{ section.settings.phone_display }}</div>
+          <div>{{ section.settings.address }}</div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Products</h3>
+        <ul>
+          <li><a href="{{ section.settings.all_parts_url | default: '#' }}">All Parts</a></li>
+          <li><a href="#">Heating Parts</a></li>
+          <li><a href="#">Motor &amp; Fan</a></li>
+          <li><a href="#">Gasket &amp; Seal</a></li>
+          <li><a href="#">Electrical &amp; PCB</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Brands</h3>
+        <ul>
+          <li><a href="#">Robot Coupe</a></li>
+          <li><a href="#">Rational</a></li>
+          <li><a href="#">Hobart</a></li>
+          <li><a href="#">Turbo Air</a></li>
+          <li><a href="#">Hoshizaki</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Support</h3>
+        <ul>
+          <li><a href="{{ section.settings.contact_url | default: '#' }}">Contact Us</a></li>
+          <li><a href="#">Compatibility Check</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns &amp; Warranty</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sp-footer-bottom">
+      <p>© {{ year_now }} KitchenParts. All rights reserved.</p>
+      <div>
+        <a href="{{ section.settings.privacy_url | default: '#' }}">Privacy Policy</a>
+        <a href="{{ section.settings.terms_url | default: '#' }}">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  #shopify-section-{{ section.id }} {
+    position: relative;
+    z-index: 1;
+  }
+
+  .sparepart-landing,
+  .sp-section,
+  .sp-footer {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .sparepart-landing {
+    position: relative;
+    overflow: hidden;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    color: #0f172a;
+    isolation: isolate;
+  }
+
+  .sp-container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .sp-center { text-align: center; }
+
+  .sp-bg,
+  .sp-dot-grid,
+  .sp-dark-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .sp-bg-1 { background: radial-gradient(circle at 20% 30%, rgba(0, 150, 136, 0.05) 0%, transparent 50%); }
+  .sp-bg-2 { background: radial-gradient(circle at 80% 70%, rgba(0, 150, 136, 0.04) 0%, transparent 40%); }
+  .sp-dot-grid {
+    opacity: .35;
+    background-image: radial-gradient(circle, #94a3b8 0.8px, transparent 0.8px);
+    background-size: 32px 32px;
+  }
+
+  .sparepart-landing .sp-container {
+    position: relative;
+    z-index: 2;
+    padding-top: 96px;
+    padding-bottom: 96px;
+    text-align: center;
+  }
+
+  .sp-live-badge,
+  .sp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .04);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #0f766e;
+  }
+
+  .sp-live-badge {
+    margin-bottom: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    color: #475569;
+  }
+
+  .sp-live-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #0f766e;
+    box-shadow: 0 0 0 0 rgba(15,118,110,.6);
+    animation: spPulse 1.8s infinite;
+  }
+
+  @keyframes spPulse {
+    0% { box-shadow: 0 0 0 0 rgba(15,118,110,.5); }
+    70% { box-shadow: 0 0 0 10px rgba(15,118,110,0); }
+    100% { box-shadow: 0 0 0 0 rgba(15,118,110,0); }
+  }
+
+  .sp-hero-title,
+  .sp-title {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+  }
+
+  .sp-hero-title {
+    max-width: 960px;
+    margin-inline: auto;
+    font-size: clamp(42px, 7vw, 78px);
+    line-height: 1.06;
+  }
+
+  .sp-hero-title span,
+  .sp-title--dark span { color: #0f766e; }
+
+  .sp-hero-subtitle,
+  .sp-copy {
+    color: #64748b;
+    line-height: 1.7;
+  }
+
+  .sp-hero-subtitle {
+    max-width: 760px;
+    margin: 20px auto 0;
+    font-size: clamp(18px, 2.3vw, 22px);
+  }
+
+  .sp-search-form {
+    max-width: 900px;
+    margin: 42px auto 0;
+  }
+
+  .sp-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, .08);
+    transition: .2s ease;
+    overflow: hidden;
+  }
+
+  .sp-search-box:focus-within {
+    border-color: #0f766e;
+    box-shadow: 0 18px 46px rgba(15, 118, 110, .12);
+  }
+
+  .sp-search-icon {
+    position: absolute;
+    left: 20px;
+    width: 20px;
+    height: 20px;
+    color: #64748b;
+  }
+
+  .sp-search-input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: 18px;
+    color: #0f172a;
+    padding: 22px 18px 22px 54px;
+    outline: none;
+  }
+
+  .sp-search-submit { margin-right: 8px; }
+
+  .sp-search-suggestions {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 14px;
+  }
+
+  .sp-suggestion {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    transition: .2s ease;
+  }
+
+  .sp-suggestion:hover { background: rgba(15,118,110,.08); color: #0f766e; }
+
+  .sp-hero-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+  }
+
+  .sp-hero-actions--center { justify-content: center; }
+
+  .sp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 12px 22px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    transition: .25s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .sp-btn:hover { transform: translateY(-1px); }
+
+  .sp-btn--block { flex: 1 1 auto; }
+  .sp-btn--primary {
+    background: #0f766e;
+    color: #fff;
+  }
+  .sp-btn--primary:hover { background: #0d655e; }
+
+  .sp-btn--secondary {
+    background: #fff;
+    color: #0f172a;
+    border-color: #dbe2ea;
+  }
+  .sp-btn--secondary:hover {
+    border-color: rgba(15,118,110,.4);
+    color: #0f766e;
+    box-shadow: 0 8px 24px rgba(15,118,110,.08);
+  }
+
+  .sp-btn--dark-alt {
+    color: #fff;
+    border-color: rgba(255,255,255,.18);
+    background: rgba(255,255,255,.04);
+  }
+  .sp-btn--dark-alt:hover {
+    border-color: rgba(15,118,110,.6);
+    background: rgba(255,255,255,.08);
+  }
+
+  .sp-trust-grid {
+    margin-top: 48px;
+    padding-top: 34px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px 26px;
+  }
+
+  .sp-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sp-trust-icon,
+  .sp-card__icon,
+  .sp-problem-card__icon {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(15,118,110,.08);
+    color: #0f766e;
+    font-size: 20px;
+  }
+
+  .sp-section {
+    padding: 96px 0;
+    background: #fff;
+  }
+
+  .sp-section--muted { background: rgba(248, 250, 252, .9); }
+
+  .sp-section-head {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 42px;
+  }
+
+  .sp-section-head--split {
+    justify-content: space-between;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+
+  .sp-title {
+    margin-top: 14px;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.15;
+  }
+
+  .sp-copy {
+    margin: 14px 0 0;
+    max-width: 760px;
+    font-size: 17px;
+  }
+
+  .sp-copy--center { margin-left: auto; margin-right: auto; }
+
+  .sp-text-link {
+    color: #0f766e;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .sp-text-link:hover { text-decoration: underline; }
+
+  .sp-category-grid,
+  .sp-product-grid,
+  .sp-problem-grid,
+  .sp-steps-grid,
+  .sp-footer-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .sp-category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sp-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 40px; }
+  .sp-problem-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 40px; }
+  .sp-steps-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 48px; }
+  .sp-footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+
+  .sp-card,
+  .sp-product-card,
+  .sp-problem-card,
+  .sp-step-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .04);
+    transition: .28s ease;
+  }
+
+  .sp-card:hover,
+  .sp-product-card:hover,
+  .sp-problem-card:hover,
+  .sp-step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(15, 118, 110, .08);
+    border-color: rgba(15,118,110,.25);
+  }
+
+  .sp-card--category {
+    text-decoration: none;
+    color: inherit;
+    padding: 30px 18px;
+    text-align: center;
+  }
+
+  .sp-card__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 18px;
+    font-size: 28px;
+    background: #f8fafc;
+  }
+
+  .sp-card__title { font-weight: 700; color: #0f172a; }
+  .sp-card__meta { margin-top: 6px; color: #64748b; font-size: 13px; }
+
+  .sp-chip-list {
+    margin-top: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .sp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    color: #475569;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .04);
+    transition: .2s ease;
+  }
+
+  .sp-chip span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #cbd5e1;
+    transition: .2s ease;
+  }
+
+  .sp-chip:hover {
+    color: #0f766e;
+    border-color: rgba(15,118,110,.35);
+    transform: translateY(-1px);
+  }
+
+  .sp-chip:hover span { background: #0f766e; }
+
+  .sp-cta-inline { margin-top: 30px; }
+
+  .sp-product-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sp-product-card__media {
+    position: relative;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+  }
+
+  .sp-product-card__media-icon {
+    font-size: 56px;
+    opacity: .35;
+  }
+
+  .sp-badge {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    display: inline-flex;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    border: 1px solid transparent;
+  }
+
+  .sp-badge--instock { background: #0f766e; color: #fff; }
+  .sp-badge--limited { background: #eef2ff; color: #4338ca; }
+  .sp-badge--inquiry { background: #fff; color: #475569; border-color: #cbd5e1; }
+
+  .sp-product-card__body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 auto;
+  }
+
+  .sp-product-card__category {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #0f766e;
+  }
+
+  .sp-product-card__title {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+    line-height: 1.35;
+  }
+
+  .sp-product-card__part {
+    color: #64748b;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .sp-product-card__compatible {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .sp-product-card__compatible strong { color: #0f172a; }
+
+  .sp-product-card__actions {
+    padding: 0 24px 24px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .sp-problem-card {
+    position: relative;
+    padding: 30px;
+  }
+
+  .sp-problem-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0f766e, rgba(15,118,110,.55));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: .28s ease;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+
+  .sp-problem-card:hover::after { transform: scaleX(1); }
+
+  .sp-problem-card h3,
+  .sp-step-card h3,
+  .sp-footer h3 {
+    margin: 0;
+    color: #0f172a;
+  }
+
+  .sp-problem-card h3 { margin-top: 18px; font-size: 22px; }
+  .sp-problem-card p {
+    margin: 12px 0 18px;
+    color: #64748b;
+    line-height: 1.7;
+  }
+
+  .sp-step-card {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .sp-step-card__bubble {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(15,118,110,.18), rgba(15,118,110,.05));
+    color: #0f766e;
+    font-size: 38px;
+    position: relative;
+  }
+
+  .sp-step-card__bubble span {
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #0f766e;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    border: 4px solid #fff;
+  }
+
+  .sp-step-card p {
+    margin: 12px auto 0;
+    color: #64748b;
+    line-height: 1.7;
+    max-width: 320px;
+  }
+
+  .sp-section--dark {
+    position: relative;
+    overflow: hidden;
+    background: #0f172a;
+    color: #fff;
+  }
+
+  .sp-dark-glow--1 { background: radial-gradient(circle at 30% 50%, rgba(0,150,136,.14) 0%, transparent 50%); }
+  .sp-dark-glow--2 { background: radial-gradient(circle at 80% 80%, rgba(0,150,136,.10) 0%, transparent 40%); }
+
+  .sp-dark-box { position: relative; z-index: 1; }
+  .sp-eyebrow--dark {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    color: #0f766e;
+  }
+
+  .sp-title--dark {
+    color: #fff;
+    max-width: 840px;
+    margin-inline: auto;
+  }
+
+  .sp-copy--dark {
+    color: rgba(255,255,255,.7);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .sp-reassurance-grid {
+    margin-top: 34px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px 24px;
+    color: rgba(255,255,255,.72);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sp-footer {
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    padding: 72px 0 36px;
+  }
+
+  .sp-footer-logo {
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+  }
+
+  .sp-footer-logo span { color: #0f766e; }
+
+  .sp-footer-brand p,
+  .sp-footer-contact,
+  .sp-footer li a,
+  .sp-footer-bottom {
+    color: #64748b;
+  }
+
+  .sp-footer-brand p {
+    max-width: 360px;
+    line-height: 1.8;
+    margin: 14px 0 0;
+  }
+
+  .sp-footer-contact {
+    margin-top: 20px;
+    display: grid;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .sp-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  .sp-footer li a,
+  .sp-footer-bottom a {
+    text-decoration: none;
+  }
+
+  .sp-footer li a:hover,
+  .sp-footer-bottom a:hover {
+    color: #0f766e;
+  }
+
+  .sp-footer-bottom {
+    margin-top: 42px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+
+  .sp-footer-bottom > div {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .sp-floating-chat {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sp-floating-chat__tooltip {
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: #0f172a;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, .24);
+    opacity: 0;
+    transform: translateX(10px);
+    transition: .25s ease;
+    pointer-events: none;
+  }
+
+  .sp-floating-chat:hover .sp-floating-chat__tooltip {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .sp-floating-chat__button {
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: #fff;
+    background: #0f766e;
+    box-shadow: 0 18px 34px rgba(15,118,110,.34);
+    transition: .25s ease;
+  }
+
+  .sp-floating-chat__button:hover { transform: scale(1.08); }
+  .sp-floating-chat__button svg { width: 26px; height: 26px; }
+
+  @media (max-width: 990px) {
+    .sp-category-grid,
+    .sp-product-grid,
+    .sp-steps-grid,
+    .sp-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .sp-problem-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 767px) {
+    .sp-section,
+    .sp-footer { padding: 72px 0; }
+
+    .sparepart-landing .sp-container { padding-top: 72px; padding-bottom: 72px; }
+
+    .sp-search-box {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 10px;
+    }
+
+    .sp-search-icon { top: 24px; }
+
+    .sp-search-input {
+      padding: 16px 14px 16px 44px;
+      font-size: 16px;
+    }
+
+    .sp-search-submit {
+      width: 100%;
+      margin-right: 0;
+    }
+
+    .sp-category-grid,
+    .sp-product-grid,
+    .sp-problem-grid,
+    .sp-steps-grid,
+    .sp-footer-grid { grid-template-columns: 1fr; }
+
+    .sp-product-card__actions {
+      flex-direction: column;
+    }
+
+    .sp-footer-bottom { flex-direction: column; align-items: flex-start; }
+    .sp-floating-chat { right: 16px; bottom: 16px; }
+    .sp-floating-chat__tooltip { display: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var scope = document.getElementById('sparepart-landing-{{ section.id }}');
+    if (!scope) return;
+
+    var input = document.getElementById('SpSearchInput-{{ section.id }}');
+    if (!input) return;
+
+    scope.querySelectorAll('[data-search-term]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        input.value = button.getAttribute('data-search-term') || '';
+        input.focus();
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Sparepart landing page",
+  "settings": [
+    { "type": "text", "id": "live_badge_text", "label": "Live badge text", "default": "10,000+ Parts In Stock & Ready to Ship" },
+    { "type": "text", "id": "hero_title_before", "label": "Hero title before highlight", "default": "Find the Right" },
+    { "type": "text", "id": "hero_title_highlight", "label": "Hero highlight", "default": "Commercial Kitchen Part" },
+    { "type": "text", "id": "hero_title_after", "label": "Hero title after highlight", "default": "Fast" },
+    { "type": "textarea", "id": "hero_subtitle", "label": "Hero subtitle", "default": "Trusted supplier for restaurants, hotels, and food-service technicians. Search by part number, machine model, or description." },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search by part number, machine model, or name..." },
+    { "type": "text", "id": "search_button_text", "label": "Search button text", "default": "Search Parts" },
+    { "type": "text", "id": "search_suggestions", "label": "Search suggestions (comma separated)", "default": "gasket, heating element, HBH550, Robot Coupe R301" },
+    { "type": "text", "id": "upload_button_text", "label": "Upload button text", "default": "Upload Image for Assistance" },
+    { "type": "url", "id": "upload_url", "label": "Upload button link" },
+    { "type": "text", "id": "browse_button_text", "label": "Browse button text", "default": "Browse All Categories" },
+    { "type": "url", "id": "browse_categories_url", "label": "Browse categories link" },
+    { "type": "url", "id": "all_categories_url", "label": "All categories link" },
+    { "type": "url", "id": "brand_link_url", "label": "Brand chip link" },
+    { "type": "url", "id": "product_detail_url", "label": "Product detail link" },
+    { "type": "url", "id": "all_parts_url", "label": "All spare parts link" },
+    { "type": "url", "id": "contact_url", "label": "Contact link" },
+    { "type": "url", "id": "line_url", "label": "LINE chat link" },
+    { "type": "text", "id": "floating_chat_text", "label": "Floating chat tooltip", "default": "Need help? Chat with us" },
+    { "type": "text", "id": "trust_1", "label": "Trust item 1", "default": "OEM Compatible Parts" },
+    { "type": "text", "id": "trust_2", "label": "Trust item 2", "default": "Warranty Guaranteed" },
+    { "type": "text", "id": "trust_3", "label": "Trust item 3", "default": "Same-Day Dispatch" },
+    { "type": "text", "id": "trust_4", "label": "Trust item 4", "default": "Expert Support" },
+    { "type": "text", "id": "email", "label": "Email", "default": "support@kitchenparts.com" },
+    { "type": "text", "id": "phone_display", "label": "Phone display", "default": "+1 (555) 123-4567" },
+    { "type": "text", "id": "phone_number", "label": "Phone number for tel link", "default": "+15551234567" },
+    { "type": "text", "id": "address", "label": "Address", "default": "Los Angeles, CA" },
+    { "type": "url", "id": "privacy_url", "label": "Privacy policy link" },
+    { "type": "url", "id": "terms_url", "label": "Terms of service link" }
+  ],
+  "presets": [
+    { "name": "Sparepart landing page" }
+  ]
+}
+{% endschema %}

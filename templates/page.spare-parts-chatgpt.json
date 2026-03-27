@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "spare_parts_landing": {
+      "type": "sparepart-landing-chatgpt",
+      "settings": {}
+    }
+  },
+  "order": ["spare_parts_landing"]
+}

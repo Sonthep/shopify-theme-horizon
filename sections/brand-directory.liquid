@@ -1,0 +1,168 @@
+{% comment %} sections/brand-directory.liquid {% endcomment %}
+
+{% assign vendor_handles = "absolute,adcraft,arcoroc,arcos,autata,bakers-pride,bartec,benchmark,berjaya,bertos,brew-rite,caddie,cambro,casadio,cecilware,chef-revival,cofrimell,colged,comida,cooktek,crown,ctx,cutlery-pro,dexter,diamond,dss,edlund,eka,electrolux,eloma,fagor,fama,firenace,firex,franke,friulinox,fujimaru,globe,gmi,gold-mendal,hamilton-beach,hatco,hobart,hosun,hoshizaki,houno,huayi,iwatani,jinli,josper,justa,kinox,kitchen-aid,kitchin,kleen-tex,koldtech,l-tellier,la-cimbali,lacor,lakeside,lincat,lkk,lloyd-pans,lucaris,maxximum,mbm,menumaster,middleby-marshall,mkn,myungse-cmk,nayati,new-ton,nieco,nordways,nts,oberglas,ocean,panasonic,pietroberto,pitco,polar-ware,power-flame,power-line,prince-castle,prisma-food,pro-chef,prochef,proluxe,pujadas,rancilio,rational,raven,renato,rheninghaus,rinnai,rj,roband,robot-coupe,roller-grill,rondo-doge,roundup,saeco,sammic,san-jamar,santos,sanyo,savory,sharp,sirman,skipio,southbend,star,t-s,tabco,table-craft,toastmaster,top-rinse,tri-star,turbo-air,turbochef,varimixer,veeetsan,vollrath,west-bend,winterhalter,wisco,wnk,wyott,zanussi,zanolli,primo" | split: "," | uniq %}
+
+{% comment %} Build sorted brand list {% endcomment %}
+{% assign brand_list = "" %}
+{% for handle in vendor_handles %}
+  {% assign col = collections[handle] %}
+  {% if col %}
+    {% assign brand_list = brand_list | append: col.title | append: "|" | append: handle | append: "," %}
+  {% endif %}
+{% endfor %}
+
+{% assign brand_entries = brand_list | split: "," %}
+{% assign sorted_entries = brand_entries | sort %}
+
+<div class="brand-directory">
+  <h1 class="brand-title">Brand</h1>
+
+  <div class="brand-filter">
+    <button class="filter-btn active" data-filter="all">All Brand</button>
+    {% assign alphabet = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,#" | split: "," %}
+    {% for letter in alphabet %}
+      <button class="filter-btn" data-filter="{{ letter }}">{{ letter }}</button>
+    {% endfor %}
+  </div>
+
+  <div id="brand-groups-container">
+    {% assign current_letter = "" %}
+
+    {% for entry in sorted_entries %}
+      {% if entry == "" %}{% continue %}{% endif %}
+      {% assign parts = entry | split: "|" %}
+      {% assign col_title = parts[0] %}
+      {% assign col_handle = parts[1] %}
+      {% assign col = collections[col_handle] %}
+      {% if col == nil %}{% continue %}{% endif %}
+
+      {% assign first_char = col_title | slice: 0 | upcase %}
+      {% assign letter_key = first_char %}
+      {% unless "ABCDEFGHIJKLMNOPQRSTUVWXYZ" contains first_char %}
+        {% assign letter_key = "#" %}
+      {% endunless %}
+
+      {% if letter_key != current_letter %}
+        {% unless current_letter == "" %}
+          </div>{%- comment -%}close brand-group__logos{%- endcomment -%}
+        </div>{%- comment -%}close brand-group{%- endcomment -%}
+        {% endunless %}
+        {% assign current_letter = letter_key %}
+        <div class="brand-group" data-letter="{{ letter_key }}">
+          <div class="brand-group__letter">{{ letter_key }}</div>
+          <div class="brand-group__logos">
+      {% endif %}
+
+      <a class="brand-logo-card" href="{{ col.url }}" title="{{ col.title }}">
+        {% if col.image %}
+          {{ col.image | image_url: width: 300 | image_tag: alt: col.title, loading: 'lazy', class: '' }}
+        {% else %}
+          <span class="brand-logo-card__text">{{ col.title }}</span>
+        {% endif %}
+      </a>
+
+    {% endfor %}
+
+    {% unless current_letter == "" %}
+          </div>
+        </div>
+    {% endunless %}
+  </div>
+</div>
+
+<style>
+.brand-directory {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+.brand-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+.brand-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 48px;
+}
+.filter-btn {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+.filter-btn.active {
+  border-color: #b8960c;
+  color: #b8960c;
+  font-weight: 600;
+}
+.brand-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+.brand-group.hidden { display: none; }
+.brand-group__letter {
+  font-size: 1.4rem;
+  font-weight: 700;
+  min-width: 32px;
+  padding-top: 8px;
+}
+.brand-group__logos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  flex: 1;
+}
+.brand-logo-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fff;
+  min-height: 80px;
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+}
+.brand-logo-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.brand-logo-card img {
+  max-width: 100%;
+  max-height: 70px;
+  object-fit: contain;
+}
+.brand-logo-card__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .brand-group__logos { grid-template-columns: repeat(3, 1fr); }
+  .brand-group { flex-direction: column; gap: 12px; }
+}
+@media (max-width: 480px) {
+  .brand-group__logos { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const filter = this.dataset.filter;
+    document.querySelectorAll('.brand-group').forEach(g => {
+      g.classList.toggle('hidden', filter !== 'all' && g.dataset.letter !== filter);
+    });
+  });
+});
+</script>
