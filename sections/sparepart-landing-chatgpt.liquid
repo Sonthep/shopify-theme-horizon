@@ -271,62 +271,7 @@ Equipment showing error codes|PCB and control board issues are common. Get genui
   </div>
 </section>
 
-<footer class="sp-footer">
-  <div class="sp-container">
-    <div class="sp-footer-grid">
-      <div class="sp-footer-brand">
-        <a href="{{ routes.root_url }}" class="sp-footer-logo">Kitchen<span>Parts</span></a>
-        <p>Your trusted source for commercial kitchen spare parts. OEM-compatible, warranty guaranteed, and shipped fast.</p>
-        <div class="sp-footer-contact">
-          <div>{{ section.settings.email }}</div>
-          <div>{{ section.settings.phone_display }}</div>
-          <div>{{ section.settings.address }}</div>
-        </div>
-      </div>
 
-      <div>
-        <h3>Products</h3>
-        <ul>
-          <li><a href="{{ section.settings.all_parts_url | default: '#' }}">All Parts</a></li>
-          <li><a href="#">Heating Parts</a></li>
-          <li><a href="#">Motor &amp; Fan</a></li>
-          <li><a href="#">Gasket &amp; Seal</a></li>
-          <li><a href="#">Electrical &amp; PCB</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Brands</h3>
-        <ul>
-          <li><a href="#">Robot Coupe</a></li>
-          <li><a href="#">Rational</a></li>
-          <li><a href="#">Hobart</a></li>
-          <li><a href="#">Turbo Air</a></li>
-          <li><a href="#">Hoshizaki</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Support</h3>
-        <ul>
-          <li><a href="{{ section.settings.contact_url | default: '#' }}">Contact Us</a></li>
-          <li><a href="#">Compatibility Check</a></li>
-          <li><a href="#">Shipping Info</a></li>
-          <li><a href="#">Returns &amp; Warranty</a></li>
-          <li><a href="#">FAQ</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="sp-footer-bottom">
-      <p>© {{ year_now }} KitchenParts. All rights reserved.</p>
-      <div>
-        <a href="{{ section.settings.privacy_url | default: '#' }}">Privacy Policy</a>
-        <a href="{{ section.settings.terms_url | default: '#' }}">Terms of Service</a>
-      </div>
-    </div>
-  </div>
-</footer>
 
 <style>
   #shopify-section-{{ section.id }} {
