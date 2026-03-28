@@ -126,7 +126,6 @@
     }
   }
 {% endstyle %}
-
 <div class="ai-doc-download-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
   {% if block.settings.heading != blank %}
     <h2 class="ai-doc-download__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
@@ -176,8 +175,8 @@
                 <a
                   href="{{ product.metafields.custom.spec_sheet.value.url }}"
                   class="ai-doc-download__download-link-{{ ai_gen_id }}"
-                  download
                   target="_blank"
+                  rel="noopener"
                 >
                   {{ block.settings.download_label }}
                 </a>
@@ -217,8 +216,8 @@
                   <a 
                     href="{{ file }}" 
                     class="ai-doc-download__download-link-{{ ai_gen_id }}"
-                    download
                     target="_blank"
+                    rel="noopener"
                   >
                     {{ block.settings.download_label }}
                   </a>
@@ -237,6 +236,7 @@
     </div>
   {% endif %}
 </div>
+
 
 {% schema %}
 {
