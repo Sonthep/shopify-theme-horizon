@@ -1,0 +1,61 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="sp-section sp-section--dark">
+  <div class="sp-dark-glow sp-dark-glow--1"></div>
+  <div class="sp-dark-glow sp-dark-glow--2"></div>
+  <div class="sp-container sp-center sp-dark-box">
+    <div class="sp-eyebrow sp-eyebrow--dark">{{ section.settings.eyebrow }}</div>
+    <h2 class="sp-title sp-title--dark">
+      {{ section.settings.title_line_1 }}
+      <span>{{ section.settings.title_line_2 }}</span>
+    </h2>
+    <p class="sp-copy sp-copy--dark">{{ section.settings.description }}</p>
+
+    <div class="sp-hero-actions sp-hero-actions--center">
+      <a href="{{ section.settings.line_url | default: '#' }}" class="sp-btn sp-btn--primary">{{ section.settings.primary_button_text }}</a>
+      <a href="tel:{{ section.settings.phone_number | replace: ' ', '' }}" class="sp-btn sp-btn--dark-alt">{{ section.settings.secondary_button_text }}</a>
+    </div>
+
+    <div class="sp-reassurance-grid">
+      {% for block in section.blocks %}
+        <div {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - CTA",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Ready to Order?" },
+    { "type": "text", "id": "title_line_1", "label": "Title line 1", "default": "Get the Parts You Need," },
+    { "type": "text", "id": "title_line_2", "label": "Title line 2 (highlighted)", "default": "When You Need Them" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Contact our expert team for personalized assistance, bulk orders, or custom part requests." },
+    { "type": "text", "id": "primary_button_text", "label": "Primary button text", "default": "Chat on LINE" },
+    { "type": "url", "id": "line_url", "label": "LINE chat link" },
+    { "type": "text", "id": "secondary_button_text", "label": "Secondary button text", "default": "Call Us Now" },
+    { "type": "text", "id": "phone_number", "label": "Phone number for tel link", "default": "+15551234567" }
+  ],
+  "blocks": [
+    {
+      "type": "reassurance",
+      "name": "Reassurance item",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "✓ No minimum order" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - CTA",
+      "blocks": [
+        { "type": "reassurance", "settings": { "text": "✓ No minimum order" } },
+        { "type": "reassurance", "settings": { "text": "🕒 Same-day dispatch" } },
+        { "type": "reassurance", "settings": { "text": "🛡 Warranty included" } },
+        { "type": "reassurance", "settings": { "text": "🎧 Expert support" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

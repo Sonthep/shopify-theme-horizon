@@ -1,0 +1,53 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">{{ section.settings.eyebrow }}</div>
+      <h2 class="sp-title">{{ section.settings.title }}</h2>
+      <p class="sp-copy sp-copy--center">{{ section.settings.description }}</p>
+    </div>
+
+    <div class="sp-steps-grid">
+      {% for block in section.blocks %}
+        <div class="sp-step-card" {{ block.shopify_attributes }}>
+          <div class="sp-step-card__bubble"><span>{{ forloop.index }}</span>{{ block.settings.icon }}</div>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - How It Works",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "How It Works" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Getting Parts Has Never Been Easier" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "From search to delivery, we make the process seamless." }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🔎" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Search or Browse" },
+        { "type": "textarea", "id": "body", "label": "Description", "default": "Find your part by number, machine model, or category. Upload a photo if unsure." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - How It Works",
+      "blocks": [
+        { "type": "step", "settings": { "icon": "🔎", "title": "Search or Browse", "body": "Find your part by number, machine model, or category. Upload a photo if unsure." } },
+        { "type": "step", "settings": { "icon": "🛡", "title": "Verify Compatibility", "body": "Our team confirms the part matches your equipment. No guesswork needed." } },
+        { "type": "step", "settings": { "icon": "🚚", "title": "Get Fast Delivery", "body": "Order ships same-day with tracking. Installation support available on request." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

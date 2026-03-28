@@ -9,10 +9,34 @@
  */
 {
   "sections": {
-    "spare_parts_landing": {
-      "type": "sparepart-landing-chatgpt",
+    "hero": {
+      "type": "sparepart-hero",
+      "settings": {}
+    },
+    "categories": {
+      "type": "sparepart-categories",
+      "settings": {}
+    },
+    "brands": {
+      "type": "sparepart-brands",
+      "settings": {}
+    },
+    "bestsellers": {
+      "type": "sparepart-bestsellers",
+      "settings": {}
+    },
+    "problems": {
+      "type": "sparepart-problems",
+      "settings": {}
+    },
+    "howitworks": {
+      "type": "sparepart-howitworks",
+      "settings": {}
+    },
+    "cta": {
+      "type": "sparepart-cta",
       "settings": {}
     }
   },
-  "order": ["spare_parts_landing"]
+  "order": ["hero", "categories", "brands", "bestsellers", "problems", "howitworks", "cta"]
 }

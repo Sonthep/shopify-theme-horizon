@@ -1,0 +1,66 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="sp-section">
+  <div class="sp-container sp-center">
+    <div class="sp-eyebrow">{{ section.settings.eyebrow }}</div>
+    <h2 class="sp-title">{{ section.settings.title }}</h2>
+    <p class="sp-copy sp-copy--center">{{ section.settings.description }}</p>
+
+    <div class="sp-chip-list">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.url | default: '#' }}" class="sp-chip" {{ block.shopify_attributes }}>
+          <span></span>{{ block.settings.brand_name }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="sp-cta-inline">
+      <a href="{{ section.settings.contact_url | default: '#' }}" class="sp-btn sp-btn--secondary">{{ section.settings.cta_text }}</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - Brands",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Shop by Brand" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Search by Equipment Brand" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "We stock parts for all major commercial kitchen equipment manufacturers." },
+    { "type": "text", "id": "cta_text", "label": "CTA button text", "default": "Don't see your brand? Contact us" },
+    { "type": "url", "id": "contact_url", "label": "Contact link" }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        { "type": "text", "id": "brand_name", "label": "Brand name", "default": "Brand Name" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - Brands",
+      "blocks": [
+        { "type": "brand", "settings": { "brand_name": "Robot Coupe" } },
+        { "type": "brand", "settings": { "brand_name": "Hamilton Beach" } },
+        { "type": "brand", "settings": { "brand_name": "Sirman" } },
+        { "type": "brand", "settings": { "brand_name": "Turbo Air" } },
+        { "type": "brand", "settings": { "brand_name": "Waring" } },
+        { "type": "brand", "settings": { "brand_name": "Hobart" } },
+        { "type": "brand", "settings": { "brand_name": "Vitamix" } },
+        { "type": "brand", "settings": { "brand_name": "Globe" } },
+        { "type": "brand", "settings": { "brand_name": "True Refrigeration" } },
+        { "type": "brand", "settings": { "brand_name": "Rational" } },
+        { "type": "brand", "settings": { "brand_name": "Combi-King" } },
+        { "type": "brand", "settings": { "brand_name": "Dito Electrolux" } },
+        { "type": "brand", "settings": { "brand_name": "Blodgett" } },
+        { "type": "brand", "settings": { "brand_name": "Manitowoc" } },
+        { "type": "brand", "settings": { "brand_name": "Hoshizaki" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

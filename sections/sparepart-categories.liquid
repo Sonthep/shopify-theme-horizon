@@ -1,0 +1,64 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section id="sp-categories" class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-section-head sp-section-head--split">
+      <div>
+        <div class="sp-eyebrow">{{ section.settings.eyebrow }}</div>
+        <h2 class="sp-title">{{ section.settings.title }}</h2>
+        <p class="sp-copy">{{ section.settings.description }}</p>
+      </div>
+      <a href="{{ section.settings.all_categories_url | default: '#' }}" class="sp-text-link">{{ section.settings.view_all_text }}</a>
+    </div>
+
+    <div class="sp-category-grid">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.url | default: '#' }}" class="sp-card sp-card--category" {{ block.shopify_attributes }}>
+          <div class="sp-card__icon">{{ block.settings.icon }}</div>
+          <div class="sp-card__title">{{ block.settings.title }}</div>
+          <div class="sp-card__meta">{{ block.settings.meta }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - Categories",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Shop by Category" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Find Parts by Type" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Browse our most common spare part categories for commercial kitchen equipment." },
+    { "type": "text", "id": "view_all_text", "label": "View all text", "default": "View all categories" },
+    { "type": "url", "id": "all_categories_url", "label": "All categories link" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🔥" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Heating Parts" },
+        { "type": "text", "id": "meta", "label": "Meta text", "default": "320+ parts" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - Categories",
+      "blocks": [
+        { "type": "category", "settings": { "icon": "🔥", "title": "Heating Parts", "meta": "320+ parts" } },
+        { "type": "category", "settings": { "icon": "⚙", "title": "Motor & Fan", "meta": "180+ parts" } },
+        { "type": "category", "settings": { "icon": "🔒", "title": "Gasket & Seal", "meta": "450+ parts" } },
+        { "type": "category", "settings": { "icon": "✂", "title": "Blade & Knife", "meta": "210+ parts" } },
+        { "type": "category", "settings": { "icon": "⚡", "title": "Electrical & PCB", "meta": "290+ parts" } },
+        { "type": "category", "settings": { "icon": "💧", "title": "Pump & Valve", "meta": "160+ parts" } },
+        { "type": "category", "settings": { "icon": "🔧", "title": "Bracket & Frame", "meta": "240+ parts" } },
+        { "type": "category", "settings": { "icon": "❄", "title": "Refrigeration", "meta": "130+ parts" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

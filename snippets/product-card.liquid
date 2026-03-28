@@ -9,6 +9,8 @@
   @param {number} [product_card_gap] - The gap between the product card children (overrides block settings)
 {%- enddoc -%}
 
+{{ 'product-card-custom.css' | asset_url | stylesheet_tag }}
+
 {% assign block_settings = block.settings %}
 
 {% style %}
@@ -64,18 +66,21 @@
     data-featured-media-url="{{ featured_media_url }}"
     on:click="/handleViewTransition"
   {% endif %}
+  {% unless onboarding %}
+    {% unless product.available %}data-unavailable="true"{% endunless %}
+  {% endunless %}
   {{ block.shopify_attributes }}
   {% if onboarding %}
     data-placeholder="true"
   {% endif %}
 >
   
-  {%- comment -%} เพิ่ม Discount Badge ตรงนี้ {%- endcomment -%}
+  {%- comment -%} Discount Badge + Stock Status {%- endcomment -%}
   {% unless onboarding %}
     {% if product.compare_at_price > product.price %}
       {% assign discount = product.compare_at_price | minus: product.price %}
       {% assign discount_percent = discount | times: 100.0 | divided_by: product.compare_at_price | round %}
-      <span class="badge badge-sale" style="position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 3px; font-weight: bold; z-index: 10;">-{{ discount_percent }}%</span>
+      <span class="badge-discount">-{{ discount_percent }}%</span>
     {% endif %}
   {% endunless %}
   
@@ -117,6 +122,20 @@
     "
   >
     {{ children }}
+
+    {%- unless onboarding -%}
+      <div class="product-card__stock-wrap">
+        {%- if product.available == false -%}
+          <span class="badge-stock badge-stock--out-of-stock">Out of Stock</span>
+        {%- elsif product.selected_or_first_available_variant.inventory_management == 'shopify'
+            and product.selected_or_first_available_variant.inventory_quantity <= 5
+            and product.selected_or_first_available_variant.inventory_quantity > 0 -%}
+          <span class="badge-stock badge-stock--low-stock">Low Stock</span>
+        {%- elsif product.available -%}
+          <span class="badge-stock badge-stock--in-stock">In Stock</span>
+        {%- endif -%}
+      </div>
+    {%- endunless -%}
   </div>
 </product-card>
 
