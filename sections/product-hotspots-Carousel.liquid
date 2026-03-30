@@ -1,0 +1,1019 @@
+
+
+<script
+  src="{{ 'product-hotspot.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+{%- liquid
+  assign slide_count = 0
+  for i in (1..5)
+    assign img_key = 'image_' | append: i
+    assign img = section.settings[img_key]
+    if img != blank
+      assign slide_count = slide_count | plus: 1
+    endif
+  endfor
+  if slide_count == 0
+    assign slide_count = 1
+  endif
+
+  assign first_image = section.settings.image_1
+-%}
+
+<div
+  class="
+    section
+    section--{{ section.settings.section_width }}
+    section-product-hotspots
+    color-{{ section.settings.color_scheme }}
+    spacing-style
+    gap-style
+  "
+  data-testid="product-hotspots"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    {% render 'gap-style', value: 28 %}
+    {% if section.settings.section_height != 'auto' %}
+      --ratio: {{ section.settings.section_height }};
+    {% elsif first_image != blank %}
+      --ratio: {{ first_image.aspect_ratio }};
+    {% endif %}
+    --product-title-gap: {{ section.settings.product_title_gap }}px;
+    --hotspot-size: 36px;
+    --minimum-width-dialog: 260px;
+    --maximum-width-dialog: 330px;
+    --width-product-image-dialog: 110px;
+  "
+>
+  <div class="section-product-hotspots__wrapper">
+    <div class="section-product-hotspots__header">
+      {% content_for 'block', type: 'text', id: 'heading' %}
+    </div>
+
+    <div
+      class="section-product-hotspots__content hotspots-carousel"
+      id="hotspots-carousel-{{ section.id }}"
+      data-slide-count="{{ slide_count }}"
+      data-current-slide="0"
+    >
+      {%- comment -%} Background image carousel track {%- endcomment -%}
+      <div class="hotspots-carousel__track" aria-hidden="true">
+        {%- assign rendered_slides = 0 -%}
+        {%- for i in (1..5) -%}
+          {%- assign img_key = 'image_' | append: i -%}
+          {%- assign slide_img = section.settings[img_key] -%}
+          {%- if slide_img != blank or i == 1 -%}
+            <div class="hotspots-carousel__slide">
+              {% if section.settings.toggle_overlay %}
+                {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+              {% endif %}
+              {% if slide_img != blank %}
+                {% render 'image', image: slide_img, class: 'hotspots__background-image' %}
+              {% else %}
+                {{ 'hero-apparel-1' | placeholder_svg_tag: 'hotspots__background-image' }}
+              {% endif %}
+            </div>
+            {%- assign rendered_slides = rendered_slides | plus: 1 -%}
+            {%- if rendered_slides >= slide_count -%}{%- break -%}{%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Hotspot blocks rendered once, overlaid on top. Each hotspot has data-hotspot-slide set by the block setting. {%- endcomment -%}
+      <div class="hotspots-container" aria-hidden="false">
+        {% content_for 'blocks' %}
+      </div>
+
+      {%- comment -%} Navigation arrows {%- endcomment -%}
+      {%- if slide_count > 1 -%}
+        <button
+          class="hotspots-carousel__btn hotspots-carousel__btn--prev button button-unstyled button-unstyled--transparent"
+          aria-label="{{ 'accessibility.slideshow_previous' | t }}"
+          data-action="prev"
+        >
+          <span class="svg-wrapper icon-arrow flip-x">
+            {{- 'icon-arrow.svg' | inline_asset_content -}}
+          </span>
+        </button>
+        <button
+          class="hotspots-carousel__btn hotspots-carousel__btn--next button button-unstyled button-unstyled--transparent"
+          aria-label="{{ 'accessibility.slideshow_next' | t }}"
+          data-action="next"
+        >
+          <span class="svg-wrapper icon-arrow">
+            {{- 'icon-arrow.svg' | inline_asset_content -}}
+          </span>
+        </button>
+
+        {%- comment -%} Dot indicators {%- endcomment -%}
+        <div class="hotspots-carousel__dots" role="tablist">
+          {%- assign dot_count = 0 -%}
+          {%- for i in (1..5) -%}
+            {%- assign img_key = 'image_' | append: i -%}
+            {%- assign dot_img = section.settings[img_key] -%}
+            {%- if dot_img != blank or i == 1 -%}
+              <button
+                class="hotspots-carousel__dot{% if dot_count == 0 %} is-active{% endif %}"
+                role="tab"
+                aria-selected="{% if dot_count == 0 %}true{% else %}false{% endif %}"
+                aria-label="{{ 'accessibility.slide_status' | t: index: dot_count | plus: 1, length: slide_count }}"
+                data-slide-target="{{ dot_count }}"
+              ></button>
+              {%- assign dot_count = dot_count | plus: 1 -%}
+              {%- if dot_count >= slide_count -%}{%- break -%}{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function initHotspotsCarousel(carouselEl) {
+      var slideCount = parseInt(carouselEl.dataset.slideCount, 10);
+      var currentSlide = 0;
+      var track = carouselEl.querySelector('.hotspots-carousel__track');
+      var dots = carouselEl.querySelectorAll('.hotspots-carousel__dot');
+
+      function updateHotspots(index) {
+        // Select all hotspot components in this carousel
+        carouselEl.querySelectorAll('.hotspots-container product-hotspot-component').forEach(function (hs) {
+          var hsSlide = hs.dataset.hotspotSlide;
+          if (!hsSlide) {
+            // No slide_index set (all slides) — always visible
+            hs.style.display = '';
+          } else {
+            // slide_index is 1-based; index is 0-based
+            hs.style.display = (parseInt(hsSlide, 10) - 1 === index) ? '' : 'none';
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0) index = slideCount - 1;
+        if (index >= slideCount) index = 0;
+        currentSlide = index;
+        if (track) track.style.transform = 'translateX(calc(-100% * ' + index + '))';
+        carouselEl.dataset.currentSlide = index;
+        dots.forEach(function (d, i) {
+          d.classList.toggle('is-active', i === index);
+          d.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        });
+        updateHotspots(index);
+      }
+
+      // Bind prev/next buttons
+      carouselEl.querySelectorAll('.hotspots-carousel__btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          goTo(currentSlide + (btn.dataset.action === 'prev' ? -1 : 1));
+        });
+      });
+
+      // Bind dot buttons
+      dots.forEach(function (dot) {
+        dot.addEventListener('click', function () {
+          var target = parseInt(dot.dataset.slideTarget, 10);
+          goTo(target);
+        });
+      });
+
+      // Touch/swipe
+      var startX = 0;
+      carouselEl.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+      carouselEl.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) goTo(currentSlide + (dx < 0 ? 1 : -1));
+      });
+
+      // Initial hotspot visibility
+      updateHotspots(0);
+    }
+
+    function init() {
+      document.querySelectorAll('.hotspots-carousel[data-slide-count]').forEach(function (el) {
+        if (!el.dataset.carouselInit) {
+          el.dataset.carouselInit = '1';
+          initHotspotsCarousel(el);
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    document.addEventListener('shopify:section:load', function () {
+      document.querySelectorAll('.hotspots-carousel[data-slide-count]').forEach(function (el) {
+        delete el.dataset.carouselInit;
+      });
+      init();
+    });
+  })();
+</script>
+
+{% stylesheet %}
+  /* Section layout */
+  .section-product-hotspots {
+    position: relative;
+  }
+
+  .section-product-hotspots__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Image container */
+  .section-product-hotspots__content {
+    position: relative;
+    aspect-ratio: var(--ratio, 21 / 9);
+    overflow: hidden;
+  }
+
+  /* ── Carousel ── */
+  .hotspots-carousel {
+    position: relative;
+  }
+
+  .hotspots-carousel__track {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+
+  .hotspots-carousel__slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Nav buttons */
+  .hotspots-carousel__btn {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: var(--layer-raised, 10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgb(var(--color-foreground-rgb, 0 0 0) / 0.45);
+    border-radius: 50%;
+    color: var(--color-background, #fff);
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .hotspots-carousel__btn:hover {
+    background: rgb(var(--color-foreground-rgb, 0 0 0) / 0.7);
+  }
+
+  .hotspots-carousel__btn--prev {
+    left: 0.75rem;
+  }
+
+  .hotspots-carousel__btn--next {
+    right: 0.75rem;
+  }
+
+  .hotspots-carousel__btn .svg-wrapper svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  /* Dot indicators */
+  .hotspots-carousel__dots {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    translate: -50% 0;
+    z-index: var(--layer-raised, 10);
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .hotspots-carousel__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.55);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .hotspots-carousel__dot.is-active {
+    background: #fff;
+    transform: scale(1.3);
+  }
+
+  @media screen and (max-width: 749px) {
+    .hotspots-carousel__btn {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .hotspots-carousel__btn .svg-wrapper svg {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+  }
+
+  /* Hide hotspots without products on touch devices (tablets included) */
+  @media (hover: none) {
+    .hotspot.hotspot--hidden-touch {
+      display: none;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media screen and (max-width: 749px) {
+    /* Hide dialog on mobile - hotspot opens quick-add modal instead */
+    .hotspot .hotspot-dialog {
+      display: none;
+    }
+  }
+
+  /* Hotspot button - positioned element with clickable area */
+  .hotspot {
+    position: absolute;
+    cursor: pointer;
+    width: var(--button-size);
+    height: var(--button-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    outline: none;
+    transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+    z-index: var(--layer-flat);
+  }
+
+  .hotspot:has(.hotspot-dialog[open]) {
+    z-index: var(--layer-raised);
+  }
+
+  .hotspot .hotspot-trigger {
+    padding: 0;
+    border: none;
+  }
+
+  .hotspot-dialog__product-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--padding-xs);
+    padding-inline-start: 0;
+    overflow: hidden;
+  }
+
+  /* Visual target circle */
+  .hotspot-trigger {
+    width: var(--hotspot-size);
+    height: var(--hotspot-size);
+    background: var(--hotspot-bg, rgb(0 0 0 / 0.5));
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: width 0.1s ease-out, height 0.1s ease-out;
+  }
+
+  /* On mobile, ensure trigger is tappable */
+  @media screen and (max-width: 749px) {
+    .hotspot-trigger {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+
+  /* Bullseye using ::after pseudo-element */
+  .hotspot-trigger::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--hotspot-size) * 0.4);
+    height: calc(var(--hotspot-size) * 0.4);
+    background: var(--hotspot-bullseye, #fff);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.1s ease-out, height 0.1s ease-out, background 0.1s ease-out;
+  }
+
+  /* Bullseye grows on hover or when dialog is open (desktop only) */
+  @media screen and (min-width: 750px) {
+    .hotspot:hover .hotspot-trigger::after,
+    .hotspot:has(.hotspot-dialog[open]) .hotspot-trigger::after {
+      width: calc(var(--hotspot-size) * 0.55);
+      height: calc(var(--hotspot-size) * 0.55);
+      transition: width 0.2s ease-out, height 0.2s ease-out, background 0.2s ease-out;
+      transition-delay: 0.2s;
+    }
+  }
+
+  .hotspots-container {
+    position: absolute;
+    inset: 0;
+    z-index: var(--layer-flat);
+    overflow: clip;
+  }
+
+  .hotspots__background-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Dialog positioning */
+  .hotspot .hotspot-dialog {
+    position: absolute;
+    padding: 0;
+    border-radius: var(--style-border-radius-popover);
+    border: var(--style-border-popover);
+    width: max-content;
+    min-width: var(--minimum-width-dialog);
+    max-width: var(--maximum-width-dialog);
+    box-shadow: var(--shadow-popover);
+
+    &[data-placement*='bottom'] {
+      --offset-y: 0px;
+      --origin-y: calc(var(--hotspot-size) / 2);
+      top: calc((var(--button-size) - var(--hotspot-size)) / 2 + var(--dialog-vertical-offset, 0px));
+      bottom: unset;
+    }
+    &[data-placement*='top'] {
+      --offset-y: 0px;
+      --origin-y: calc(100% - (var(--hotspot-size) * 0.5));
+      top: unset;
+      bottom: calc((var(--button-size) - var(--hotspot-size)) * 0.5 - var(--dialog-vertical-offset, 0px));
+    }
+    &[data-placement*='left'] {
+      --offset-x: calc((var(--button-size) - var(--hotspot-size)) * 0.5);
+      --origin-x: calc(100% - (var(--hotspot-size) * 0.5));
+      left: unset;
+      right: 100%;
+    }
+    &[data-placement*='right'] {
+      --offset-x: calc((var(--button-size) - var(--hotspot-size)) * -0.5);
+      --origin-x: calc(var(--hotspot-size) * 0.5);
+      left: 100%;
+      right: unset;
+    }
+    &[data-placement*='center'] {
+      left: 50%;
+      translate: -50% 0;
+      right: unset;
+    }
+    &[data-placement*='center'][data-placement*='bottom'] {
+      --origin-y: calc(var(--hotspot-size) * 0.5);
+      --origin-x: 50%;
+      --offset-y: calc((var(--button-size) - var(--hotspot-size)) * -0.5);
+      /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+      --offset-x: 0;
+      top: 100%;
+      bottom: unset;
+      margin: 0;
+    }
+    &[data-placement*='center'][data-placement*='top'] {
+      --origin-y: calc(100% - (var(--hotspot-size) * 0.5));
+      --origin-x: 50%;
+      --offset-y: calc((var(--button-size) - var(--hotspot-size)) * 0.5);
+      /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+      --offset-x: 0;
+      bottom: 100%;
+    }
+  }
+
+  .hotspot .hotspot-dialog:is(:focus, :focus-visible),
+  .hotspot .hotspot-dialog__link:is(:focus, :focus-visible) {
+    outline: none;
+  }
+
+  .hotspot-dialog__product {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  .hotspot-dialog__product-image,
+  .hotspot-dialog svg.hotspot-dialog__placeholder-product-image {
+    width: var(--width-product-image-dialog);
+    height: var(--width-product-image-dialog);
+    aspect-ratio: 1;
+    padding: var(--padding-product-image-popover, var(--padding-xs));
+    object-fit: cover;
+    border-radius: var(--style-border-radius-popover);
+  }
+
+  .hotspot-dialog__link {
+    position: absolute;
+    inset: 0;
+    z-index: var(--layer-flat);
+  }
+
+  .hotspot-dialog__product-title {
+    margin-block-end: var(--product-title-gap);
+    padding-inline-end: var(--padding-sm);
+    min-width: 0;
+  }
+
+  .hotspot .hotspot-dialog .hotspot-dialog__sold-out-badge {
+    display: flex;
+    width: fit-content;
+    justify-self: flex-end;
+    align-self: flex-end;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-body--size);
+    padding: var(--padding-2xs) var(--padding-sm);
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--border-radius-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-sm);
+    opacity: var(--opacity-80);
+  }
+
+  /* Dialog transitions */
+  .hotspot .hotspot-dialog {
+    --hotspot-blur: 4px;
+    --hotspot-scale: 0.8;
+    --hotspot-entry-duration: 0.2s;
+    --hotspot-exit-duration: 0.1s;
+
+    /* Firefox doesn't have reverse transitions */
+    /* in webkit/chromium we can set a closing attribute as we transition the exit and hook there */
+    filter: blur(var(--hotspot-blur));
+    opacity: 0;
+    transform: scale(var(--hotspot-scale)) translate(0, 0);
+    transition-property: display, opacity, filter, transform;
+    transition-duration: var(--hotspot-entry-duration);
+    transition-timing-function: ease;
+
+    transform: scale(var(--hotspot-scale)) translate(var(--offset-x), var(--offset-y));
+    transform-origin: var(--origin-x) var(--origin-y);
+    transition-timing-function: cubic-bezier(0.65, -0.49, 0.35, 1.12);
+
+    &[data-closing='true'] {
+      transition-duration: var(--hotspot-exit-duration);
+      transition-timing-function: ease-out;
+      transform: scale(1) translate(0, calc(var(--hotspot-size) * 0.25));
+    }
+
+    /* We can only set transition-behavior once we've measured the dialog dimensions */
+    &[data-showing='true'] {
+      transition-behavior: allow-discrete;
+    }
+  }
+
+  .hotspot .hotspot-dialog[open][data-showing='true'] {
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
+    filter: blur(0px);
+  }
+
+  @starting-style {
+    .hotspot .hotspot-dialog[open][data-showing='true'] {
+      opacity: 0;
+      filter: blur(var(--hotspot-blur));
+      transform: scale(var(--hotspot-scale)) translate(var(--offset-x), var(--offset-y));
+      transform-origin: var(--origin-x) var(--origin-y);
+    }
+  }
+
+  /* Safety triangles for dialogs */
+  .hotspot .hotspot-dialog::after {
+    content: '';
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: all;
+    transition: opacity 0.22s ease-out, translate 0.22s 0.1s ease-out;
+    scale: var(--scale-x, 1) var(--scale-y, 1);
+    z-index: var(--layer-flat);
+  }
+
+  .hotspot-dialog[open]:is([data-placement*='left'], [data-placement*='right'])::after {
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    width: calc(var(--button-size) / 2 + var(--hotspot-size) * 0.5);
+  }
+
+  .hotspot-dialog[open][data-placement*='right']::after {
+    right: 100%;
+    left: unset;
+  }
+
+  .hotspot-dialog[open][data-placement*='left']::after {
+    left: 100%;
+    right: unset;
+    --scale-x: -1;
+  }
+
+  .hotspot-dialog[open][data-placement*='top']::after {
+    --scale-y: -1;
+  }
+
+  .hotspot-dialog[open][data-placement*='center']::after {
+    height: calc(var(--button-size) / 2 + var(--hotspot-size) * 0.5);
+    width: 100%;
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+    clip-path: polygon(0 0, 100% 0, 50% calc(100% - var(--hotspot-size) * 0.25));
+    --scale-x: 1;
+    --scale-y: 1;
+  }
+
+  .hotspot-dialog[open][data-placement*='center'][data-placement*='bottom']::after {
+    top: unset;
+    bottom: 100%;
+    --scale-y: -1;
+  }
+
+  .hotspot-dialog[open][data-placement*='center'][data-placement*='top']::after {
+    top: 100%;
+    bottom: unset;
+  }
+
+  /* Quick add button */
+  .hotspot-dialog[open] {
+    .quick-add {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      width: auto;
+      height: auto;
+      position: relative;
+      z-index: var(--layer-flat);
+    }
+
+    .quick-add__button {
+      position: relative;
+      padding-block: 0;
+      box-shadow: none;
+      align-items: center;
+      justify-self: flex-end;
+      height: fit-content;
+      translate: var(--padding-2xs) 0;
+      border: none;
+      color: var(--color-foreground);
+      background-color: var(--color-background);
+      overflow: visible;
+      pointer-events: all;
+      opacity: 1;
+      animation: elementSlideInTop var(--animation-speed) var(--animation-easing);
+      transition-property: translate;
+      transition-duration: var(--animation-speed);
+      transition-timing-function: var(--ease-out-cubic);
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: calc(50px + 2px);
+        border: 2px solid transparent;
+        pointer-events: none;
+        transition-property: border-color;
+        transition-duration: 0s;
+        transition-timing-function: var(--ease-out-cubic);
+      }
+
+      &:is(:hover, :focus, :focus-visible, :active) {
+        translate: 0 0;
+        transition-delay: var(--animation-speed-slow);
+
+        &::before {
+          border-color: rgb(var(--color-foreground-rgb) / var(--opacity-15));
+          transition-duration: var(--animation-speed);
+          transition-delay: var(--animation-speed-slow);
+        }
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_hotspots",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "_hotspot-product"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Carousel Images"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add up to 5 images for the carousel. Each hotspot block can be assigned to a specific slide number."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "toggle_overlay",
+      "label": "t:settings.media_overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:settings.overlay_color",
+      "alpha": true,
+      "default": "#00000026",
+      "visible_if": "{{ section.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "t:settings.overlay_style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        },
+        {
+          "value": "gradient",
+          "label": "t:options.gradient"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ section.settings.toggle_overlay }}"
+    },
+    {
+      "type": "select",
+      "id": "gradient_direction",
+      "label": "t:settings.gradient_direction",
+      "options": [
+        {
+          "value": "to top",
+          "label": "t:options.up"
+        },
+        {
+          "value": "to bottom",
+          "label": "t:options.down"
+        }
+      ],
+      "default": "to top",
+      "visible_if": "{{ section.settings.toggle_overlay and section.settings.overlay_style == 'gradient' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "t:settings.height",
+      "options": [
+        {
+          "value": "auto",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "21 / 9",
+          "label": "t:options.small"
+        },
+        {
+          "value": "16 / 9",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "4 / 3",
+          "label": "t:options.large"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "header",
+      "content": "t:content.colors"
+    },
+    {
+      "type": "color",
+      "id": "hotspot_color",
+      "label": "t:settings.hotspot_color",
+      "default": "#FFFFFF57",
+      "alpha": true
+    },
+    {
+      "type": "color",
+      "id": "bullseye_color",
+      "label": "t:settings.bullseye_color",
+      "default": "#ffffff",
+      "alpha": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.popover"
+    },
+    {
+      "type": "range",
+      "id": "product_title_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "product_title_preset",
+      "label": "t:settings.product_title_typography",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "",
+      "info": "t:info.edit_presets_in_theme_settings"
+    },
+    {
+      "type": "select",
+      "id": "product_price_preset",
+      "label": "t:settings.product_price_typography",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "",
+      "info": "t:info.edit_presets_in_theme_settings"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_hotspots",
+      "category": "t:categories.products",
+      "settings": {
+        "section_width": "page-width",
+        "color_scheme": "scheme-1",
+        "product_title_gap": 8,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "t:names.heading",
+          "static": true,
+          "settings": {
+            "text": "t:text_defaults.shop_the_look",
+            "type_preset": "h4"
+          }
+        },
+        "hotspot-1": {
+          "type": "_hotspot-product",
+          "settings": {
+            "x-position": 40,
+            "y-position": 40,
+            "slide_index": "1"
+          }
+        },
+        "hotspot-2": {
+          "type": "_hotspot-product",
+          "settings": {
+            "x-position": 60,
+            "y-position": 60,
+            "slide_index": "1"
+          }
+        }
+      },
+      "block_order": ["hotspot-1", "hotspot-2"]
+    }
+  ]
+}
+{% endschema %}
