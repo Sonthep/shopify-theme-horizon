@@ -137,8 +137,9 @@
         "video_1": "shopify://files/videos/75 One Stop Food Service & Hospitality Solutions.mp4",
         "media_type_2": "image",
         "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
-        "media_type_1_mobile": "image",
+        "custom_mobile_media": true,
+        "media_type_1_mobile": "video",
+        "video_1_mobile": "shopify://files/videos/75 One Stop Food Service & Hospitality Solutions.mp4",
         "media_type_2_mobile": "image",
         "link": "",
         "open_in_new_tab": false,
@@ -629,13 +630,54 @@
           "adcraft",
           "arcos",
           "autata",
-          "bartec",
           "benchmark",
           "berjaya",
           "bertos",
-          "brew-rite"
+          "brew-rite",
+          "bakers-pride",
+          "bartec",
+          "caddie",
+          "cambro",
+          "casadio",
+          "cecilware",
+          "chef-revival",
+          "cofrimell",
+          "colged",
+          "comida",
+          "cooktek",
+          "crown",
+          "ctx",
+          "cutlery-pro",
+          "dexter",
+          "diamond",
+          "dss",
+          "edlund",
+          "eka",
+          "electrolux",
+          "eloma",
+          "fagor",
+          "fama",
+          "firenace",
+          "firex",
+          "franke",
+          "friulinox",
+          "fujimaru",
+          "globe",
+          "gmi",
+          "gold-mendal",
+          "hamilton-beach",
+          "hatco",
+          "hobart",
+          "hoshizaki",
+          "hosun",
+          "houno",
+          "huayi",
+          "iwatani",
+          "jinli",
+          "josper",
+          "justa"
         ],
-        "layout_type": "carousel",
+        "layout_type": "grid",
         "carousel_on_mobile": true,
         "columns": 3,
         "mobile_columns": "2",
@@ -653,33 +695,92 @@
         "padding-block-end": 48
       }
     },
-    "product_hotspots_xbDf6f": {
-      "type": "product-hotspots",
+    "product_hotspots_carousel_jftUAn": {
+      "type": "product-hotspots-Carousel",
       "blocks": {
-        "hotspot_product_qLy9b4": {
+        "hotspot_product_LAyXmw": {
           "type": "_hotspot-product",
+          "name": "Hotspot1",
           "settings": {
-            "product": "drawer-freezer-w1200-d750mm-3-drawers-1-door",
-            "x-position": 15,
-            "y-position": 40
+            "product": "upright-bun-pan-freezer-w1260-d860mm-4-doors",
+            "x-position": 6,
+            "y-position": 60,
+            "slide_index": "1"
           },
           "blocks": {}
         },
-        "hotspot_product_PfLrRm": {
+        "hotspot_product_4Gkbft": {
           "type": "_hotspot-product",
+          "name": "Hotspot2",
           "settings": {
-            "product": "drawer-freezer-w1200-d750mm-6-drawers",
+            "product": "hood-dishwasher-500x500mm-rack",
             "x-position": 40,
-            "y-position": 40
+            "y-position": 40,
+            "slide_index": "1"
           },
           "blocks": {}
         },
-        "hotspot_product_8YfpgA": {
+        "hotspot_product_VwGVaH": {
           "type": "_hotspot-product",
+          "name": "Hotspot3",
+          "settings": {
+            "product": "non-stick-paella-pan-22cm",
+            "x-position": 60,
+            "y-position": 60,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_dGwG44": {
+          "type": "_hotspot-product",
+          "name": "Hotspot 21",
           "settings": {
             "product": "drawer-freezer-w1500-d750mm-2-drawers-1-door",
-            "x-position": 73,
-            "y-position": 60
+            "x-position": 20,
+            "y-position": 60,
+            "slide_index": "2"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_j3apBi": {
+          "type": "_hotspot-product",
+          "name": "Hotspot2/2",
+          "settings": {
+            "product": "drawer-freezer-w1500-d750mm-6-drawers",
+            "x-position": 40,
+            "y-position": 40,
+            "slide_index": "2"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_xeVRBW": {
+          "type": "_hotspot-product",
+          "name": "Hotspot2/3",
+          "settings": {
+            "product": "drawer-freezer-w1200-d750mm-3-drawers-1-door",
+            "x-position": 77,
+            "y-position": 60,
+            "slide_index": "2"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_8hTYjD": {
+          "type": "_hotspot-product",
+          "settings": {
+            "product": "upright-display-freezer-w1260-d860mm-2-doors",
+            "x-position": 55,
+            "y-position": 40,
+            "slide_index": "3"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_yHLxMT": {
+          "type": "_hotspot-product",
+          "settings": {
+            "product": "gas-6-burners-with-oven",
+            "x-position": 23,
+            "y-position": 58,
+            "slide_index": "3"
           },
           "blocks": {}
         },
@@ -712,20 +813,27 @@
         }
       },
       "block_order": [
-        "hotspot_product_qLy9b4",
-        "hotspot_product_PfLrRm",
-        "hotspot_product_8YfpgA"
+        "hotspot_product_LAyXmw",
+        "hotspot_product_4Gkbft",
+        "hotspot_product_VwGVaH",
+        "hotspot_product_dGwG44",
+        "hotspot_product_j3apBi",
+        "hotspot_product_xeVRBW",
+        "hotspot_product_8hTYjD",
+        "hotspot_product_yHLxMT"
       ],
       "name": "t:names.product_hotspots",
       "settings": {
-        "image": "shopify://shop_images/4f4a2937-3fbb-4671-92ba-3cea5a74854b.png",
+        "image_1": "shopify://shop_images/1-2-3-4-5.png",
+        "image_2": "shopify://shop_images/4f4a2937-3fbb-4671-92ba-3cea5a74854b.png",
+        "image_3": "shopify://shop_images/9022a705161ff42b7879d88f1fd6d0e8.png",
         "toggle_overlay": false,
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "section_width": "page-width",
         "section_height": "auto",
-        "hotspot_color": "#FFFFFF57",
+        "hotspot_color": "#ffffff57",
         "bullseye_color": "#ffffff",
         "color_scheme": "scheme-1",
         "product_title_gap": 8,
@@ -1633,7 +1741,7 @@
     "marquee_trust",
     "collections_browse",
     "collection_list_yNywVt",
-    "product_hotspots_xbDf6f",
+    "product_hotspots_carousel_jftUAn",
     "products_featured",
     "editorial_about",
     "carousel_features",
