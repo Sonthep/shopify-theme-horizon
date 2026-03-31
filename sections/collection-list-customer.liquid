@@ -1,0 +1,233 @@
+{% comment %} sections/collection-list-customer.liquid {% endcomment %}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+<div
+  class="
+    section
+    section--{{ section.settings.section_width }}
+    color-{{ section.settings.color_scheme }}
+    cust-ref
+    spacing-style
+  "
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+
+  {% if section.settings.title != blank %}
+    <h2 class="cust-ref__title">{{ section.settings.title | upcase }}</h2>
+  {% endif %}
+
+  {% if section.settings.category != blank %}
+    <div class="cust-ref__cat-header">
+      <span class="cust-ref__cat-dot"></span>
+      <span class="cust-ref__cat-label">{{ section.settings.category | upcase }}</span>
+      <span class="cust-ref__cat-line"></span>
+    </div>
+  {% endif %}
+
+  <div class="cust-ref__box">
+    <div class="cust-ref__grid">
+      {% for block in section.blocks %}
+        {% if block.type == "logo" %}
+          <div class="cust-ref__item" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              {{
+                block.settings.image
+                | image_url: width: 300
+                | image_tag:
+                  loading: 'lazy',
+                  alt: block.settings.image.alt,
+                  class: 'cust-ref__img'
+              }}
+            {% else %}
+              <span class="cust-ref__img-placeholder">Logo</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% stylesheet %}
+  .cust-ref {
+    padding-inline: 20px;
+  }
+
+  .cust-ref__title {
+    text-align: center;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    margin-bottom: 36px;
+  }
+
+  .cust-ref__cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .cust-ref__cat-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .cust-ref__cat-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cust-ref__cat-line {
+    flex: 1;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+
+  .cust-ref__box {
+    border: 1px solid rgba(128,128,128,0.35);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .cust-ref__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+
+  .cust-ref__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    min-height: 70px;
+  }
+
+  .cust-ref__img {
+    max-width: 100%;
+    max-height: 70px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .cust-ref__img-placeholder {
+    font-size: 0.7rem;
+    color: #888;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .cust-ref__grid {
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+    }
+
+    .cust-ref__img {
+      max-height: 55px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Customer References",
+  "tag": "section",
+  "class": "customer-references-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "info": "แสดงหัวข้อใหญ่ ใส่เฉพาะ section แรก เช่น CUSTOMER REFERENCES"
+    },
+    {
+      "type": "text",
+      "id": "category",
+      "label": "Category name",
+      "info": "ชื่อกลุ่ม เช่น RESTAURANT, HOTEL, RETAIL"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Width",
+      "options": [
+        { "value": "page-width", "label": "Page" },
+        { "value": "full-width", "label": "Full" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer References",
+      "category": "Custom",
+      "settings": {
+        "title": "Customer References",
+        "category": "RESTAURANT"
+      },
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

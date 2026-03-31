@@ -4,7 +4,21 @@
   {% content_for 'blocks' %}
 {% endcapture %}
 
+{% if section.settings.title != blank %}
+  <{{ section.settings.heading_tag }} class="section-title section--{{ section.settings.section_width }}">
+    {{ section.settings.title | escape }}
+  </{{ section.settings.heading_tag }}>
+{% endif %}
+
 {% render 'section', section: section, children: children %}
+
+{% stylesheet %}
+  .section-title {
+    margin-inline: auto;
+    padding-inline: var(--page-width-padding, 20px);
+    margin-block-end: 12px;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -25,6 +39,29 @@
     "groups": ["header"]
   },
   "settings": [
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "p", "label": "Paragraph" }
+      ],
+      "default": "h2",
+      "visible_if": "{{ section.settings.title != blank }}"
+    },
     {
       "type": "header",
       "content": "t:content.layout"

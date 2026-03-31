@@ -5,11 +5,11 @@
     assign section_collections = section.settings.collection_list
     assign max_items = section.settings.collection_list.count
   elsif section.settings.layout_type == 'editorial'
-    assign max_items = section.settings.max_collections
+    assign max_items = 1000
   elsif section.settings.layout_type == 'bento'
-    assign max_items = 4
+    assign max_items = 1000
   elsif section.settings.layout_type == 'carousel'
-    assign max_items = section.settings.columns | plus: 2
+    assign max_items = 1000
   elsif section.settings.layout_type == 'grid'
     assign max_items = 1000
   endif
