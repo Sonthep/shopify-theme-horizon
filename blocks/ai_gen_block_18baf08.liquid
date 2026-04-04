@@ -1,0 +1,163 @@
+{% doc %}
+  @prompt
+    Create a vendor logo block for the product page. Use Liquid: assign vendor_collection = collections[product.vendor] — then display vendor_collection.featured_image as the vendor logo image. The collection handle matches the product vendor name in lowercase (e.g. vendor "LKK" = handle "lkk"). Style as a clean minimal logo, max-height 60px, left-aligned, with a text fallback showing product.vendor if no collection image exists. No border, no background.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% assign vendor_handle = product.vendor | handleize %}
+{% assign vendor_collection = collections[vendor_handle] %}
+
+{% style %}
+  .ai-vendor-logo-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin-bottom: {{ block.settings.spacing_bottom }}px;
+  }
+
+  .ai-vendor-logo-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .ai-vendor-logo-image-{{ ai_gen_id }} {
+    max-height: {{ block.settings.max_height }}px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .ai-vendor-logo-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    color: {{ block.settings.text_color }};
+    font-weight: {{ block.settings.text_weight }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-vendor-logo-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-vendor-logo-image-{{ ai_gen_id }} {
+      max-height: {{ block.settings.max_height | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-vendor-logo-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-vendor-logo-container-{{ ai_gen_id }}">
+    {% if vendor_collection.featured_image %}
+      <img
+        src="{{ vendor_collection.featured_image | image_url: width: 400 }}"
+        alt="{{ product.vendor | escape }}"
+        class="ai-vendor-logo-image-{{ ai_gen_id }}"
+        loading="lazy"
+        width="{{ vendor_collection.featured_image.width }}"
+        height="{{ vendor_collection.featured_image.height }}"
+      >
+    {% else %}
+      <p class="ai-vendor-logo-text-{{ ai_gen_id }}">{{ product.vendor }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Vendor logo",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo image"
+    },
+    {
+      "type": "paragraph",
+      "content": "Displays the vendor collection's featured image as the logo. Collection handle must match the vendor name in lowercase."
+    },
+    {
+      "type": "range",
+      "id": "max_height",
+      "label": "Maximum height",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Text fallback"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shown when no collection image exists"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vendor logo"
+    }
+  ]
+}
+{% endschema %}

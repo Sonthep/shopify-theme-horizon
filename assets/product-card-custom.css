@@ -111,19 +111,19 @@ product-card.product-card {
   padding-top: 14px;
 }
 
-/* ---- Brand / Vendor (text block) ---- */
+/* ---- Brand / Vendor ---- */
 .product-grid__card > .text-block:first-of-type,
 .product-grid__card > .group-block > .text-block:first-child {
   margin-bottom: -2px;
 }
 
-.product-grid__card > .text-block :is(p),
-.product-grid__card > .group-block > .text-block:first-child :is(p) {
+.product-grid__card .text-block:is(p),
+.product-grid__card .group-block .text-block:first-child:is(p) {
   font-size: 11px !important;
   font-weight: 600 !important;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: #9ca3af !important;
+  color: rgb(212, 74, 74) !important;
   line-height: 1.4;
   margin: 0;
 }

@@ -130,7 +130,7 @@
         {%- elsif product.selected_or_first_available_variant.inventory_management == 'shopify'
             and product.selected_or_first_available_variant.inventory_quantity <= 5
             and product.selected_or_first_available_variant.inventory_quantity > 0 -%}
-          <span class="badge-stock badge-stock--low-stock">Low Stock</span>
+          
         {%- elsif product.available -%}
           <span class="badge-stock badge-stock--in-stock">In Stock</span>
         {%- endif -%}

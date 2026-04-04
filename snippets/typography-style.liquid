@@ -15,8 +15,9 @@
 {% assign preset = preset | default: settings.type_preset %}
 
 {%- capture variables -%}
-  {%- if preset != 'rte' and settings.color != "" -%}
+  {%- if settings.color != blank -%}
     --color: {{ settings.color }};
+    color: {{ settings.color }};
   {%- endif -%}
   {%- if preset == 'custom' -%}
     {% liquid

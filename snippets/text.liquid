@@ -36,9 +36,9 @@
       if block_settings.font_size != ''
         echo ' custom-font-size '
       endif
-      if block_settings.color != ''
-        echo ' custom-color '
-      endif
+    endif
+    if block_settings.color != blank
+      echo ' custom-color '
     endif
     if block_settings.background
       echo ' text-block--background '
@@ -214,7 +214,7 @@
   }
 
   .custom-color,
-  .custom-color > :is(h1, h2, h3, h4, h5, h6, p, *) {
-    color: var(--color);
+  .custom-color * {
+    color: var(--color) !important;
   }
 {% endstylesheet %}
