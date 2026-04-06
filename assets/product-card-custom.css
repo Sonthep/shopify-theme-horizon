@@ -98,6 +98,7 @@ product-card.product-card {
 .product-grid__card > product-title,
 .product-grid__card > product-price,
 .product-grid__card > product-sku-component,
+.product-grid__card > product-inventory,
 .product-grid__card > .text-block,
 .product-grid__card > a.contents {
   padding-inline: var(--_card-pad);

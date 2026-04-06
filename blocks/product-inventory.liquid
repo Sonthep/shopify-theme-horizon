@@ -47,18 +47,26 @@
     product-inventory spacing-style
     {% if block_settings.type_preset != '' %}{{ block_settings.type_preset }}{% endif%}
   "
-  style="{% render 'spacing-style', settings: block_settings %}"
+  style="{% render 'spacing-style', settings: block_settings %}{% if block_settings.font_size != blank %}font-size: {{ block_settings.font_size }};{% endif %}"
   {{ block.shopify_attributes }}
   data-product-id="{{ product.id }}"
 >
+  {%- liquid
+    case status
+      when 'in_stock'
+        assign custom_text = block_settings.custom_text_in_stock
+      when 'low'
+        assign custom_text = block_settings.custom_text_low_stock
+      when 'out_of_stock'
+        assign custom_text = block_settings.custom_text_out_of_stock
+    endcase
+  -%}
   <span
     class="product-inventory__status"
   >
-    <span
-      class="svg-wrapper product-inventory__icon product-inventory__icon-{{ status }}"
-    >
-      {{ 'icon-inventory.svg' | inline_asset_content }}
-    </span>
+    {%- if block_settings.prefix_text != blank -%}
+      <span class="product-inventory__prefix">{{ block_settings.prefix_text }}</span>
+    {%- endif -%}
     <span
       class="product-inventory__text"
       id="Inventory-{{ section.id }}"
@@ -66,7 +74,9 @@
       aria-label="{{ 'accessibility.inventory_status' | t }}"
     >
       {%- if show_quantity -%}
-        {{ 'content.inventory_low_stock_show_count' | t: count: inventory_quantity }}
+        {{- inventory_quantity -}}
+      {%- elsif custom_text != blank -%}
+        {{- custom_text -}}
       {%- else -%}
         {{- translation_key | t -}}
       {%- endif -%}
@@ -75,6 +85,10 @@
 </product-inventory>
 
 {% stylesheet %}
+  product-inventory {
+    display: block;
+  }
+
   .product-inventory__status {
     display: flex;
     align-items: center;
@@ -83,26 +97,8 @@
     gap: var(--padding-xs);
   }
 
-  .product-inventory__icon,
-  .product-inventory__icon svg {
-    width: var(--icon-size-sm);
-    height: var(--icon-size-sm);
-  }
-
-  .product-inventory__icon-low {
-    color: var(--color-lowstock);
-  }
-
-  .product-inventory__icon-in_stock {
-    color: var(--color-instock);
-  }
-
-  .product-inventory__icon-out_of_stock {
-    color: var(--color-outofstock);
-  }
-
-  .product-inventory__icon circle:first-of-type {
-    opacity: 0.3;
+  .product-inventory__text {
+    color: inherit;
   }
 {% endstylesheet %}
 
@@ -129,6 +125,51 @@
       "id": "show_inventory_quantity",
       "label": "t:settings.show_inventory_quantity",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Custom Text"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "Font size",
+      "options": [
+        { "value": "", "label": "Default" },
+        { "value": "10px", "label": "10px" },
+        { "value": "11px", "label": "11px" },
+        { "value": "12px", "label": "12px" },
+        { "value": "13px", "label": "13px" },
+        { "value": "14px", "label": "14px" },
+        { "value": "15px", "label": "15px" },
+        { "value": "16px", "label": "16px" },
+        { "value": "18px", "label": "18px" },
+        { "value": "20px", "label": "20px" }
+      ],
+      "default": ""
+    },
+    {
+      "type": "inline_richtext",
+      "id": "prefix_text",
+      "label": "Prefix text"
+    },
+    {
+      "type": "text",
+      "id": "custom_text_in_stock",
+      "label": "In stock text",
+      "placeholder": "e.g. In stock"
+    },
+    {
+      "type": "text",
+      "id": "custom_text_low_stock",
+      "label": "Low stock text",
+      "placeholder": "e.g. Only a few left"
+    },
+    {
+      "type": "text",
+      "id": "custom_text_out_of_stock",
+      "label": "Out of stock text",
+      "placeholder": "e.g. Sold out"
     },
     {
       "type": "header",
