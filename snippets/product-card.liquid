@@ -127,12 +127,6 @@
       <div class="product-card__stock-wrap">
         {%- if product.available == false -%}
           <span class="badge-stock badge-stock--out-of-stock">Out of Stock</span>
-        {%- elsif product.selected_or_first_available_variant.inventory_management == 'shopify'
-            and product.selected_or_first_available_variant.inventory_quantity <= 5
-            and product.selected_or_first_available_variant.inventory_quantity > 0 -%}
-          
-        {%- elsif product.available -%}
-          <span class="badge-stock badge-stock--in-stock">In Stock</span>
         {%- endif -%}
       </div>
     {%- endunless -%}
