@@ -135,6 +135,7 @@
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
+                    "color": "",
                     "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
@@ -186,13 +187,32 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "product_inventory_iQTbrn": {
+                  "type": "product-inventory",
+                  "name": "t:names.product_inventory",
+                  "settings": {
+                    "inventory_threshold": 10,
+                    "show_inventory_quantity": false,
+                    "font_size": "",
+                    "prefix_text": "Stock:",
+                    "custom_text_in_stock": "",
+                    "custom_text_low_stock": "",
+                    "custom_text_out_of_stock": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
                 "ai_gen_block_18baf08_c3pwwP",
                 "text_xrnftG",
                 "sku_DVjhAA",
-                "price_tVjtKg"
+                "price_tVjtKg",
+                "product_inventory_iQTbrn"
               ]
             },
             "divider_VJhene": {
@@ -428,6 +448,7 @@
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
+            "color": "",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,

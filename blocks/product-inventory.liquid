@@ -3,67 +3,16 @@
 {%- liquid
   assign block_settings = block.settings
   assign variant = closest.product.selected_or_first_available_variant
-  if variant.inventory_management == 'shopify'
-    assign inventory_managed = true
-  endif
   assign inventory_quantity = variant.inventory_quantity
-  assign inventory_policy = variant.inventory_policy
-  assign threshold = block_settings.inventory_threshold
-
-  if inventory_managed
-    if inventory_quantity > 0
-      if inventory_quantity <= threshold
-        assign status = 'low'
-        assign show_quantity = block_settings.show_inventory_quantity
-        if show_quantity == false
-          assign translation_key = 'content.inventory_low_stock'
-        endif
-      else
-        assign status = 'in_stock'
-        assign translation_key = 'content.inventory_in_stock'
-      endif
-    else
-      if inventory_policy == 'continue'
-        assign status = 'in_stock'
-        assign translation_key = 'content.inventory_in_stock'
-      else
-        assign status = 'out_of_stock'
-        assign translation_key = 'content.inventory_out_of_stock'
-      endif
-    endif
-  else
-    if closest.product.selected_or_first_available_variant != null
-      assign status = 'in_stock'
-      assign translation_key = 'content.inventory_in_stock'
-    else
-      assign status = 'out_of_stock'
-      assign translation_key = 'content.inventory_out_of_stock'
-    endif
-  endif
 -%}
 
 <product-inventory
-  class="
-    product-inventory spacing-style
-    {% if block_settings.type_preset != '' %}{{ block_settings.type_preset }}{% endif%}
-  "
-  style="{% render 'spacing-style', settings: block_settings %}{% if block_settings.font_size != blank %}font-size: {{ block_settings.font_size }};{% endif %}"
+  class="product-inventory spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}{% if block_settings.font_size != blank %}font-size: {{ block_settings.font_size }};{% endif %}{% if block_settings.text_color != blank %}color: {{ block_settings.text_color }};{% endif %}"
   {{ block.shopify_attributes }}
   data-product-id="{{ product.id }}"
 >
-  {%- liquid
-    case status
-      when 'in_stock'
-        assign custom_text = block_settings.custom_text_in_stock
-      when 'low'
-        assign custom_text = block_settings.custom_text_low_stock
-      when 'out_of_stock'
-        assign custom_text = block_settings.custom_text_out_of_stock
-    endcase
-  -%}
-  <span
-    class="product-inventory__status"
-  >
+  <span class="product-inventory__status">
     {%- if block_settings.prefix_text != blank -%}
       <span class="product-inventory__prefix">{{ block_settings.prefix_text }}</span>
     {%- endif -%}
@@ -71,15 +20,8 @@
       class="product-inventory__text"
       id="Inventory-{{ section.id }}"
       role="status"
-      aria-label="{{ 'accessibility.inventory_status' | t }}"
     >
-      {%- if show_quantity -%}
-        {{- inventory_quantity -}}
-      {%- elsif custom_text != blank -%}
-        {{- custom_text -}}
-      {%- else -%}
-        {{- translation_key | t -}}
-      {%- endif -%}
+      {{- inventory_quantity -}}
     </span>
   </span>
 </product-inventory>
@@ -92,7 +34,7 @@
   .product-inventory__status {
     display: flex;
     align-items: center;
-    font-size: var(--font-paragraph--size);
+    font-size: inherit;
     line-height: var(--font-paragraph--line-height);
     gap: var(--padding-xs);
   }
@@ -108,68 +50,20 @@
   "tag": null,
   "settings": [
     {
-      "type": "paragraph",
-      "content": "t:content.resource_reference_product_inventory"
-    },
-    {
-      "type": "range",
-      "id": "inventory_threshold",
-      "label": "t:settings.inventory_threshold",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "default": 10
-    },
-    {
-      "type": "checkbox",
-      "id": "show_inventory_quantity",
-      "label": "t:settings.show_inventory_quantity",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Custom Text"
-    },
-    {
-      "type": "select",
+      "type": "text",
       "id": "font_size",
       "label": "Font size",
-      "options": [
-        { "value": "", "label": "Default" },
-        { "value": "10px", "label": "10px" },
-        { "value": "11px", "label": "11px" },
-        { "value": "12px", "label": "12px" },
-        { "value": "13px", "label": "13px" },
-        { "value": "14px", "label": "14px" },
-        { "value": "15px", "label": "15px" },
-        { "value": "16px", "label": "16px" },
-        { "value": "18px", "label": "18px" },
-        { "value": "20px", "label": "20px" }
-      ],
-      "default": ""
+      "placeholder": "e.g. 13px, 1rem, 0.85em"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
     },
     {
       "type": "inline_richtext",
       "id": "prefix_text",
       "label": "Prefix text"
-    },
-    {
-      "type": "text",
-      "id": "custom_text_in_stock",
-      "label": "In stock text",
-      "placeholder": "e.g. In stock"
-    },
-    {
-      "type": "text",
-      "id": "custom_text_low_stock",
-      "label": "Low stock text",
-      "placeholder": "e.g. Only a few left"
-    },
-    {
-      "type": "text",
-      "id": "custom_text_out_of_stock",
-      "label": "Out of stock text",
-      "placeholder": "e.g. Sold out"
     },
     {
       "type": "header",

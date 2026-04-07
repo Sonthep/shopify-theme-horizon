@@ -497,6 +497,24 @@
               },
               "blocks": {}
             },
+            "product_inventory_HcRcJD": {
+              "type": "product-inventory",
+              "name": "t:names.product_inventory",
+              "settings": {
+                "inventory_threshold": 10,
+                "show_inventory_quantity": true,
+                "font_size": "11px",
+                "prefix_text": "Stock:",
+                "custom_text_in_stock": "",
+                "custom_text_low_stock": "",
+                "custom_text_out_of_stock": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "price": {
               "type": "price",
               "name": "t:names.product_price",
@@ -519,23 +537,6 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "product_inventory_HcRcJD": {
-              "type": "product-inventory",
-              "name": "t:names.product_inventory",
-              "settings": {
-                "inventory_threshold": 10,
-                "show_inventory_quantity": true,
-                "prefix_text": "stock:",
-                "custom_text_in_stock": "",
-                "custom_text_low_stock": "",
-                "custom_text_out_of_stock": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
             }
           },
           "block_order": [
@@ -543,8 +544,8 @@
             "vendor",
             "sku",
             "title",
-            "price",
-            "product_inventory_HcRcJD"
+            "product_inventory_HcRcJD",
+            "price"
           ]
         }
       },
