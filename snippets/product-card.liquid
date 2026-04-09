@@ -123,13 +123,7 @@
   >
     {{ children }}
 
-    {%- unless onboarding -%}
-      <div class="product-card__stock-wrap">
-        {%- if product.available == false -%}
-          <span class="badge-stock badge-stock--out-of-stock">Out of Stock</span>
-        {%- endif -%}
-      </div>
-    {%- endunless -%}
+
   </div>
 </product-card>
 
