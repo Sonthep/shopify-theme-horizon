@@ -501,13 +501,8 @@
               "type": "product-inventory",
               "name": "t:names.product_inventory",
               "settings": {
-                "inventory_threshold": 10,
-                "show_inventory_quantity": true,
                 "font_size": "11px",
                 "prefix_text": "Stock:",
-                "custom_text_in_stock": "",
-                "custom_text_low_stock": "",
-                "custom_text_out_of_stock": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,

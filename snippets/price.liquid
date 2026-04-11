@@ -15,8 +15,11 @@
   assign compare_at_price = selected_variant.compare_at_price
 
   assign show_compare_price = false
+  assign discount_pct = 0
   if compare_at_price > price
     assign show_compare_price = true
+    assign discount_amount = compare_at_price | minus: price
+    assign discount_pct = discount_amount | times: 100.0 | divided_by: compare_at_price | round
   endif
 
   if product_resource == blank
@@ -87,27 +90,18 @@
     </span>
   {% else %}
     {% comment %} Standard pricing display {% endcomment %}
-    {% if show_sale_price_first == false and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
-    {% endif %}
-
     {% if show_compare_price %}
-      <span role="group">
+      <span role="group" class="price-sale-group">
         <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
         <span class="price">{{ price | default: '&nbsp;' }}</span>
+        {% if discount_pct > 0 %}<span class="inline-discount-badge">-{{ discount_pct }}%</span>{% endif %}
+      </span>
+      <span role="group" class="price-compare-group">
+        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+        <span class="compare-at-price">{{- compare_at_price -}}</span>
       </span>
     {% else %}
       <span class="price">{{ price | default: '&nbsp;' }}</span>
-    {% endif %}
-
-    {% if show_sale_price_first == true and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
     {% endif %}
   {% endif %}
   {%- if selected_variant.unit_price and show_unit_price %}

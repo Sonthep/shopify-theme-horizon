@@ -272,6 +272,31 @@ product-card.product-card {
   z-index: 5;
 }
 
+/* ---- Inline discount badge (price block) ---- */
+.price-sale-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.price-compare-group {
+  display: block;
+}
+
+.inline-discount-badge {
+  display: inline-block;
+  background-color: #e53935;
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+
 
 
 /* ============================================================

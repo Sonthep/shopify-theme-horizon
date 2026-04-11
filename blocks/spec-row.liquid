@@ -1,0 +1,37 @@
+﻿{%- if block.settings.show_row -%}
+<tr {{ block.shopify_attributes }}>
+  <td class="spec-tbl__label">
+    {{- block.settings.label | escape -}}
+  </td>
+  <td>
+    {{- block.settings.value | escape -}}
+  </td>
+</tr>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Row",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_row",
+      "label": "Show row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "placeholder": "e.g. Width (mm)"
+    },
+    {
+      "type": "text",
+      "id": "value",
+      "label": "Value",
+      "info": "กดไอคอน 🗄 เพื่อเชื่อมต่อ metafield โดยตรง"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,258 @@
+﻿{%- assign bid = block.id | replace: '_', '' | downcase -%}
+
+{% style %}
+  .spec-tbl-{{ bid }} {
+    display: block;
+    width: 100%;
+  }
+
+  .spec-tbl__heading-{{ bid }} {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin: 0 0 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .spec-tbl__wrap-{{ bid }} {
+    overflow-x: auto;
+    border: 1px solid {{ block.settings.color_border }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .spec-tbl__table-{{ bid }} {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: {{ block.settings.font_size }}px;
+    background-color: {{ block.settings.color_bg }};
+  }
+
+  .spec-tbl__table-{{ bid }} thead tr {
+    background-color: {{ block.settings.color_header_bg }};
+    border-bottom: 2px solid {{ block.settings.color_border }};
+  }
+
+  .spec-tbl__table-{{ bid }} th {
+    padding: {{ block.settings.cell_padding }}px {{ block.settings.cell_padding | plus: 4 }}px;
+    text-align: left;
+    font-weight: 600;
+    color: {{ block.settings.color_header_text }};
+    white-space: nowrap;
+  }
+
+  .spec-tbl__table-{{ bid }} td {
+    padding: {{ block.settings.cell_padding }}px {{ block.settings.cell_padding | plus: 4 }}px;
+    vertical-align: middle;
+    color: {{ block.settings.color_text }};
+    border-bottom: 1px solid {{ block.settings.color_row_divider }};
+    line-height: 1.5;
+  }
+
+  .spec-tbl__table-{{ bid }} tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .spec-tbl__table-{{ bid }} tbody tr:nth-child(even) td {
+    background-color: {{ block.settings.color_stripe }};
+  }
+
+  .spec-tbl__table-{{ bid }} tbody tr:hover td {
+    background-color: {{ block.settings.color_hover }};
+  }
+
+  .spec-tbl__label-{{ bid }},
+  .spec-tbl-{{ bid }} .spec-tbl__label {
+    font-weight: 500;
+    width: {{ block.settings.label_width }}%;
+    color: {{ block.settings.color_label }};
+    white-space: nowrap;
+  }
+
+  .spec-tbl__empty-{{ bid }} {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 749px) {
+    .spec-tbl__label-{{ bid }} {
+      white-space: normal;
+    }
+    .spec-tbl__table-{{ bid }} td,
+    .spec-tbl__table-{{ bid }} th {
+      padding: 8px 10px;
+    }
+  }
+{% endstyle %}
+
+<div class="spec-tbl-{{ bid }}" {{ block.shopify_attributes }}>
+  {%- if block.settings.heading != blank -%}
+    <p class="spec-tbl__heading-{{ bid }}">{{ block.settings.heading | escape }}</p>
+  {%- endif -%}
+
+  <div class="spec-tbl__wrap-{{ bid }}">
+    <table class="spec-tbl__table-{{ bid }}">
+      {%- if block.settings.show_header -%}
+        <thead>
+          <tr>
+            <th class="spec-tbl__label">{{ block.settings.col_label | default: 'Specification' | escape }}</th>
+            <th>{{ block.settings.col_value | default: 'Value' | escape }}</th>
+          </tr>
+        </thead>
+      {%- endif -%}
+      <tbody>
+        {%- content_for 'blocks' -%}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Specification Table",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "spec-row"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Specification"
+    },
+    {
+      "type": "header",
+      "content": "Column headers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show column header row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "col_label",
+      "label": "Column 1 title",
+      "default": "Specification"
+    },
+    {
+      "type": "text",
+      "id": "col_value",
+      "label": "Column 2 title",
+      "default": "Value"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "cell_padding",
+      "label": "Cell padding",
+      "min": 6,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "label_width",
+      "label": "Label column width",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Row background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_stripe",
+      "label": "Alternating row",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "color_hover",
+      "label": "Row hover",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "Outer border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "color_row_divider",
+      "label": "Row divider",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "color_label",
+      "label": "Label text",
+      "default": "#444444"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Value text",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "color_header_bg",
+      "label": "Header background",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "color_header_text",
+      "label": "Header text",
+      "default": "#111111"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Specification Table"
+    }
+  ]
+}
+{% endschema %}
