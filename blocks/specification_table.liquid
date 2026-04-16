@@ -75,10 +75,6 @@
     font-style: italic;
   }
 
-  details:has(.spec-tbl__table-{{ bid }} tbody:not(:has(tr))) {
-    display: none;
-  }
-
   @media screen and (max-width: 749px) {
     .spec-tbl__label-{{ bid }} {
       white-space: normal;
@@ -111,6 +107,16 @@
     </table>
   </div>
 </div>
+
+<script>
+  (function () {
+    var tbody = document.querySelector('.spec-tbl__table-{{ bid }} tbody');
+    if (tbody && tbody.querySelectorAll('tr').length === 0) {
+      var details = tbody.closest('details');
+      if (details) details.style.display = 'none';
+    }
+  })();
+</script>
 
 {% schema %}
 {
