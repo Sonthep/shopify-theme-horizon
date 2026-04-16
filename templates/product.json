@@ -294,7 +294,7 @@
                   "type": "_accordion-row",
                   "settings": {
                     "heading": "Detail",
-                    "open_by_default": true,
+                    "open_by_default": false,
                     "icon": "none",
                     "width": 20
                   },
@@ -333,7 +333,7 @@
                   "type": "_accordion-row",
                   "name": "t:names.accordion_row",
                   "settings": {
-                    "heading": "When will I get my order?",
+                    "heading": "Speccification",
                     "open_by_default": true,
                     "icon": "none",
                     "width": 20
@@ -346,7 +346,7 @@
                         "heading": "",
                         "show_header": true,
                         "col_label": "Specification",
-                        "col_value": "Value",
+                        "col_value": "",
                         "font_size": 14,
                         "cell_padding": 8,
                         "border_radius": 6,
@@ -362,32 +362,194 @@
                         "color_header_text": "#111111"
                       },
                       "blocks": {
-                        "spec_row_01": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_02": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_03": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_04": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_05": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_06": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_07": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_08": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_09": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_10": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_11": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_12": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_13": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_14": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_15": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_16": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_17": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_18": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_19": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } },
-                        "spec_row_20": { "type": "spec-row", "settings": { "show_row": true, "label": "", "value": "" } }
+                        "spec_row_01": {
+                          "type": "spec-row",
+                          "name": "Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Width (mm)",
+                            "value": "{{ closest.product.metafields.specs.width_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_02": {
+                          "type": "spec-row",
+                          "name": "Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Depth (mm)",
+                            "value": "{{ closest.product.metafields.specs.depth_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_03": {
+                          "type": "spec-row",
+                          "name": "Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_04": {
+                          "type": "spec-row",
+                          "name": "Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_05": {
+                          "type": "spec-row",
+                          "name": "Voltage",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Voltage",
+                            "value": "{{ closest.product.metafields.specs.voltage.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_06": {
+                          "type": "spec-row",
+                          "name": "Hz",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Hz",
+                            "value": "{{ closest.product.metafields.specs.hz.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_07": {
+                          "type": "spec-row",
+                          "name": "Wattage",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wattage",
+                            "value": "{{ closest.product.metafields.specs.wattage.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_08": {
+                          "type": "spec-row",
+                          "name": "Ampere",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Ampere",
+                            "value": "{{ closest.product.metafields.specs.ampere.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_09": {
+                          "type": "spec-row",
+                          "name": "Chiller door amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller door amount",
+                            "value": "{{ closest.product.metafields.specs.chiller_door_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_10": {
+                          "type": "spec-row",
+                          "name": "Chiller capacity volume (liter)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller capacity volume (liter)",
+                            "value": "{{ closest.product.metafields.specs.chiller_capacity_liter.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_11": {
+                          "type": "spec-row",
+                          "name": "Chiller temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller temperature",
+                            "value": "{{ closest.product.metafields.specs.chiller_temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_12": {
+                          "type": "spec-row",
+                          "name": "Refrigerant",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Refrigerant",
+                            "value": "{{ closest.product.metafields.specs.refrigerant.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_13": {
+                          "type": "spec-row",
+                          "name": "Spareparts warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Spareparts warranty",
+                            "value": "{{ closest.product.metafields.specs.spareparts_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_14": {
+                          "type": "spec-row",
+                          "name": "Service warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Service warranty",
+                            "value": "{{ closest.product.metafields.specs.service_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_15": {
+                          "type": "spec-row",
+                          "name": "Product of",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Product of",
+                            "value": "{{ closest.product.metafields.specs.product_of.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_16": {
+                          "type": "spec-row",
+                          "name": "Certificates",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Certificates",
+                            "value": "{{ closest.product.metafields.specs.certificates.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_17": {
+                          "type": "spec-row",
+                          "settings": {
+                            "show_row": true,
+                            "label": "",
+                            "value": ""
+                          },
+                          "blocks": {}
+                        }
                       },
                       "block_order": [
-                        "spec_row_01","spec_row_02","spec_row_03","spec_row_04","spec_row_05",
-                        "spec_row_06","spec_row_07","spec_row_08","spec_row_09","spec_row_10",
-                        "spec_row_11","spec_row_12","spec_row_13","spec_row_14","spec_row_15",
-                        "spec_row_16","spec_row_17","spec_row_18","spec_row_19","spec_row_20"
+                        "spec_row_01",
+                        "spec_row_02",
+                        "spec_row_03",
+                        "spec_row_04",
+                        "spec_row_05",
+                        "spec_row_06",
+                        "spec_row_07",
+                        "spec_row_08",
+                        "spec_row_09",
+                        "spec_row_10",
+                        "spec_row_11",
+                        "spec_row_12",
+                        "spec_row_13",
+                        "spec_row_14",
+                        "spec_row_15",
+                        "spec_row_16",
+                        "spec_row_17"
                       ]
                     }
                   },

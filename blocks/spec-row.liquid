@@ -1,4 +1,4 @@
-﻿{%- if block.settings.show_row -%}
+﻿{%- if block.settings.show_row and block.settings.value != blank -%}
 <tr {{ block.shopify_attributes }}>
   <td class="spec-tbl__label">
     {{- block.settings.label | escape -}}
