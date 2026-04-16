@@ -234,6 +234,19 @@
         Next, add PDF files to display in the table
       </div>
     </div>
+    <script>
+      (function () {
+        var el = document.querySelector('.ai-doc-download-{{ ai_gen_id }}');
+        if (el) {
+          var details = el.closest('details');
+          if (details) {
+            details.style.display = 'none';
+          } else {
+            el.style.display = 'none';
+          }
+        }
+      })();
+    </script>
   {% endif %}
 </div>
 
