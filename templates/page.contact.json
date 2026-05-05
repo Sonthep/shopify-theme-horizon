@@ -77,7 +77,7 @@
       }
     },
     "form": {
-      "type": "section",
+      "type": "watch-youtube",
       "blocks": {
         "contact_form_UwiCkQ": {
           "type": "contact-form",

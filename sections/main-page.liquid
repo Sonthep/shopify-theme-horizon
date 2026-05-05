@@ -1,7 +1,7 @@
 
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div class="section page-width-content color-{{ section.settings.color_scheme }}">
+<div class="section section--page-width color-{{ section.settings.color_scheme }}">
   <div
     class="
       spacing-style
@@ -15,6 +15,11 @@
       {% render 'spacing-style', settings: section.settings %}
     "
   >
+    {%- if page.content != blank -%}
+      <div class="rte">
+        {{ page.content }}
+      </div>
+    {%- endif -%}
     {% content_for 'blocks' %}
   </div>
 </div>

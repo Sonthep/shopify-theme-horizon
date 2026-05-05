@@ -22,6 +22,16 @@
   section: section
 %}
 
+{%- if block.settings.card_width > 0 -%}
+  {%- style -%}
+    .collection-card[data-block-id="{{ block.id }}"] {
+      flex: 0 0 {{ block.settings.card_width }}px !important;
+      width: {{ block.settings.card_width }}px !important;
+      max-width: 100% !important;
+    }
+  {%- endstyle -%}
+{%- endif -%}
+
 {% schema %}
 {
   "name": "t:names.collection_card",
@@ -180,6 +190,21 @@
       "min": 0,
       "max": 100,
       "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Card size"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "Card width",
+      "info": "Set to 0 to use automatic width",
+      "min": 0,
+      "max": 800,
+      "step": 10,
       "unit": "px",
       "default": 0
     }

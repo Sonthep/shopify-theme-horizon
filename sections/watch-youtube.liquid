@@ -10,23 +10,17 @@
   </{{ section.settings.heading_tag }}>
 {% endif %}
 
-<p style="text-align: center; font-size: 26px; font-weight: 500;">Watch us on YouTube</p>
-<div class="container">
-  <div class="row">
-    <div class="col-md-4">
-      <p style="text-align: center;">
-        <iframe width="100%" height="250" src="https://www.youtube.com/embed/YWgtyDeVINs" frameborder="0" allowfullscreen=""></iframe>
-      </p>
+<div class="yt-section">
+  <p class="yt-section__title">Watch us on YouTube</p>
+  <div class="yt-section__grid">
+    <div class="yt-section__item">
+      <iframe src="https://www.youtube.com/embed/YWgtyDeVINs" frameborder="0" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="col-md-4">
-      <p style="text-align: center;">
-        <iframe width="100%" height="250" src="https://www.youtube.com/embed/lTJrBeEkG94?si=mHe-c5Om5W_Q584h" frameborder="0" allowfullscreen=""></iframe>
-      </p>
+    <div class="yt-section__item">
+      <iframe src="https://www.youtube.com/embed/lTJrBeEkG94?si=mHe-c5Om5W_Q584h" frameborder="0" allowfullscreen loading="lazy"></iframe>
     </div>
-    <div class="col-md-4">
-      <p style="text-align: center;">
-        <iframe width="100%" height="250" src="https://www.youtube.com/embed/Gv2x78nNaDM?si=IV0XH5X56DhL0POP" frameborder="0" allowfullscreen=""></iframe>
-      </p>
+    <div class="yt-section__item">
+      <iframe src="https://www.youtube.com/embed/Gv2x78nNaDM?si=IV0XH5X56DhL0POP" frameborder="0" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
 </div>
@@ -38,6 +32,43 @@
     margin-inline: auto;
     padding-inline: var(--page-width-padding, 20px);
     margin-block-end: 12px;
+  }
+
+  .yt-section {
+    padding: 32px var(--page-width-padding, 20px);
+  }
+
+  .yt-section__title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-block-end: 24px;
+  }
+
+  .yt-section__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+
+  .yt-section__item {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .yt-section__item iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .yt-section__grid {
+      grid-template-columns: 1fr;
+    }
   }
 {% endstylesheet %}
 

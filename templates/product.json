@@ -146,6 +146,32 @@
                   },
                   "blocks": {}
                 },
+                "text_xcJPKp": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p><strong>Product ID : </strong><strong>{{ closest.product.metafields.custom.good_id.value }}</strong></p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "#343030",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
                 "sku_DVjhAA": {
                   "type": "sku",
                   "name": "t:names.product_sku",
@@ -206,6 +232,7 @@
               "block_order": [
                 "ai_gen_block_18baf08_c3pwwP",
                 "text_xrnftG",
+                "text_xcJPKp",
                 "sku_DVjhAA",
                 "price_tVjtKg",
                 "product_inventory_iQTbrn"
@@ -344,7 +371,7 @@
                       "name": "Specification table",
                       "settings": {
                         "heading": "",
-                        "show_header": true,
+                        "show_header": false,
                         "col_label": "Specification",
                         "col_value": "",
                         "font_size": 14,
@@ -372,6 +399,16 @@
                           },
                           "blocks": {}
                         },
+                        "spec_row_WTJm7B": {
+                          "type": "spec-row",
+                          "name": "Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Length (mm)",
+                            "value": "{{ closest.product.metafields.specs.length_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
                         "spec_row_02": {
                           "type": "spec-row",
                           "name": "Width (mm)",
@@ -389,6 +426,416 @@
                             "show_row": true,
                             "label": "Height (mm)",
                             "value": "{{ closest.product.metafields.specs.height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_wCC8re": {
+                          "type": "spec-row",
+                          "name": "Packing Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Width (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_width.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_jPBUJr": {
+                          "type": "spec-row",
+                          "name": "Packing Length (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Length (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_length_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_BC9mVj": {
+                          "type": "spec-row",
+                          "name": "Packing Length (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_jmyijF": {
+                          "type": "spec-row",
+                          "name": "Gross Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Gross Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.gross_weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_nVcNW8": {
+                          "type": "spec-row",
+                          "name": "Net Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Net Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.net_weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7MBFBE": {
+                          "type": "spec-row",
+                          "name": "Volume (mc)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Volume (mc)",
+                            "value": "{{ closest.product.metafields.specs.volume_mc.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_UCnMdJ": {
+                          "type": "spec-row",
+                          "name": "Rack Size (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rack Size (mm)",
+                            "value": "{{ closest.product.metafields.specs.rack_size_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_78WXrx": {
+                          "type": "spec-row",
+                          "name": "Useable Chamber Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Useable Chamber Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.usable_chamber_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_aCFT64": {
+                          "type": "spec-row",
+                          "name": "Maximum Dishes Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum Dishes Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.max_dishes_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tQaqVn": {
+                          "type": "spec-row",
+                          "name": "Maximum Trays Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum Trays Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.max_trays_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_k8RaKk": {
+                          "type": "spec-row",
+                          "name": "Door Construction",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Door Construction",
+                            "value": "{{ closest.product.metafields.specs.door_construction.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_hCUMhD": {
+                          "type": "spec-row",
+                          "name": "Tank Volume (L)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Volume (L)",
+                            "value": "{{ closest.product.metafields.specs.tank_volume_l.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_DJ6bX7": {
+                          "type": "spec-row",
+                          "name": "Tank Heating Element (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Heating Element (W)",
+                            "value": "{{ closest.product.metafields.specs.tank_heating_element_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tVWiXF": {
+                          "type": "spec-row",
+                          "name": "Tank Surface Strainers",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Surface Strainers",
+                            "value": "{{ closest.product.metafields.specs.tank_surface_strainers.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_TbXadV": {
+                          "type": "spec-row",
+                          "name": "Wash Pump Type",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Pump Type",
+                            "value": "{{ closest.product.metafields.specs.wash_pump_type.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_xxpMYj": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Min Water Supply Temperature(°C)",
+                            "value": "{{ closest.product.metafields.specs.min_water_temp_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_zDMf9q": {
+                          "type": "spec-row",
+                          "name": "Max Water Supply Temperature(°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Water Supply Temperature(°C)",
+                            "value": "{{ closest.product.metafields.specs.max_water_temp_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_VNrW96": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Pressure (bar)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Min Water Supply Pressure (bar)",
+                            "value": "{{ closest.product.metafields.specs.min_water_pressure_bar.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iHi9Ti": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Pressure (bar)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Water Supply Pressure (bar)",
+                            "value": "{{ closest.product.metafields.specs.max_water_pressure_bar.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_P93aN3": {
+                          "type": "spec-row",
+                          "name": "Wash Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Temperature (°C)",
+                            "value": "{{ closest.product.metafields.specs.wash_temperature_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MjLVdB": {
+                          "type": "spec-row",
+                          "name": "Maximum real productivity (racks/hour)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum real productivity (racks/hour)",
+                            "value": "{{ closest.product.metafields.specs.max_real_productivity_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_DhjNpL": {
+                          "type": "spec-row",
+                          "name": "Maximum theoretical productivity (racks/hour)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum theoretical productivity(racks/hour)",
+                            "value": "{{ closest.product.metafields.specs.max_theoretical_productivity_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_JDWA6Y": {
+                          "type": "spec-row",
+                          "name": "Boiler Volume (L)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Volume (L)",
+                            "value": "{{ closest.product.metafields.specs.boiler_volume_l.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iDnkR4": {
+                          "type": "spec-row",
+                          "name": "Boiler Type",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Type",
+                            "value": "{{ closest.product.metafields.specs.boiler_type.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_X6FrE3": {
+                          "type": "spec-row",
+                          "name": "Boiler Heating Element (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Heating Element (W)",
+                            "value": "{{ closest.product.metafields.specs.boiler_heating_element_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_r43Eii": {
+                          "type": "spec-row",
+                          "name": "Rinse Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse Temperature (°C)",
+                            "value": "{{ closest.product.metafields.specs.rinse_temperature_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_NHCEhD": {
+                          "type": "spec-row",
+                          "name": "Rinse Water Consumption",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse Water Consumption",
+                            "value": "{{ closest.product.metafields.specs.rinse_water_consumption.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Y7XKnX": {
+                          "type": "spec-row",
+                          "name": "Wash Cycle (sec)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Cycle (sec)",
+                            "value": "{{ closest.product.metafields.specs.wash_cycle_sec.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_fRUCxL": {
+                          "type": "spec-row",
+                          "name": "Productivity Speed 1 (racks/hr)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Productivity Speed 1 (racks/hr)",
+                            "value": "{{ closest.product.metafields.specs.productivity_speed_1_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MCrFNP": {
+                          "type": "spec-row",
+                          "name": "Productivity Speed 2 (racks/hr)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Productivity Speed 2 (racks/hr)",
+                            "value": "{{ closest.product.metafields.specs.productivity_speed_2_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7eEEyF": {
+                          "type": "spec-row",
+                          "name": "Power with cold water supply (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with cold water supply (W)",
+                            "value": "{{ closest.product.metafields.specs.power_cold_water_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_qYVQxN": {
+                          "type": "spec-row",
+                          "name": "Power with hot water supply (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with hot water supply (W)",
+                            "value": "{{ closest.product.metafields.specs.power_hot_water_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_8fehkX": {
+                          "type": "spec-row",
+                          "name": "Power with plus heat recovery system (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with plus heat recovery system (W)",
+                            "value": "{{ closest.product.metafields.specs.power_heat_recovery_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_xbnnMr": {
+                          "type": "spec-row",
+                          "name": "Max Electric Power (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Electric Power (W)",
+                            "value": "{{ closest.product.metafields.specs.max_electric_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_cCbPkn": {
+                          "type": "spec-row",
+                          "name": "Wash Pump Power (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Pump Power (W)",
+                            "value": "{{ closest.product.metafields.specs.wash_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tfG9kA": {
+                          "type": "spec-row",
+                          "name": "Drain pump (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Drain pump(W)",
+                            "value": "{{ closest.product.metafields.specs.drain_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_mtbhwP": {
+                          "type": "spec-row",
+                          "name": "Rinse pump (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse pump (W)",
+                            "value": "{{ closest.product.metafields.specs.rinse_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_JVYB3C": {
+                          "type": "spec-row",
+                          "name": "Door/hood openin (cm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Door/hood openin (cm)",
+                            "value": "{{ closest.product.metafields.specs.door_opening_cm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_6Gcf3j": {
+                          "type": "spec-row",
+                          "name": "Pump Warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Pump Warranty",
+                            "value": "{{ closest.product.metafields.specs.pump_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_9Ymi8d": {
+                          "type": "spec-row",
+                          "name": "Phrase ",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Phrase",
+                            "value": "{{ closest.product.metafields.specs.phrase.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_g6QVWq": {
+                          "type": "spec-row",
+                          "name": "Packing Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.packing_weight_kg.value }}"
                           },
                           "blocks": {}
                         },
@@ -462,6 +909,126 @@
                           },
                           "blocks": {}
                         },
+                        "spec_row_AmUQV4": {
+                          "type": "spec-row",
+                          "name": "Cooking Surface",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Cooking Surface (mm)",
+                            "value": "{{ closest.product.metafields.specs.cooking_surface_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iEVzLt": {
+                          "type": "spec-row",
+                          "name": "Construction",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Construction",
+                            "value": "{{ closest.product.metafields.specs.construction.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_p3qtp8": {
+                          "type": "spec-row",
+                          "name": "Freezer Temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Temperature",
+                            "value": "{{ closest.product.metafields.specs.freezer_temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_kwd47C": {
+                          "type": "spec-row",
+                          "name": "Freezer Door Amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Door Amount",
+                            "value": "{{ closest.product.metafields.specs.freezer_door_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_UKiWyN": {
+                          "type": "spec-row",
+                          "name": "Drawer Amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Drawer Amount",
+                            "value": "{{ closest.product.metafields.specs.drawer_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_npKqAm": {
+                          "type": "spec-row",
+                          "name": "Freezer Capacity Volume",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Capacity Volume",
+                            "value": "{{ closest.product.metafields.specs.freezer_capacity_volume.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_yfmL4f": {
+                          "type": "spec-row",
+                          "name": "Usage Time",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Usage Time",
+                            "value": "{{ closest.product.metafields.specs.usage_time.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7pFqfE": {
+                          "type": "spec-row",
+                          "name": "Temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Temperature",
+                            "value": "{{ closest.product.metafields.specs.temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_z7bYmi": {
+                          "type": "spec-row",
+                          "name": "Safety Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Safety Features",
+                            "value": "{{ closest.product.metafields.specs.safety_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Pe7N7N": {
+                          "type": "spec-row",
+                          "name": "Special Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Special Features",
+                            "value": "{{ closest.product.metafields.specs.special_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MWbLJM": {
+                          "type": "spec-row",
+                          "name": "Accessories",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Accessories",
+                            "value": "{{ closest.product.metafields.specs.accessories.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_J7bgzi": {
+                          "type": "spec-row",
+                          "name": "Performance Rate",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Performance Rate",
+                            "value": "{{ closest.product.metafields.specs.performance_rate.value }}"
+                          },
+                          "blocks": {}
+                        },
                         "spec_row_11": {
                           "type": "spec-row",
                           "name": "Chiller temperature",
@@ -487,7 +1054,7 @@
                           "name": "Spareparts warranty",
                           "settings": {
                             "show_row": true,
-                            "label": "Spareparts warranty",
+                            "label": "Spareparts Warranty",
                             "value": "{{ closest.product.metafields.specs.spareparts_warranty.value }}"
                           },
                           "blocks": {}
@@ -497,8 +1064,18 @@
                           "name": "Service warranty",
                           "settings": {
                             "show_row": true,
-                            "label": "Service warranty",
+                            "label": "Service Warranty",
                             "value": "{{ closest.product.metafields.specs.service_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_YBz4YK": {
+                          "type": "spec-row",
+                          "name": "Compressor Warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Compressor Warranty",
+                            "value": "{{ closest.product.metafields.specs.compressor_warranty.value }}"
                           },
                           "blocks": {}
                         },
@@ -524,6 +1101,77 @@
                         },
                         "spec_row_17": {
                           "type": "spec-row",
+                          "name": "Compatible With",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Compatible With",
+                            "value": "{{ closest.product.metafields.custom.compatible_with | metafield_text }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_yUwGF4": {
+                          "type": "spec-row",
+                          "name": "Cutting Size",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Cutting Size",
+                            "value": "{{ closest.product.metafields.specs.cutting_size.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_3qYQfj": {
+                          "type": "spec-row",
+                          "name": "Material",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Material",
+                            "value": "{{ closest.product.metafields.specs.material.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Ay37et": {
+                          "type": "spec-row",
+                          "name": "Installation",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Installation/Mounting",
+                            "value": "{{ closest.product.metafields.specs.installation.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_4cybJk": {
+                          "type": "spec-row",
+                          "name": "Type of Cut",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Type of Cut",
+                            "value": "{{ closest.product.metafields.specs.type_of_cut.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_j3Dmkn": {
+                          "type": "spec-row",
+                          "name": "Safety Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Safety Features",
+                            "value": "{{ closest.product.metafields.specs.safety_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_4zFPDW": {
+                          "type": "spec-row",
+                          "name": "Made in",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Made in",
+                            "value": "{{ closest.product.metafields.specs.made_in.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_deNYt8": {
+                          "type": "spec-row",
+                          "name": "Row",
                           "settings": {
                             "show_row": true,
                             "label": "",
@@ -534,8 +1182,50 @@
                       },
                       "block_order": [
                         "spec_row_01",
+                        "spec_row_WTJm7B",
                         "spec_row_02",
                         "spec_row_03",
+                        "spec_row_wCC8re",
+                        "spec_row_jPBUJr",
+                        "spec_row_BC9mVj",
+                        "spec_row_jmyijF",
+                        "spec_row_nVcNW8",
+                        "spec_row_7MBFBE",
+                        "spec_row_UCnMdJ",
+                        "spec_row_78WXrx",
+                        "spec_row_aCFT64",
+                        "spec_row_tQaqVn",
+                        "spec_row_k8RaKk",
+                        "spec_row_hCUMhD",
+                        "spec_row_DJ6bX7",
+                        "spec_row_tVWiXF",
+                        "spec_row_TbXadV",
+                        "spec_row_xxpMYj",
+                        "spec_row_zDMf9q",
+                        "spec_row_VNrW96",
+                        "spec_row_iHi9Ti",
+                        "spec_row_P93aN3",
+                        "spec_row_MjLVdB",
+                        "spec_row_DhjNpL",
+                        "spec_row_JDWA6Y",
+                        "spec_row_iDnkR4",
+                        "spec_row_X6FrE3",
+                        "spec_row_r43Eii",
+                        "spec_row_NHCEhD",
+                        "spec_row_Y7XKnX",
+                        "spec_row_fRUCxL",
+                        "spec_row_MCrFNP",
+                        "spec_row_7eEEyF",
+                        "spec_row_qYVQxN",
+                        "spec_row_8fehkX",
+                        "spec_row_xbnnMr",
+                        "spec_row_cCbPkn",
+                        "spec_row_tfG9kA",
+                        "spec_row_mtbhwP",
+                        "spec_row_JVYB3C",
+                        "spec_row_6Gcf3j",
+                        "spec_row_9Ymi8d",
+                        "spec_row_g6QVWq",
                         "spec_row_04",
                         "spec_row_05",
                         "spec_row_06",
@@ -543,13 +1233,33 @@
                         "spec_row_08",
                         "spec_row_09",
                         "spec_row_10",
+                        "spec_row_AmUQV4",
+                        "spec_row_iEVzLt",
+                        "spec_row_p3qtp8",
+                        "spec_row_kwd47C",
+                        "spec_row_UKiWyN",
+                        "spec_row_npKqAm",
+                        "spec_row_yfmL4f",
+                        "spec_row_7pFqfE",
+                        "spec_row_z7bYmi",
+                        "spec_row_Pe7N7N",
+                        "spec_row_MWbLJM",
+                        "spec_row_J7bgzi",
                         "spec_row_11",
                         "spec_row_12",
                         "spec_row_13",
                         "spec_row_14",
+                        "spec_row_YBz4YK",
                         "spec_row_15",
                         "spec_row_16",
-                        "spec_row_17"
+                        "spec_row_17",
+                        "spec_row_yUwGF4",
+                        "spec_row_3qYQfj",
+                        "spec_row_Ay37et",
+                        "spec_row_4cybJk",
+                        "spec_row_j3Dmkn",
+                        "spec_row_4zFPDW",
+                        "spec_row_deNYt8"
                       ]
                     }
                   },
@@ -563,11 +1273,11 @@
                 "accordion_row_kz6mpj"
               ]
             },
-            "ai_gen_block_75b47c2_h8kDzA": {
+            "document_specsheet_EKAWHE": {
               "type": "document-specsheet",
               "name": "Document downloads",
               "settings": {
-                "heading": "Documents",
+                "heading": "",
                 "heading_size": 24,
                 "heading_spacing": 20,
                 "heading_color": "#000000",
@@ -580,14 +1290,14 @@
                 "use_metafield_spec": true,
                 "metafield_spec_label": "Spec Sheet",
                 "file_1": "{{ closest.product.metafields.custom.link_pdf.value }}",
-                "file_name_1": "PDF LINK",
+                "file_name_1": "Spec Sheet",
                 "file_size_1": "",
                 "file_2": "",
                 "file_name_2": "Installation Manual",
                 "file_size_2": "5.1 MB",
-                "file_3": "{{ closest.product.metafields.custom.fliphtml5.value }}",
-                "file_name_3": "FLIPHTML5",
-                "file_size_3": "",
+                "file_3": "",
+                "file_name_3": "Parts Manual",
+                "file_size_3": "3.8 MB",
                 "file_4": "",
                 "file_name_4": "",
                 "file_size_4": "",
@@ -639,7 +1349,7 @@
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
             "accordion_RAbGda",
-            "ai_gen_block_75b47c2_h8kDzA"
+            "document_specsheet_EKAWHE"
           ]
         }
       },
