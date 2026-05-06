@@ -16,13 +16,31 @@
     "
   >
     {%- if page.content != blank -%}
-      <div class="rte">
+      <div class="rte page-rte-content">
         {{ page.content }}
       </div>
     {%- endif -%}
     {% content_for 'blocks' %}
   </div>
 </div>
+
+{% stylesheet %}
+  .page-rte-content table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  @media screen and (max-width: 749px) {
+    .page-rte-content {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .page-rte-content table {
+      min-width: 600px;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

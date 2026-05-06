@@ -561,7 +561,7 @@
       ],
       "name": "Slideshow: Banner",
       "settings": {
-        "display_mode": "with_hints",
+        "display_mode": "full_frame",
         "section_width": "page-width",
         "full_frame_on_mobile": true,
         "slideshow_gap": 12,
@@ -575,7 +575,7 @@
         "autoplay": true,
         "autoplay_speed": 3,
         "padding-block-start": 40,
-        "padding-block-end": 18
+        "padding-block-end": 0
       }
     },
     "collections_browse": {
@@ -1084,7 +1084,7 @@
           "name": "t:names.collection_card",
           "static": true,
           "settings": {
-            "placement": "below_image",
+            "placement": "on_image",
             "horizontal_alignment": "center",
             "vertical_alignment": "center",
             "collection_card_gap": 8,
@@ -1182,14 +1182,14 @@
         "columns": 5,
         "mobile_columns": "2",
         "mobile_card_size": "44cqw",
-        "columns_gap": 8,
+        "columns_gap": 11,
         "bento_gap": 8,
         "rows_gap": 8,
         "max_collections": 4,
         "icons_style": "arrow",
         "icons_shape": "square",
         "section_width": "page-width",
-        "gap": 12,
+        "gap": 13,
         "color_scheme": "",
         "padding-block-start": 0,
         "padding-block-end": 0

@@ -56,7 +56,7 @@
             "heading_help_faq": {
               "type": "text",
               "settings": {
-                "text": "<p><strong>Help &amp; FAQ</strong></p>",
+                "text": "<p><strong>Help & FAQ</strong></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -176,7 +176,7 @@
             "links_service": {
               "type": "text",
               "settings": {
-                "text": "<p><a href=\"/pages/warranty-policy\">Warranty policy</a></p><p><a href=\"/pages/delivery-and-shipping-policy\">Delivery and shipping policy</a></p><p><a href=\"/pages/after-sales-service\">After sales service</a></p><p><a href=\"/pages/installation-policy\">Installation policy</a></p>",
+                "text": "<p><a href=\"/pages/warranty-policy\">Warranty policy</a></p><p><a href=\"/pages/delivery-and-shipping-policy\" target=\"_blank\" title=\"Delivery and shipping policy\">Delivery and shipping policy</a></p><p><a href=\"/pages/after-sales-service-warranty\" target=\"_blank\" title=\"After sales service Warranty\">After sales service</a></p><p><a href=\"/pages/installation-policy\" target=\"_blank\" title=\"Installation policy\">Installation policy</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -271,7 +271,7 @@
             "links_about_us": {
               "type": "text",
               "settings": {
-                "text": "<p><a href=\"/pages/who-we-are\">Who we are</a></p><p><a href=\"/pages/service-center\">Service center</a></p><p><a href=\"/pages/contact-us\">Contact us</a></p>",
+                "text": "<p><a href=\"/pages/who-we-are\" target=\"_blank\" title=\"Who we are\">Who we are</a></p><p><a href=\"/pages/service-center\" target=\"_blank\" title=\"Service Center\">Service center</a></p><p><a href=\"/pages/contact-us\" target=\"_blank\" title=\"Contact Us\">Contact us</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -416,11 +416,11 @@
             "social_links": {
               "type": "social-links",
               "settings": {
-                "instagram_url": "https://www.instagram.com/sevenfive_th/",
-                "facebook_url": "https://www.facebook.com/sevenfive.th",
-                "line_url": "https://lin.ee/sevenfive",
-                "youtube_url": "https://www.youtube.com/@sevenfive_th",
-                "tiktok_url": "https://www.tiktok.com/@sevenfive_th",
+                "facebook_url": "https://www.facebook.com/75sevenfive",
+                "instagram_url": "https://www.instagram.com/sevenfive.distributor/",
+                "youtube_url": "https://www.youtube.com/@Sevenfivedistributor",
+                "tiktok_url": "https://www.tiktok.com/@sevenfiveofficial",
+                "line_url": "https://page.line.me/nop6433t?oat_content=url&openQrModal=true",
                 "twitter_url": "",
                 "threads_url": "",
                 "linkedin_url": "",
