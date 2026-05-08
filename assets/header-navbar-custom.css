@@ -45,6 +45,34 @@
   background-color: transparent;
 }
 
+/* Shop by Category: 2-row carousel on desktop using CSS Grid */
+@media screen and (min-width: 750px) {
+  [id$='_collections_browse'] slideshow-component,
+  [id$='_collections_browse'] slideshow-container {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  [id$='_collections_browse'] slideshow-slides {
+    display: grid !important;
+    grid-template-rows: repeat(2, auto) !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc((100% - (19px * 3)) / 4) !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    flex-wrap: initial !important;
+    scroll-snap-type: none !important;
+  }
+
+  [id$='_collections_browse'] .resource-list__slide {
+    width: auto !important;
+    flex: none !important;
+    scroll-snap-align: none !important;
+  }
+}
+
 /* Fix search icon color: foreground is white in header, but icon sits on white input background */
 #header-component .search-bar-trigger {
   color: #1a1a1a;

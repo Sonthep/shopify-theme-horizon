@@ -9,280 +9,6 @@
  */
 {
   "sections": {
-    "hero_main": {
-      "type": "hero",
-      "blocks": {
-        "btn_group": {
-          "type": "group",
-          "name": "t:names.group",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "center",
-            "vertical_alignment": "flex-end",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "center",
-            "vertical_alignment_flex_direction_column": "flex-end",
-            "gap": 100,
-            "width": "custom",
-            "custom_width": 100,
-            "width_mobile": "custom",
-            "custom_width_mobile": 100,
-            "height": "custom",
-            "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "background_media": "none",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "link": "",
-            "open_in_new_tab": false,
-            "placeholder": "",
-            "padding-block-start": 100,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "btn_shop": {
-              "type": "button",
-              "name": "t:names.button",
-              "settings": {
-                "label": "Shop All Parts",
-                "link": "shopify://collections/equipment",
-                "open_in_new_tab": false,
-                "style_class": "button",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "btn_shop"
-          ]
-        },
-        "heading_1": {
-          "type": "text",
-          "name": "t:names.heading",
-          "settings": {
-            "text": "",
-            "width": "fit-content",
-            "max_width": "narrow",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "balance",
-            "color": "#ffffff",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "subtext_1": {
-          "type": "text",
-          "name": "t:names.text",
-          "settings": {
-            "text": "",
-            "width": "fit-content",
-            "max_width": "narrow",
-            "alignment": "center",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "#ffffffcc",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "btn_group",
-        "heading_1",
-        "subtext_1"
-      ],
-      "name": "t:names.hero",
-      "settings": {
-        "media_type_1": "video",
-        "image_1": "shopify://shop_images/494889917_1235379195256840_4073216459876585932_n.jpg",
-        "video_1": "shopify://files/videos/Company profile -Notext.mp4",
-        "media_type_2": "image",
-        "stack_media_on_mobile": false,
-        "custom_mobile_media": true,
-        "media_type_1_mobile": "video",
-        "video_1_mobile": "shopify://files/videos/75 One Stop Food Service & Hospitality Solutions.mp4",
-        "media_type_2_mobile": "image",
-        "link": "",
-        "open_in_new_tab": false,
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 20,
-        "section_width": "full-width",
-        "section_height": "large",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-5",
-        "toggle_overlay": false,
-        "overlay_color": "#00000080",
-        "overlay_style": "gradient",
-        "gradient_direction": "to bottom",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 100,
-        "padding-block-end": 80
-      }
-    },
-    "marquee_trust": {
-      "type": "marquee",
-      "blocks": {
-        "trust_1": {
-          "type": "text",
-          "settings": {
-            "text": "<p>✓ Price Match Policy</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h6",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "0.05em",
-            "case": "uppercase",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "trust_2": {
-          "type": "text",
-          "settings": {
-            "text": "<p>✓ 30,000+ Products & Parts In Stock</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h6",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "0.05em",
-            "case": "uppercase",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "trust_3": {
-          "type": "text",
-          "settings": {
-            "text": "<p>✓ 365 Days 24 Hours After Sales Service</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h6",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "0.05em",
-            "case": "uppercase",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "trust_4": {
-          "type": "text",
-          "settings": {
-            "text": "<p>✓ Free Delivery For Order Over 5,000 Baht*</p>",
-            "width": "fit-content",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h6",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "0.05em",
-            "case": "uppercase",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "trust_1",
-        "trust_2",
-        "trust_3",
-        "trust_4"
-      ],
-      "settings": {
-        "movement_direction": "reverse",
-        "color_scheme": "scheme-5",
-        "padding-block-start": 16,
-        "padding-block-end": 16,
-        "gap_between_elements": 48
-      }
-    },
     "slideshow_jEnJaK": {
       "type": "slideshow",
       "blocks": {
@@ -562,11 +288,11 @@
       "name": "Slideshow: Banner",
       "settings": {
         "display_mode": "full_frame",
-        "section_width": "page-width",
+        "section_width": "full-width",
         "full_frame_on_mobile": true,
-        "slideshow_gap": 12,
+        "slideshow_gap": 0,
         "corner_radius": 0,
-        "slide_height": "large",
+        "slide_height": "medium",
         "content_position": "on-media",
         "color_scheme": "",
         "icons_style": "arrows_large",
@@ -574,7 +300,7 @@
         "slideshow_controls_style": "dots",
         "autoplay": true,
         "autoplay_speed": 3,
-        "padding-block-start": 40,
+        "padding-block-start": 0,
         "padding-block-end": 0
       }
     },
@@ -701,19 +427,28 @@
         "collection_list": [
           "smallwares",
           "refrigeration-equipment",
-          "stainless-steel-fabrication"
+          "stainless-steel-fabrication",
+          "access-handle",
+          "absolute",
+          "access-panel",
+          "actuator",
+          "adapter",
+          "autata"
         ],
         "layout_type": "carousel",
         "carousel_on_mobile": true,
-        "columns": 5,
+        "columns": 4,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
         "columns_gap": 19,
         "bento_gap": 8,
-        "rows_gap": 8,
+        "rows_gap": 19,
         "max_collections": 6,
         "icons_style": "arrow",
         "icons_shape": "none",
+        "show_navigation_dots": true,
+        "autoplay": true,
+        "autoplay_speed": 3000,
         "section_width": "page-width",
         "gap": 22,
         "color_scheme": "scheme-1",
@@ -1378,8 +1113,6 @@
     }
   },
   "order": [
-    "hero_main",
-    "marquee_trust",
     "slideshow_jEnJaK",
     "collections_browse",
     "products_featured",
