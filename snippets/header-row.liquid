@@ -31,6 +31,12 @@
     assign item_column = settings[column_key] | default: 'left'
 
     case item
+      when 'menu'
+        if item_row == 'bottom'
+          assign item_column = 'center'
+        endif
+      when 'search'
+        assign item_column = 'center'
       when 'actions'
         assign item_column = 'right'
     endcase

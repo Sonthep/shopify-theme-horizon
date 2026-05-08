@@ -747,6 +747,13 @@
       --header-right: minmax(max-content, 1fr);
     }
 
+    /* If search is in center column, give it more room to grow */
+    &:has(.header__column--center .search-action) {
+      --header-center: 3fr;
+      --header-left: minmax(max-content, 1fr);
+      --header-right: minmax(max-content, 1fr);
+    }
+
     /* If there is no center column, make the column the menu is in grow eagerly */
     &:where(:not(:has(.header__column--center))) {
       @media screen and (min-width: 750px) {
@@ -900,7 +907,7 @@
   }
 
   .header:not(.header--compact) .header__row--bottom {
-    --header-padding: var(--padding-xs);
+    --header-padding: var(--padding-2xs);
   }
 
   .header--collapse-row-paddings {
