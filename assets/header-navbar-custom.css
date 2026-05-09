@@ -159,6 +159,11 @@
   }
 }
 
+/* Logo vertical spacing: set 35px on top and bottom for visual balance */
+#header-component.header .logo-block {
+  margin-block: 35px;
+}
+
 /* Search pill (white, rounded) */
 #header-component.header .search-action--bar {
   --header-search-height: var(--custom-header-search-height, 48px);
