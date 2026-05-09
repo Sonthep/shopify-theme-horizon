@@ -195,7 +195,7 @@
       {% render 'localization-form',
         show_country: show_country,
         show_language: show_language,
-        localization_style: 'dropdown',
+        localization_style: 'inline',
         form_style: form_style,
         form_id: section.id
       %}
@@ -310,6 +310,8 @@
   style="
     --color-scheme-top-row: rgba({{ section.settings.color_scheme_top.settings.background.rgba }});
     --color-scheme-bottom-row: rgba({{ section.settings.color_scheme_bottom.settings.background.rgba }});
+    --custom-header-vertical-padding: {{ section.settings.header_vertical_padding | default: 10 }}px;
+    --custom-header-search-height: {{ section.settings.search_control_height | default: 48 }}px;
     {% if section.settings.actions_display_style == 'text' %}
       --header-actions-font-size: {{ section.settings.actions_font_size | default: '1rem' }};
       --header-actions-font-family: var(--font-{{ section.settings.actions_font | default: 'heading' }}--family);
@@ -1253,6 +1255,17 @@
       "visible_if": "{{ section.settings.show_search }}"
     },
     {
+      "type": "range",
+      "id": "search_control_height",
+      "label": "Search height",
+      "min": 36,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.show_search }}"
+    },
+    {
       "type": "header",
       "content": "t:content.localization"
     },
@@ -1398,6 +1411,16 @@
         }
       ],
       "default": "standard"
+    },
+    {
+      "type": "range",
+      "id": "header_vertical_padding",
+      "label": "Header height",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10
     },
     {
       "type": "select",
