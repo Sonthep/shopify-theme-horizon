@@ -13,8 +13,8 @@
   --color-border: rgb(255 255 255 / 0.18);
   --color-border-rgb: 255 255 255;
 
-  /* Match compact reference height */
-  --header-padding: 10px;
+  /* Allow theme editor control over header height */
+  --header-padding: var(--custom-header-vertical-padding, 10px);
 }
 
 #header-component.header .header__underlay-closed,
@@ -36,8 +36,8 @@
 
 /* Top row spacing */
 #header-component.header .header__columns {
-  --padding-block-start: 10px;
-  --padding-block-end: 8px;
+  --padding-block-start: var(--custom-header-vertical-padding, 10px);
+  --padding-block-end: var(--custom-header-vertical-padding, 10px);
 }
 
 /* Remove box (background) from language selector */
@@ -89,6 +89,41 @@
   [id$='_collections_browse'] .cb-custom-dots {
     display: none !important;
   }
+
+  [id$='_collections_browse'] .collection-card,
+  [id$='_collections_browse'] .collection-card__image,
+  [id$='_collections_browse'] .collection-card__content {
+    transition:
+      transform 220ms ease,
+      box-shadow 220ms ease,
+      filter 220ms ease,
+      color 220ms ease;
+  }
+
+  [id$='_collections_browse'] .collection-card {
+    border-radius: 18px;
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+
+  [id$='_collections_browse'] .collection-card__image {
+    transform-origin: center center;
+  }
+
+  @media (any-hover: hover) and (prefers-reduced-motion: no-preference) {
+    [id$='_collections_browse'] .collection-card:hover {
+      box-shadow: 0 16px 36px rgb(12 32 22 / 0.14);
+    }
+
+    [id$='_collections_browse'] .collection-card:hover .collection-card__image {
+      transform: scale(1.035);
+      filter: saturate(1.05);
+    }
+
+    [id$='_collections_browse'] .collection-card:hover .collection-card__content {
+      transform: translateY(-2px);
+    }
+  }
 }
 
 /* Fix search icon color: foreground is white in header, but icon sits on white input background */
@@ -126,20 +161,33 @@
 
 /* Search pill (white, rounded) */
 #header-component.header .search-action--bar {
+  --header-search-height: var(--custom-header-search-height, 48px);
   max-width: 520px;
 }
 
 #header-component.header .search-bar-trigger {
   background: #ffffff !important;
   border-color: rgb(0 0 0 / 0.08) !important;
-  min-height: 36px;
-  padding: 6px 14px;
+  min-height: var(--header-search-height);
+  height: var(--header-search-height);
+  padding-block: 0;
+  padding-inline: 18px;
+  border-radius: calc(var(--header-search-height) / 2);
 }
 
 #header-component.header .search-bar-trigger__icon,
 #header-component.header .search-bar-trigger__text {
   color: rgb(0 0 0 / 0.75);
   opacity: 1;
+}
+
+#header-component.header .search-bar-trigger__icon {
+  width: calc(var(--header-search-height) * 0.34);
+  height: calc(var(--header-search-height) * 0.34);
+}
+
+#header-component.header .search-bar-trigger__text {
+  line-height: 1;
 }
 
 /* Menu links row */
@@ -164,16 +212,57 @@
 
   #header-component.header .header-menu .menu-list__link-title {
     padding-inline: 10px;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.32em;
+    transition: text-decoration-color 180ms ease, opacity 180ms ease;
   }
 
   #header-component.header .header-menu .menu-list__link {
     color: #ffffff;
     opacity: 0.95;
+    background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   #header-component.header .header-menu .menu-list__link:hover,
-  #header-component.header .header-menu .menu-list__link:focus {
+  #header-component.header .header-menu .menu-list__link:focus,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] {
     opacity: 1;
+  }
+
+  #header-component.header .header-menu .menu-list__link:hover .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link:focus .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] .menu-list__link-title {
+    text-decoration-color: currentColor;
+  }
+
+  #header-component.header .header-menu .menu-list__link:is(:hover, :focus, [aria-expanded='true']) {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  #header-component.header .header-menu .menu-list__link:is(.menu-list__link--active, [aria-current='page']) .menu-list__link-title {
+    text-decoration-color: transparent;
+  }
+
+  /* Force underline for all top-level menu link variations on hover/focus —
+     Some menu items (e.g. ones rendered as buttons or placed into the overflow
+     slot) may not inherit the title selector. This rule ensures underline
+     appears regardless of exact structure. */
+  #header-component.header .header-menu .menu-list__link:hover,
+  #header-component.header .header-menu .menu-list__link:focus,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'],
+  #header-component.header .header-menu .menu-list__link:hover .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link:focus .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] .menu-list__link-title {
+    text-decoration-line: underline !important;
+    text-decoration-color: currentColor !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 0.32em !important;
   }
 }
 
