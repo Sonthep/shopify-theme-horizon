@@ -37,14 +37,14 @@
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
           {% if section.settings.image_1 != blank %}
-            {% render 'image', image: section.settings.image_1, class: 'hotspots__background-image', loading: 'eager' %}
+            {% render 'image', image: section.settings.image_1, class: 'hotspots__background-image' %}
           {% else %}
             {{ 'hero-apparel-1' | placeholder_svg_tag: 'hotspots__background-image' }}
           {% endif %}
         </div>
 
         {%- comment -%} Top-right: image OR customizable text box {%- endcomment -%}
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--top-right">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-top">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -65,6 +65,39 @@
             {% else %}
               {{ 'hero-apparel-2' | placeholder_svg_tag: 'hotspots__background-image' }}
             {% endif %}
+          {% endif %}
+        </div>
+
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-bottom">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_3 != blank %}
+            {% render 'image', image: section.settings.image_3, class: 'hotspots__background-image' %}
+          {% else %}
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'hotspots__background-image' }}
+          {% endif %}
+        </div>
+
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-top">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_4 != blank %}
+            {% render 'image', image: section.settings.image_4, class: 'hotspots__background-image' %}
+          {% else %}
+            {{ 'hero-apparel-4' | placeholder_svg_tag: 'hotspots__background-image' }}
+          {% endif %}
+        </div>
+
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-bottom">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_5 != blank %}
+            {% render 'image', image: section.settings.image_5, class: 'hotspots__background-image' %}
+          {% else %}
+            {{ 'hero-apparel-5' | placeholder_svg_tag: 'hotspots__background-image' }}
           {% endif %}
         </div>
 
@@ -118,9 +151,10 @@
   /* ── Mosaic Grid ── */
   .hotspots-mosaic__grid {
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    /* Left large, middle column (text box + small), right column (two stacked small images) */
+    grid-template-columns: 3fr 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 4px;
+    gap: 8px;
     aspect-ratio: 16 / 7;
     position: relative;
   }
@@ -134,14 +168,23 @@
     grid-column: 1;
     grid-row: 1 / 3;
   }
-
-  .hotspots-mosaic__cell--top-right {
+  .hotspots-mosaic__cell--center-top {
     grid-column: 2;
     grid-row: 1;
   }
 
-  .hotspots-mosaic__cell--bottom-right {
+  .hotspots-mosaic__cell--center-bottom {
     grid-column: 2;
+    grid-row: 2;
+  }
+
+  .hotspots-mosaic__cell--side-top {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .hotspots-mosaic__cell--side-bottom {
+    grid-column: 3;
     grid-row: 2;
   }
 
@@ -186,7 +229,7 @@
   @media screen and (max-width: 749px) {
     .hotspots-mosaic__grid {
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto auto;
       aspect-ratio: unset;
     }
 
@@ -196,15 +239,27 @@
       aspect-ratio: 4 / 3;
     }
 
-    .hotspots-mosaic__cell--top-right {
+    .hotspots-mosaic__cell--center-top {
       grid-column: 1;
       grid-row: 2;
       aspect-ratio: 1;
     }
 
-    .hotspots-mosaic__cell--bottom-right {
+    .hotspots-mosaic__cell--center-bottom {
       grid-column: 2;
       grid-row: 2;
+      aspect-ratio: 1;
+    }
+
+    .hotspots-mosaic__cell--side-top {
+      grid-column: 1;
+      grid-row: 3;
+      aspect-ratio: 1;
+    }
+
+    .hotspots-mosaic__cell--side-bottom {
+      grid-column: 2;
+      grid-row: 3;
       aspect-ratio: 1;
     }
   }
