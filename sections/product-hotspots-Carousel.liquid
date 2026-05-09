@@ -43,15 +43,28 @@
           {% endif %}
         </div>
 
-        {%- comment -%} Top-right image {%- endcomment -%}
+        {%- comment -%} Top-right: image OR customizable text box {%- endcomment -%}
         <div class="hotspots-mosaic__cell hotspots-mosaic__cell--top-right">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
-          {% if section.settings.image_2 != blank %}
-            {% render 'image', image: section.settings.image_2, class: 'hotspots__background-image' %}
+          {% if section.settings.top_right_type == 'text' %}
+            <div class="hotspots-mosaic__text-hero" style="background: {{ section.settings.text_box_bg_color }}; color: {{ section.settings.text_box_text_color }};">
+              <div class="hotspots-mosaic__text-hero-inner">
+                {% if section.settings.text_box_title != blank %}
+                  <div class="hotspots-mosaic__text-hero-title">{{ section.settings.text_box_title }}</div>
+                {% endif %}
+                {% if section.settings.text_box_subtitle != blank %}
+                  <div class="hotspots-mosaic__text-hero-sub">{{ section.settings.text_box_subtitle }}</div>
+                {% endif %}
+              </div>
+            </div>
           {% else %}
-            {{ 'hero-apparel-2' | placeholder_svg_tag: 'hotspots__background-image' }}
+            {% if section.settings.image_2 != blank %}
+              {% render 'image', image: section.settings.image_2, class: 'hotspots__background-image' %}
+            {% else %}
+              {{ 'hero-apparel-2' | placeholder_svg_tag: 'hotspots__background-image' }}
+            {% endif %}
           {% endif %}
         </div>
 
@@ -140,6 +153,34 @@
     transform: translate(-50%, -50%);
     z-index: var(--layer-raised, 10);
     pointer-events: none;
+  }
+
+  /* Top-right text hero style */
+  .hotspots-mosaic__text-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hotspots-mosaic__text-hero-inner {
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .hotspots-mosaic__text-hero-title {
+    font-weight: 700;
+    font-size: 1.6rem;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  .hotspots-mosaic__text-hero-sub {
+    font-size: 0.95rem;
+    opacity: 0.95;
   }
 
   @media screen and (max-width: 749px) {
@@ -591,6 +632,45 @@
       "type": "image_picker",
       "id": "image_5",
       "label": "Image 5"
+    },
+    {
+      "type": "select",
+      "id": "top_right_type",
+      "label": "Top-right content",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "text", "label": "Text box (eg. green card)" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "text",
+      "id": "text_box_title",
+      "label": "Text box title",
+      "default": "มาตรฐาน\nมืออาชีพ",
+      "info": "ใช้ newlines เพื่อขึ้นบรรทัดใหม่",
+      "visible_if": "{{ section.settings.top_right_type == 'text' }}"
+    },
+    {
+      "type": "text",
+      "id": "text_box_subtitle",
+      "label": "Text box subtitle",
+      "default": "เพื่อทุกครัวธุรกิจ",
+      "visible_if": "{{ section.settings.top_right_type == 'text' }}"
+    },
+    {
+      "type": "color",
+      "id": "text_box_bg_color",
+      "label": "Text box background",
+      "default": "#0B6B5B",
+      "visible_if": "{{ section.settings.top_right_type == 'text' }}"
+    },
+    {
+      "type": "color",
+      "id": "text_box_text_color",
+      "label": "Text box text color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.top_right_type == 'text' }}"
     },
     {
       "type": "checkbox",
