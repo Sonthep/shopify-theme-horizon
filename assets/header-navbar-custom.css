@@ -50,7 +50,7 @@
   [id$='_collections_browse'] slideshow-component,
   [id$='_collections_browse'] slideshow-container {
     overflow-x: hidden !important;
-    overflow-y: visible !important;
+    overflow-y: hidden !important;
     height: auto !important;
   }
 
@@ -60,11 +60,17 @@
     grid-auto-flow: column !important;
     grid-auto-columns: calc(100% / 4) !important;
     overflow-x: auto !important;
-    overflow-y: visible !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none;
     height: auto !important;
     max-height: none !important;
     flex-wrap: initial !important;
     scroll-snap-type: none !important;
+  }
+
+  [id$='_collections_browse'] slideshow-slides::-webkit-scrollbar {
+    display: none;
   }
 
   [id$='_collections_browse'] .resource-list__slide {
@@ -78,6 +84,10 @@
   [id$='_collections_browse'] .resource-list__item {
     width: fit-content;
     margin-inline: auto;
+  }
+
+  [id$='_collections_browse'] .cb-custom-dots {
+    display: none !important;
   }
 }
 
