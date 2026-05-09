@@ -8,22 +8,6 @@
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 
-{%- liquid
-  assign slide_count = 0
-  for i in (1..5)
-    assign img_key = 'image_' | append: i
-    assign img = section.settings[img_key]
-    if img != blank
-      assign slide_count = slide_count | plus: 1
-    endif
-  endfor
-  if slide_count == 0
-    assign slide_count = 1
-  endif
-
-  assign first_image = section.settings.image_1
--%}
-
 <div
   class="
     section
@@ -37,11 +21,6 @@
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: 28 %}
-    {% if section.settings.section_height != 'auto' %}
-      --ratio: {{ section.settings.section_height }};
-    {% elsif first_image != blank %}
-      --ratio: {{ first_image.aspect_ratio }};
-    {% endif %}
     --product-title-gap: {{ section.settings.product_title_gap }}px;
     --hotspot-size: 36px;
     --minimum-width-dialog: 260px;
@@ -50,175 +29,58 @@
   "
 >
   <div class="section-product-hotspots__wrapper">
-    <div class="section-product-hotspots__header">
-      {% content_for 'block', type: 'text', id: 'heading' %}
-    </div>
+    <div class="section-product-hotspots__content hotspots-mosaic">
+      <div class="hotspots-mosaic__grid">
+        {%- comment -%} Main left image {%- endcomment -%}
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--main">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_1 != blank %}
+            {% render 'image', image: section.settings.image_1, class: 'hotspots__background-image', loading: 'eager' %}
+          {% else %}
+            {{ 'hero-apparel-1' | placeholder_svg_tag: 'hotspots__background-image' }}
+          {% endif %}
+        </div>
 
-    <div
-      class="section-product-hotspots__content hotspots-carousel"
-      id="hotspots-carousel-{{ section.id }}"
-      data-slide-count="{{ slide_count }}"
-      data-current-slide="0"
-    >
-      {%- comment -%} Background image carousel track {%- endcomment -%}
-      <div class="hotspots-carousel__track" aria-hidden="true">
-        {%- assign rendered_slides = 0 -%}
-        {%- for i in (1..5) -%}
-          {%- assign img_key = 'image_' | append: i -%}
-          {%- assign slide_img = section.settings[img_key] -%}
-          {%- if slide_img != blank or i == 1 -%}
-            <div class="hotspots-carousel__slide">
-              {% if section.settings.toggle_overlay %}
-                {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
-              {% endif %}
-              {% if slide_img != blank %}
-                {% render 'image', image: slide_img, class: 'hotspots__background-image' %}
-              {% else %}
-                {{ 'hero-apparel-1' | placeholder_svg_tag: 'hotspots__background-image' }}
-              {% endif %}
-            </div>
-            {%- assign rendered_slides = rendered_slides | plus: 1 -%}
-            {%- if rendered_slides >= slide_count -%}{%- break -%}{%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
+        {%- comment -%} Top-right image {%- endcomment -%}
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--top-right">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_2 != blank %}
+            {% render 'image', image: section.settings.image_2, class: 'hotspots__background-image' %}
+          {% else %}
+            {{ 'hero-apparel-2' | placeholder_svg_tag: 'hotspots__background-image' }}
+          {% endif %}
+        </div>
+
+        {%- comment -%} Bottom-right image {%- endcomment -%}
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--bottom-right">
+          {% if section.settings.toggle_overlay %}
+            {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
+          {% endif %}
+          {% if section.settings.image_3 != blank %}
+            {% render 'image', image: section.settings.image_3, class: 'hotspots__background-image' %}
+          {% else %}
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'hotspots__background-image' }}
+          {% endif %}
+        </div>
+
+        {%- comment -%} Text overlay box {%- endcomment -%}
+        <div class="hotspots-mosaic__text-box">
+          {% content_for 'block', type: 'text', id: 'heading' %}
+        </div>
       </div>
 
-      {%- comment -%} Hotspot blocks rendered once, overlaid on top. Each hotspot has data-hotspot-slide set by the block setting. {%- endcomment -%}
+      {%- comment -%} Hotspot blocks rendered on top {%- endcomment -%}
       <div class="hotspots-container" aria-hidden="false">
         {% content_for 'blocks' %}
       </div>
-
-      {%- comment -%} Navigation arrows {%- endcomment -%}
-      {%- if slide_count > 1 -%}
-        <button
-          class="hotspots-carousel__btn hotspots-carousel__btn--prev button button-unstyled button-unstyled--transparent"
-          aria-label="{{ 'accessibility.slideshow_previous' | t }}"
-          data-action="prev"
-        >
-          <span class="svg-wrapper icon-arrow flip-x">
-            {{- 'icon-arrow.svg' | inline_asset_content -}}
-          </span>
-        </button>
-        <button
-          class="hotspots-carousel__btn hotspots-carousel__btn--next button button-unstyled button-unstyled--transparent"
-          aria-label="{{ 'accessibility.slideshow_next' | t }}"
-          data-action="next"
-        >
-          <span class="svg-wrapper icon-arrow">
-            {{- 'icon-arrow.svg' | inline_asset_content -}}
-          </span>
-        </button>
-
-        {%- comment -%} Dot indicators {%- endcomment -%}
-        <div class="hotspots-carousel__dots" role="tablist">
-          {%- assign dot_count = 0 -%}
-          {%- for i in (1..5) -%}
-            {%- assign img_key = 'image_' | append: i -%}
-            {%- assign dot_img = section.settings[img_key] -%}
-            {%- if dot_img != blank or i == 1 -%}
-              <button
-                class="hotspots-carousel__dot{% if dot_count == 0 %} is-active{% endif %}"
-                role="tab"
-                aria-selected="{% if dot_count == 0 %}true{% else %}false{% endif %}"
-                aria-label="{{ 'accessibility.slide_status' | t: index: dot_count | plus: 1, length: slide_count }}"
-                data-slide-target="{{ dot_count }}"
-              ></button>
-              {%- assign dot_count = dot_count | plus: 1 -%}
-              {%- if dot_count >= slide_count -%}{%- break -%}{%- endif -%}
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
     </div>
   </div>
 </div>
 
-<script>
-  (function () {
-    function initHotspotsCarousel(carouselEl) {
-      var slideCount = parseInt(carouselEl.dataset.slideCount, 10);
-      var currentSlide = 0;
-      var track = carouselEl.querySelector('.hotspots-carousel__track');
-      var dots = carouselEl.querySelectorAll('.hotspots-carousel__dot');
-
-      function updateHotspots(index) {
-        // Select all hotspot components in this carousel
-        carouselEl.querySelectorAll('.hotspots-container product-hotspot-component').forEach(function (hs) {
-          var hsSlide = hs.dataset.hotspotSlide;
-          if (!hsSlide) {
-            // No slide_index set (all slides) — always visible
-            hs.style.display = '';
-          } else {
-            // slide_index is 1-based; index is 0-based
-            hs.style.display = (parseInt(hsSlide, 10) - 1 === index) ? '' : 'none';
-          }
-        });
-      }
-
-      function goTo(index) {
-        if (index < 0) index = slideCount - 1;
-        if (index >= slideCount) index = 0;
-        currentSlide = index;
-        if (track) track.style.transform = 'translateX(calc(-100% * ' + index + '))';
-        carouselEl.dataset.currentSlide = index;
-        dots.forEach(function (d, i) {
-          d.classList.toggle('is-active', i === index);
-          d.setAttribute('aria-selected', i === index ? 'true' : 'false');
-        });
-        updateHotspots(index);
-      }
-
-      // Bind prev/next buttons
-      carouselEl.querySelectorAll('.hotspots-carousel__btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          goTo(currentSlide + (btn.dataset.action === 'prev' ? -1 : 1));
-        });
-      });
-
-      // Bind dot buttons
-      dots.forEach(function (dot) {
-        dot.addEventListener('click', function () {
-          var target = parseInt(dot.dataset.slideTarget, 10);
-          goTo(target);
-        });
-      });
-
-      // Touch/swipe
-      var startX = 0;
-      carouselEl.addEventListener('touchstart', function (e) {
-        startX = e.touches[0].clientX;
-      }, { passive: true });
-      carouselEl.addEventListener('touchend', function (e) {
-        var dx = e.changedTouches[0].clientX - startX;
-        if (Math.abs(dx) > 40) goTo(currentSlide + (dx < 0 ? 1 : -1));
-      });
-
-      // Initial hotspot visibility
-      updateHotspots(0);
-    }
-
-    function init() {
-      document.querySelectorAll('.hotspots-carousel[data-slide-count]').forEach(function (el) {
-        if (!el.dataset.carouselInit) {
-          el.dataset.carouselInit = '1';
-          initHotspotsCarousel(el);
-        }
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-    document.addEventListener('shopify:section:load', function () {
-      document.querySelectorAll('.hotspots-carousel[data-slide-count]').forEach(function (el) {
-        delete el.dataset.carouselInit;
-      });
-      init();
-    });
-  })();
-</script>
 
 {% stylesheet %}
   /* Section layout */
@@ -237,104 +99,72 @@
   /* Image container */
   .section-product-hotspots__content {
     position: relative;
-    aspect-ratio: var(--ratio, 21 / 9);
-    overflow: hidden;
+    width: 100%;
   }
 
-  /* ── Carousel ── */
-  .hotspots-carousel {
+  /* ── Mosaic Grid ── */
+  .hotspots-mosaic__grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    aspect-ratio: 16 / 7;
     position: relative;
   }
 
-  .hotspots-carousel__track {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-    will-change: transform;
-  }
-
-  .hotspots-carousel__slide {
+  .hotspots-mosaic__cell {
     position: relative;
-    flex: 0 0 100%;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
   }
 
-  /* Nav buttons */
-  .hotspots-carousel__btn {
+  .hotspots-mosaic__cell--main {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .hotspots-mosaic__cell--top-right {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .hotspots-mosaic__cell--bottom-right {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  /* Text overlay box — centred over the mosaic */
+  .hotspots-mosaic__text-box {
     position: absolute;
     top: 50%;
-    translate: 0 -50%;
-    z-index: var(--layer-raised, 10);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    background: rgb(var(--color-foreground-rgb, 0 0 0) / 0.45);
-    border-radius: 50%;
-    color: var(--color-background, #fff);
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-
-  .hotspots-carousel__btn:hover {
-    background: rgb(var(--color-foreground-rgb, 0 0 0) / 0.7);
-  }
-
-  .hotspots-carousel__btn--prev {
-    left: 0.75rem;
-  }
-
-  .hotspots-carousel__btn--next {
-    right: 0.75rem;
-  }
-
-  .hotspots-carousel__btn .svg-wrapper svg {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  /* Dot indicators */
-  .hotspots-carousel__dots {
-    position: absolute;
-    bottom: 0.75rem;
     left: 50%;
-    translate: -50% 0;
+    transform: translate(-50%, -50%);
     z-index: var(--layer-raised, 10);
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
-  }
-
-  .hotspots-carousel__dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: rgb(255 255 255 / 0.55);
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-
-  .hotspots-carousel__dot.is-active {
-    background: #fff;
-    transform: scale(1.3);
+    pointer-events: none;
   }
 
   @media screen and (max-width: 749px) {
-    .hotspots-carousel__btn {
-      width: 2rem;
-      height: 2rem;
+    .hotspots-mosaic__grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      aspect-ratio: unset;
     }
 
-    .hotspots-carousel__btn .svg-wrapper svg {
-      width: 0.875rem;
-      height: 0.875rem;
+    .hotspots-mosaic__cell--main {
+      grid-column: 1 / 3;
+      grid-row: 1;
+      aspect-ratio: 4 / 3;
+    }
+
+    .hotspots-mosaic__cell--top-right {
+      grid-column: 1;
+      grid-row: 2;
+      aspect-ratio: 1;
+    }
+
+    .hotspots-mosaic__cell--bottom-right {
+      grid-column: 2;
+      grid-row: 2;
+      aspect-ratio: 1;
     }
   }
 

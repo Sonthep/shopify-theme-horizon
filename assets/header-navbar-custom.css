@@ -49,7 +49,8 @@
 @media screen and (min-width: 750px) {
   [id$='_collections_browse'] slideshow-component,
   [id$='_collections_browse'] slideshow-container {
-    overflow: visible !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
     height: auto !important;
   }
 
@@ -57,7 +58,7 @@
     display: grid !important;
     grid-template-rows: repeat(2, auto) !important;
     grid-auto-flow: column !important;
-    grid-auto-columns: calc((100% - (19px * 3)) / 4) !important;
+    grid-auto-columns: calc(100% / 4) !important;
     overflow-x: auto !important;
     overflow-y: visible !important;
     height: auto !important;
@@ -67,9 +68,16 @@
   }
 
   [id$='_collections_browse'] .resource-list__slide {
+    display: flex !important;
+    justify-content: center !important;
     width: auto !important;
     flex: none !important;
     scroll-snap-align: none !important;
+  }
+
+  [id$='_collections_browse'] .resource-list__item {
+    width: fit-content;
+    margin-inline: auto;
   }
 }
 

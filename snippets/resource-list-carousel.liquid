@@ -51,7 +51,7 @@
 
 <div
   class="resource-list__carousel"
-  style="{{ gutter_style }} --slide-width-max: {{ slide_width_max | default: '300px' }};"
+  style="{{ gutter_style }} --slide-width-max: {{ slide_width_max | default: '300px' }}; --peek-next-slide-size: 0px;"
 >
   {% render 'slideshow',
     ref: slideshow_ref,

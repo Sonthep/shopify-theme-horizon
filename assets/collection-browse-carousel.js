@@ -1,7 +1,16 @@
 /**
  * Custom dots + autoplay for Shop by Category (2-row grid carousel)
- * The built-in slideshow JS hides controls when scrollWidth <= offsetWidth,
- * which happens with CSS Grid. This script creates standalone dots + autoplay.
+ *
+ * Key design decisions:
+ * - Shopify's `infinite: true` autoplay scrolls to the NEXT SINGLE SLIDE every
+ *   3 seconds. In our CSS Grid layout, "next slide" is the 2nd item in column 1
+ *   (offsetLeft = 0), so it resets scroll to 0. Fix: remove infinite + autoplay
+ *   attributes from slideshow-component so Shopify never touches scroll position.
+ * - Shopify's arrows fire a SlideshowSelectEvent that triggers DOM reordering for
+ *   infinite mode. We intercept arrow *click* at capture phase on the section,
+ *   before the event reaches the button, so Shopify's handler never runs.
+ * - Column width is set in JS as exact pixels (scroller.clientWidth / 4) rather
+ *   than calc(100% / 4) to avoid any sub-pixel rounding that causes a peek.
  */
 (function () {
   function initCollectionBrowseCarousel() {
@@ -11,15 +20,48 @@
     const scroller = section.querySelector('slideshow-slides');
     if (!scroller) return;
 
-    // Calculate how many "pages" we have (columns per page = 4)
+    // --- Neutralise Shopify's own slideshow for this section ---
+    //
+    // Shopify's autoplay fires this.next() every N ms, which calls
+    // select(slideIndex). In our CSS Grid, slide[1] is column-1 row-2
+    // (offsetLeft = 0), so autoplay keeps resetting scrollLeft to 0.
+    //
+    // The slideshow component reads these attributes dynamically (getter),
+    // so removing them prevents future resume() calls from restarting.
+    // We ALSO call suspend() to clear any interval already running, and
+    // setAttribute('paused') so resume() short-circuits even if called.
+    const slideshowEl = section.querySelector('slideshow-component');
+    if (slideshowEl) {
+      slideshowEl.removeAttribute('autoplay');
+      slideshowEl.setAttribute('paused', '');
+      slideshowEl.removeAttribute('infinite');
+      if (typeof slideshowEl.suspend === 'function') slideshowEl.suspend();
+    }
+
+    // Hide Shopify's built-in navigation dots (we render our own)
+    const builtInControls = section.querySelector('slideshow-controls');
+    if (builtInControls) builtInControls.style.display = 'none';
+
     const COLS_PER_PAGE = 4;
     const ROWS = 2;
     const ITEMS_PER_PAGE = COLS_PER_PAGE * ROWS;
-    const slides = scroller.querySelectorAll('.resource-list__slide');
-    const totalItems = slides.length;
+    const allSlides = scroller.querySelectorAll('.resource-list__slide');
+    const totalItems = allSlides.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
     if (totalPages <= 1) return;
+
+    /**
+     * Set grid-auto-columns to exact pixels so 4 columns fill the viewport
+     * precisely — no sub-pixel gap that would cause a peeking 5th column.
+     */
+    function updateColumnSize() {
+      const w = scroller.clientWidth;
+      if (w > 0) scroller.style.gridAutoColumns = (w / COLS_PER_PAGE) + 'px';
+    }
+    updateColumnSize();
+    const ro = new ResizeObserver(updateColumnSize);
+    ro.observe(scroller);
 
     // --- Build dots container ---
     const existingDots = section.querySelector('.cb-custom-dots');
@@ -38,7 +80,7 @@
       dot.style.cssText =
         'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;padding:0;' +
         'background:var(--color-border,#ccc);transition:background 0.3s,transform 0.3s;';
-      dot.addEventListener('click', () => goToPage(i));
+      dot.addEventListener('click', () => { stopAutoplay(); goToPage(i); });
       dotsWrapper.appendChild(dot);
       dotEls.push(dot);
     }
@@ -54,11 +96,14 @@
     let autoplayTimer = null;
     const AUTOPLAY_SPEED = 3000;
 
+    /**
+     * Scroll target = page * scroller.clientWidth (exact, since columns are that wide).
+     * Clamp to maxScroll for last page so partial pages never appear left-aligned.
+     */
     function getPageScrollLeft(page) {
-      const slideEl = slides[page * ITEMS_PER_PAGE];
-      if (!slideEl) return 0;
-      // offsetLeft relative to scroller
-      return slideEl.offsetLeft - (scroller.offsetLeft || 0);
+      const target = page * scroller.clientWidth;
+      const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+      return Math.min(target, Math.max(0, maxScroll));
     }
 
     function updateDots(page) {
@@ -81,12 +126,34 @@
       updateDots(currentPage);
     }
 
-    // Sync dots on manual scroll
+    /**
+     * Intercept Shopify arrow clicks at capture phase (fires BEFORE the event
+     * reaches the button, so Shopify's SlideshowSelectEvent is never dispatched).
+     */
+    section.addEventListener(
+      'click',
+      (e) => {
+        const btn = e.target.closest(
+          '.slideshow-control--previous, .slideshow-control--next'
+        );
+        if (!btn) return;
+        e.stopPropagation();
+        e.preventDefault();
+        stopAutoplay();
+        if (btn.classList.contains('slideshow-control--previous')) {
+          goToPage(currentPage - 1 < 0 ? totalPages - 1 : currentPage - 1);
+        } else {
+          goToPage((currentPage + 1) % totalPages);
+        }
+      },
+      true // capture phase
+    );
+
+    // Sync dots on touch/drag scroll
     let scrollTimer;
     scroller.addEventListener('scroll', () => {
       clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
-        // Find which page is most visible
         let closest = 0;
         let minDiff = Infinity;
         for (let p = 0; p < totalPages; p++) {
@@ -100,7 +167,7 @@
       }, 80);
     });
 
-    // --- Autoplay ---
+    // --- Autoplay (our own) ---
     function startAutoplay() {
       stopAutoplay();
       autoplayTimer = setInterval(() => {
@@ -112,12 +179,21 @@
       if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
     }
 
-    // Pause on hover
     section.addEventListener('mouseenter', stopAutoplay);
     section.addEventListener('mouseleave', startAutoplay);
 
     updateDots(0);
     startAutoplay();
+
+    // Failsafe: re-kill Shopify's interval after its async connectedCallback finishes.
+    // connectedCallback is async so the setInterval may start a few ms after our init.
+    setTimeout(() => {
+      const sw = section.querySelector('slideshow-component');
+      if (!sw) return;
+      sw.removeAttribute('autoplay');
+      sw.setAttribute('paused', '');
+      if (typeof sw.suspend === 'function') sw.suspend();
+    }, 500);
   }
 
   // Run after DOM is ready
