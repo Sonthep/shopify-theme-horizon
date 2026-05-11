@@ -256,19 +256,15 @@
           on:change="/changeLanguage"
         >
           {%- for language in localization.available_languages -%}
-                <option
-                  value="{{ language.iso_code }}"
-                  lang="{{ language.iso_code }}"
-                  {% if language.iso_code == localization.language.iso_code %}
-                    selected
-                  {% endif %}
-                >
-                  {%- if localization_style == 'inline' -%}
-                    {{ language.iso_code | upcase }}
-                  {%- else -%}
-                    {{ language.endonym_name | capitalize }}
-                  {%- endif -%}
-                </option>
+            <option
+              value="{{ language.iso_code }}"
+              lang="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}
+                selected
+              {% endif %}
+            >
+              {{ language.endonym_name | capitalize }}
+            </option>
           {%- endfor -%}
         </select>
         <span class="svg-wrapper icon-caret">

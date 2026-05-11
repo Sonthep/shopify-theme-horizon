@@ -14,6 +14,26 @@
     "footer_main": {
       "type": "footer",
       "blocks": {
+        "logo_a9MdXH": {
+          "type": "logo",
+          "name": "t:names.logo",
+          "settings": {
+            "inverse": false,
+            "font": "heading",
+            "unit": "pixel",
+            "percent_width": 100,
+            "pixel_height": 96,
+            "custom_mobile_size": false,
+            "unit_mobile": "percent",
+            "percent_width_mobile": 100,
+            "pixel_height_mobile": 120,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "group_help_faq": {
           "type": "group",
           "settings": {
@@ -443,6 +463,7 @@
         }
       },
       "block_order": [
+        "logo_a9MdXH",
         "group_help_faq",
         "group_service",
         "group_about_us",
@@ -451,7 +472,7 @@
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
-        "gap": 24,
+        "gap": 0,
         "color_scheme": "scheme-1",
         "padding-block-start": 40,
         "padding-block-end": 40

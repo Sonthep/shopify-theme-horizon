@@ -384,10 +384,10 @@
           "static": true,
           "settings": {
             "placement": "on_image",
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "flex-end",
-            "collection_card_gap": 0,
-            "inherit_color_scheme": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "collection_card_gap": 11,
+            "inherit_color_scheme": false,
             "color_scheme": "",
             "border": "none",
             "border_width": 1,
@@ -447,7 +447,7 @@
         "columns": 4,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
-        "columns_gap": 0,
+        "columns_gap": 10,
         "bento_gap": 8,
         "rows_gap": 19,
         "max_collections": 6,
@@ -737,89 +737,91 @@
     "product_hotspots_carousel_jftUAn": {
       "type": "product-hotspots-Carousel",
       "blocks": {
-        "hotspot_product_LAyXmw": {
+        "hotspot_product_idLTBp": {
           "type": "_hotspot-product",
-          "name": "Hotspot1",
+          "name": "t:names.hotspot_product",
           "settings": {
-            "product": "upright-bun-pan-freezer-w1260-d860mm-4-doors",
-            "x-position": 6,
-            "y-position": 60,
+            "product": "",
+            "x-position": 50,
+            "y-position": 50,
             "slide_index": "1"
           },
           "blocks": {}
         },
-        "hotspot_product_4Gkbft": {
+        "hotspot_product_F9wwgV": {
           "type": "_hotspot-product",
-          "name": "Hotspot2",
+          "name": "t:names.hotspot_product",
+          "settings": {
+            "product": "",
+            "x-position": 50,
+            "y-position": 50,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_zHrR9F": {
+          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
+          "settings": {
+            "product": "soup-bucket-with-lid-d10-5-inch",
+            "x-position": 50,
+            "y-position": 50,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_rUhGNK": {
+          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
           "settings": {
             "product": "hood-dishwasher-500x500mm-rack",
-            "x-position": 40,
-            "y-position": 40,
-            "slide_index": "1"
-          },
-          "blocks": {}
-        },
-        "hotspot_product_VwGVaH": {
-          "type": "_hotspot-product",
-          "name": "Hotspot3",
-          "settings": {
-            "product": "non-stick-paella-pan-22cm",
-            "x-position": 60,
-            "y-position": 60,
-            "slide_index": "1"
-          },
-          "blocks": {}
-        },
-        "hotspot_product_dGwG44": {
-          "type": "_hotspot-product",
-          "name": "Hotspot 21",
-          "settings": {
-            "product": "drawer-freezer-w1500-d750mm-2-drawers-1-door",
             "x-position": 20,
-            "y-position": 60,
-            "slide_index": "2"
+            "y-position": 35,
+            "slide_index": "1"
           },
           "blocks": {}
         },
-        "hotspot_product_j3apBi": {
+        "hotspot_product_i4BB9p": {
           "type": "_hotspot-product",
-          "name": "Hotspot2/2",
-          "settings": {
-            "product": "drawer-freezer-w1500-d750mm-6-drawers",
-            "x-position": 40,
-            "y-position": 40,
-            "slide_index": "2"
-          },
-          "blocks": {}
-        },
-        "hotspot_product_xeVRBW": {
-          "type": "_hotspot-product",
-          "name": "Hotspot2/3",
-          "settings": {
-            "product": "drawer-freezer-w1200-d750mm-3-drawers-1-door",
-            "x-position": 77,
-            "y-position": 60,
-            "slide_index": "2"
-          },
-          "blocks": {}
-        },
-        "hotspot_product_8hTYjD": {
-          "type": "_hotspot-product",
-          "settings": {
-            "product": "upright-display-freezer-w1260-d860mm-2-doors",
-            "x-position": 55,
-            "y-position": 40,
-            "slide_index": "3"
-          },
-          "blocks": {}
-        },
-        "hotspot_product_yHLxMT": {
-          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
           "settings": {
             "product": "gas-6-burners-with-oven",
-            "x-position": 40,
-            "y-position": 58,
-            "slide_index": "3"
+            "x-position": 30,
+            "y-position": 65,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_wk9FqC": {
+          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
+          "settings": {
+            "product": "commercial-microwave-oven-2100w",
+            "x-position": 90,
+            "y-position": 20,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_XabnP9": {
+          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
+          "settings": {
+            "product": "convection-oven-pastry-2920",
+            "x-position": 92,
+            "y-position": 41,
+            "slide_index": "1"
+          },
+          "blocks": {}
+        },
+        "hotspot_product_eRB6TH": {
+          "type": "_hotspot-product",
+          "name": "t:names.hotspot_product",
+          "settings": {
+            "product": "upright-display-chiller-w1260-d860mm-4-doors",
+            "x-position": 70,
+            "y-position": 72,
+            "slide_index": "1"
           },
           "blocks": {}
         },
@@ -852,21 +854,27 @@
         }
       },
       "block_order": [
-        "hotspot_product_LAyXmw",
-        "hotspot_product_4Gkbft",
-        "hotspot_product_VwGVaH",
-        "hotspot_product_dGwG44",
-        "hotspot_product_j3apBi",
-        "hotspot_product_xeVRBW",
-        "hotspot_product_8hTYjD",
-        "hotspot_product_yHLxMT"
+        "hotspot_product_idLTBp",
+        "hotspot_product_F9wwgV",
+        "hotspot_product_zHrR9F",
+        "hotspot_product_rUhGNK",
+        "hotspot_product_i4BB9p",
+        "hotspot_product_wk9FqC",
+        "hotspot_product_XabnP9",
+        "hotspot_product_eRB6TH"
       ],
       "name": "t:names.product_hotspots",
       "settings": {
         "image_1": "shopify://shop_images/1-2-3-4-5.png",
         "image_2": "shopify://shop_images/4f4a2937-3fbb-4671-92ba-3cea5a74854b.png",
         "image_3": "shopify://shop_images/9022a705161ff42b7879d88f1fd6d0e8.png",
-        "image_4": "shopify://shop_images/6cd19ad3-2a31-4905-9440-ef16762b34a6.png",
+        "image_4": "shopify://shop_images/photo-1596552183299-000ef779e88d.avif",
+        "image_5": "shopify://shop_images/a087edc4-0624-491d-ae5c-f9adc2125ee5.png",
+        "top_right_type": "text",
+        "text_box_title": "Professional Standard",
+        "text_box_subtitle": "For Every Business",
+        "text_box_bg_color": "#0b6b5b",
+        "text_box_text_color": "#ffffff",
         "toggle_overlay": false,
         "overlay_color": "#00000026",
         "overlay_style": "solid",
@@ -1145,7 +1153,7 @@
           "static": true,
           "settings": {
             "alignment": "left",
-            "gap": 8,
+            "gap": 9,
             "inherit_color_scheme": true,
             "color_scheme": "",
             "border": "none",

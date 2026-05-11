@@ -8,18 +8,18 @@
     assign total_blocks = section.blocks.size
 
     # Grid layout calculations
-    assign grid_columns = total_blocks | at_most: 4
+    assign grid_columns = total_blocks | at_most: 5
 
     # Calculate last row counts using modulo arithmetic
     # last_row_count = (total_blocks - 1) % N + 1
-    assign last_row_count = total_blocks | minus: 1 | modulo: 4 | plus: 1
+    assign last_row_count = total_blocks | minus: 1 | modulo: 5 | plus: 1
     assign tablet_last_row_count = total_blocks | minus: 1 | modulo: 2 | plus: 1
 
     # Check if there are orphaned elements (single item in last row)
     assign has_isolated_grid_item_desktop = false
     assign has_isolated_grid_item_tablet = false
 
-    if total_blocks > 4 and last_row_count == 1
+    if total_blocks > 5 and last_row_count == 1
       assign has_isolated_grid_item_desktop = true
     endif
 
@@ -54,7 +54,8 @@
     grid-template-columns: 1fr;
     gap: var(--footer-gap);
     border-block-start: 1px solid #e0e0e0;
-    padding-block-start: var(--footer-gap);
+    padding-block-start: calc(var(--footer-gap) + 16px);
+    padding-block-end: calc(var(--footer-gap) + 16px);
   }
 
   @media screen and (min-width: 750px) and (max-width: 989px) {
@@ -63,7 +64,8 @@
       grid-auto-flow: row;
     }
 
-    .footer-content[style*='--grid-columns: 4'] {
+    .footer-content[style*='--grid-columns: 4'],
+    .footer-content[style*='--grid-columns: 5'] {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -73,12 +75,16 @@
   }
 
   @media screen and (min-width: 990px) {
+    /* First column (logo/contact) gets 1.6x width; rest split equally */
     .footer-content {
-      grid-template-columns: repeat(var(--grid-columns), 1fr);
+      grid-template-columns: 1.6fr repeat(calc(var(--grid-columns) - 1), 1fr);
+      align-items: start;
+      column-gap: calc(var(--footer-gap) + 8px);
     }
 
     /* Single item centered */
     .footer-content[style*='--grid-columns: 1'] {
+      grid-template-columns: 1fr;
       justify-items: center;
     }
 
@@ -88,14 +94,31 @@
   }
 
   .footer-content .menu__heading {
-    color: #333333;
-    font-size: 16px;
+    color: #222;
+    font-size: 15px;
     font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-block-end: 14px;
     line-height: 24px;
   }
 
   .footer-content a {
     text-decoration: none;
+    font-size: 14px;
+    color: #555;
+    transition: color 0.15s ease;
+    line-height: 1.7;
+  }
+
+  .footer-content a:hover {
+    color: #111;
+  }
+
+  /* Menu list item spacing */
+  .footer-content nav li + li,
+  .footer-content ul li + li {
+    margin-block-start: 6px;
   }
 {% endstylesheet %}
 

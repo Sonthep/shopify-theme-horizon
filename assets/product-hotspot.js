@@ -18,6 +18,12 @@ export class ProductHotspotComponent extends Component {
   /** @type {(() => void) | null} */
   #pointerenterHandler = null;
   timer = /** @type {number | null} */ (null);
+  /** @type {(() => void) | null} */
+  #dragCleanup = null;
+  #isDragging = false;
+
+  /** @type {boolean} */
+  static #designModeStylesInjected = false;
 
   connectedCallback() {
     super.connectedCallback();
@@ -27,6 +33,12 @@ export class ProductHotspotComponent extends Component {
 
     // Listen for breakpoint changes
     mediaQueryLarge.addEventListener('change', this.#handleBreakpointChange);
+
+    // Design mode: drag-to-position
+    if (window.Shopify?.designMode) {
+      ProductHotspotComponent.#injectDesignModeStyles();
+      this.#setupDesignModeDrag();
+    }
   }
 
   disconnectedCallback() {
@@ -35,6 +47,177 @@ export class ProductHotspotComponent extends Component {
     // Clean up listeners
     this.#removeDesktopListeners();
     mediaQueryLarge.removeEventListener('change', this.#handleBreakpointChange);
+
+    if (this.#dragCleanup) {
+      this.#dragCleanup();
+      this.#dragCleanup = null;
+    }
+  }
+
+  // ─── Design-mode drag-to-position ────────────────────────────────────────
+
+  /** Inject design-mode styles once into the document */
+  static #injectDesignModeStyles() {
+    if (ProductHotspotComponent.#designModeStylesInjected) return;
+    ProductHotspotComponent.#designModeStylesInjected = true;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Design-mode hotspot drag handle */
+      .hotspot--design-mode .hotspot-trigger {
+        cursor: grab !important;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.9), 0 0 0 4px rgba(32,120,244,0.7);
+      }
+      .hotspot--design-mode.hotspot--dragging .hotspot-trigger {
+        cursor: grabbing !important;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.9), 0 0 0 4px rgba(32,120,244,1);
+      }
+      /* Coordinate badge shown while dragging */
+      .hotspot-drag-badge {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.88);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 99999;
+        line-height: 1.5;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      }
+      .hotspot-drag-badge.hotspot-drag-badge--done {
+        background: rgba(15,120,40,0.92);
+        animation: _hotspot-badge-fade 15s 1s forwards;
+      }
+      @keyframes _hotspot-badge-fade { 80% { opacity: 1; } to { opacity: 0; pointer-events: none; } }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /** Set up drag-to-position in Shopify design mode */
+  #setupDesignModeDrag() {
+    const { trigger } = this.refs;
+    this.classList.add('hotspot--design-mode');
+
+    let startClientX = 0, startClientY = 0;
+    let startCenterXPct = 0, startCenterYPct = 0;
+    /** @type {HTMLDivElement | null} */
+    let activeBadge = null;
+    let hasDragged = false;
+
+    const getContainer = () => /** @type {HTMLElement | null} */ (this.closest('.hotspots-container'));
+
+    /** @param {MouseEvent} e */
+    const onMouseDown = (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const container = getContainer();
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const selfRect = this.getBoundingClientRect();
+      const centerX = selfRect.left + selfRect.width / 2;
+      const centerY = selfRect.top + selfRect.height / 2;
+
+      startClientX = e.clientX;
+      startClientY = e.clientY;
+      startCenterXPct = ((centerX - containerRect.left) / containerRect.width) * 100;
+      startCenterYPct = ((centerY - containerRect.top) / containerRect.height) * 100;
+      hasDragged = false;
+      this.#isDragging = true;
+      this.classList.add('hotspot--dragging');
+
+      // Close any open dialog before dragging
+      if (this.refs.dialog.open) this.closeDialog();
+
+      // Remove any stale pending badge before starting a new drag
+      this.querySelector('.hotspot-drag-badge')?.remove();
+
+      // Create live coordinate badge
+      activeBadge = document.createElement('div');
+      activeBadge.className = 'hotspot-drag-badge';
+      activeBadge.textContent = `X: ${Math.round(startCenterXPct)}, Y: ${Math.round(startCenterYPct)}`;
+      this.appendChild(activeBadge);
+
+      document.body.style.userSelect = 'none';
+      document.addEventListener('mousemove', onMouseMove, { capture: true });
+      document.addEventListener('mouseup', onMouseUp, { capture: true });
+    };
+
+    /** @param {MouseEvent} e */
+    const onMouseMove = (e) => {
+      if (!this.#isDragging) return;
+
+      const container = getContainer();
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const dx = e.clientX - startClientX;
+      const dy = e.clientY - startClientY;
+
+      if (Math.sqrt(dx * dx + dy * dy) > 3) hasDragged = true;
+
+      const newX = Math.max(0, Math.min(100, startCenterXPct + (dx / containerRect.width) * 100));
+      const newY = Math.max(0, Math.min(100, startCenterYPct + (dy / containerRect.height) * 100));
+
+      this.style.left = `calc(${newX}% - var(--button-size) / 2)`;
+      this.style.top = `calc(${newY}% - var(--button-size) / 2)`;
+
+      if (activeBadge) activeBadge.textContent = `X: ${Math.round(newX)}, Y: ${Math.round(newY)}`;
+    };
+
+    /** @param {MouseEvent} e */
+    const onMouseUp = (e) => {
+      if (!this.#isDragging) return;
+      this.#isDragging = false;
+      this.classList.remove('hotspot--dragging');
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMouseMove, { capture: true });
+      document.removeEventListener('mouseup', onMouseUp, { capture: true });
+
+      // Suppress the click that follows mouseup when user dragged
+      if (hasDragged) {
+        trigger.addEventListener('click', (ev) => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
+      }
+
+      const container = getContainer();
+      let finalX = Math.round(startCenterXPct);
+      let finalY = Math.round(startCenterYPct);
+
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        const selfRect = this.getBoundingClientRect();
+        finalX = Math.round(((selfRect.left + selfRect.width / 2 - containerRect.left) / containerRect.width) * 100);
+        finalY = Math.round(((selfRect.top + selfRect.height / 2 - containerRect.top) / containerRect.height) * 100);
+      }
+
+      // ── Show final coordinate badge (fades after 15s — enough time to type into slider) ──
+      activeBadge?.remove();
+      activeBadge = null;
+
+      const doneBadge = document.createElement('div');
+      doneBadge.className = 'hotspot-drag-badge hotspot-drag-badge--done';
+      doneBadge.innerHTML =
+        `<strong>X: ${finalX} &nbsp; Y: ${finalY}</strong><br>` +
+        `<span style="font-size:10px;opacity:0.85">&#x2192; ใส่ค่านี้ใน Horizontal / Vertical แล้ว Save</span>`;
+      this.appendChild(doneBadge);
+    };
+
+    trigger.addEventListener('mousedown', onMouseDown);
+
+    this.#dragCleanup = () => {
+      trigger.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mousemove', onMouseMove, { capture: true });
+      document.removeEventListener('mouseup', onMouseUp, { capture: true });
+    };
   }
 
   /**

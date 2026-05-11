@@ -32,7 +32,7 @@
     <div class="section-product-hotspots__content hotspots-mosaic">
       <div class="hotspots-mosaic__grid">
         {%- comment -%} Main left image {%- endcomment -%}
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--main">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--main" data-hotspot-target="main">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -44,7 +44,7 @@
         </div>
 
         {%- comment -%} Top-right: image OR customizable text box {%- endcomment -%}
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-top">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-top" data-hotspot-target="center-top">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -68,7 +68,7 @@
           {% endif %}
         </div>
 
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-bottom">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--center-bottom" data-hotspot-target="center-bottom">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -79,7 +79,7 @@
           {% endif %}
         </div>
 
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-top">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-top" data-hotspot-target="side-top">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -90,7 +90,7 @@
           {% endif %}
         </div>
 
-        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-bottom">
+        <div class="hotspots-mosaic__cell hotspots-mosaic__cell--side-bottom" data-hotspot-target="side-bottom">
           {% if section.settings.toggle_overlay %}
             {% render 'overlay', settings: section.settings, layer: 'var(--layer-flat)' %}
           {% endif %}
@@ -117,12 +117,13 @@
         <div class="hotspots-mosaic__text-box">
           {% content_for 'block', type: 'text', id: 'heading' %}
         </div>
+
+        {%- comment -%} Hotspot blocks rendered on top of the grid {%- endcomment -%}
+        <div class="hotspots-container" aria-hidden="false">
+          {% content_for 'blocks' %}
+        </div>
       </div>
 
-      {%- comment -%} Hotspot blocks rendered on top {%- endcomment -%}
-      <div class="hotspots-container" aria-hidden="false">
-        {% content_for 'blocks' %}
-      </div>
     </div>
   </div>
 </div>
@@ -364,7 +365,12 @@
     position: absolute;
     inset: 0;
     z-index: var(--layer-flat);
-    overflow: clip;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .hotspots-container > * {
+    pointer-events: auto;
   }
 
   .hotspots__background-image {

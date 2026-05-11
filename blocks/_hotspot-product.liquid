@@ -18,6 +18,8 @@
   data-product-url="{{ block.settings.product.url }}"
   data-product-title="{{ block.settings.product.title | escape }}"
   data-id="{{ block.id }}"
+  data-x-position="{{ block.settings.x-position }}"
+  data-y-position="{{ block.settings.y-position }}"
   {% if block.settings.slide_index and block.settings.slide_index != '0' %}data-hotspot-slide="{{ block.settings.slide_index }}"{% endif %}
   {{ block.shopify_attributes }}
 >
