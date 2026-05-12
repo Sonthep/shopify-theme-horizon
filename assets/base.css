@@ -412,6 +412,10 @@ p:empty {
   flex: 1;
 }
 
+.content-for-layout > .shopify-section:last-child {
+  flex-grow: 1;
+}
+
 /* Set up page widths & margins */
 .page-width-wide,
 .page-width-normal,
@@ -2658,6 +2662,10 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
 }
 
+.tax-note:empty {
+  display: none;
+}
+
 product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   margin-block: 0;
 }
@@ -2666,6 +2674,31 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   opacity: 0.4;
   text-decoration-line: line-through;
   text-decoration-thickness: 1.5px;
+}
+
+/* Volume pricing note should match unit-price styling (small, grey text) */
+product-price .volume-pricing-note,
+product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) .volume-pricing-note {
+  display: block;
+  font-family: var(--font-body--family);
+  font-weight: normal;
+  font-size: var(--font-size--xs);
+  line-height: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+}
+
+.price-item__group {
+  display: inline-block;
+}
+
+.price-item--sale {
+  white-space: nowrap;
+}
+
+.price__hidden {
+  display: none;
 }
 
 .card-gallery {
@@ -4810,11 +4843,14 @@ body:has(.header[transparent]) .header {
 }
 
 .header-menu .menu-list__submenu,
-.header-drawer .menu-drawer__submenu,
-.header-drawer .menu-drawer__menu-container {
+.header-drawer .menu-drawer__submenu {
   border: 1px solid var(--b2b-color-border);
   border-radius: var(--b2b-radius-card);
   box-shadow: var(--b2b-shadow-soft);
+}
+
+.header-drawer .menu-drawer__menu-container {
+  border: none;
 }
 
 .header-menu .menu-list__link,
@@ -4831,6 +4867,10 @@ body:has(.header[transparent]) .header {
 .header-drawer .menu-drawer__back-button:hover,
 .header-drawer .menu-drawer__close-button:hover {
   background-color: var(--b2b-color-surface-soft);
+}
+
+.header-drawer .menu-drawer__close-button {
+  color: var(--color-foreground);
 }
 
 @media screen and (min-width: 750px) {

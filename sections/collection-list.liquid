@@ -69,7 +69,39 @@
     content_type: 'collections',
     test_id: 'collections-list-grid'
   %}
+
+  {% if section.settings.show_view_all and section.settings.view_all_url != blank %}
+    <div class="collection-list__view-all">
+      <a href="{{ section.settings.view_all_url }}" class="collection-list__view-all-link">
+        {{ section.settings.view_all_text | default: 'View All Product' }}
+      </a>
+    </div>
+  {% endif %}
 </div>
+
+{% stylesheet %}
+  .collection-list__view-all {
+    text-align: center;
+    margin-block-start: -20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .collection-list__view-all-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+  }
+
+  .collection-list__view-all-link:hover {
+    opacity: 1;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -115,6 +147,28 @@
       "type": "collection_list",
       "id": "collection_list",
       "label": "t:settings.collection_list"
+    },
+    {
+      "type": "header",
+      "content": "View All Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show \"View All\" link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Link text",
+      "default": "View All Product"
+    },
+    {
+      "type": "url",
+      "id": "view_all_url",
+      "label": "Link URL",
+      "default": "/collections/all"
     },
     {
       "type": "header",

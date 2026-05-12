@@ -1,0 +1,256 @@
+{%- liquid
+  assign bg_image = section.settings.background_image
+  assign heading = section.settings.heading | default: 'Newsletter & Promotions'
+  assign subheading = section.settings.subheading
+  assign placeholder = section.settings.placeholder | default: 'กรอกอีเมลของคุณ...'
+  assign button_text = section.settings.button_text | default: 'ส่ง'
+-%}
+
+<section class="newsletter-signup color-{{ section.settings.color_scheme }}" id="newsletter-signup-{{ section.id }}">
+  {%- if bg_image != blank -%}
+    <div class="newsletter-signup__bg">
+      {{- bg_image | image_url: width: 1600 | image_tag: loading: 'lazy', class: 'newsletter-signup__bg-img' -}}
+      <div class="newsletter-signup__overlay"></div>
+    </div>
+  {%- endif -%}
+
+  <div class="newsletter-signup__content">
+    <h2 class="newsletter-signup__heading">{{ heading }}</h2>
+
+    {%- if subheading != blank -%}
+      <p class="newsletter-signup__subheading">{{ subheading }}</p>
+    {%- endif -%}
+
+    {%- form 'customer', id: 'newsletter-form-{{ section.id }}', class: 'newsletter-signup__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+
+      {%- if form.posted_successfully? -%}
+        <p class="newsletter-signup__success">{{ 'general.newsletter.success' | t }}</p>
+      {%- else -%}
+        <div class="newsletter-signup__input-row">
+          <label class="newsletter-signup__input-wrap">
+            <span class="newsletter-signup__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </span>
+            <input
+              type="email"
+              name="contact[email]"
+              id="newsletter-email-{{ section.id }}"
+              class="newsletter-signup__input"
+              value="{{ form.email }}"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              placeholder="{{ placeholder }}"
+              required
+              aria-required="true"
+            >
+          </label>
+          <button type="submit" class="newsletter-signup__btn">{{ button_text }}</button>
+        </div>
+
+        {%- if form.errors -%}
+          <p class="newsletter-signup__error">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .newsletter-signup {
+    position: relative;
+    overflow: hidden;
+    padding-block: 72px 64px;
+    text-align: center;
+  }
+
+  .newsletter-signup__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .newsletter-signup__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .newsletter-signup__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .newsletter-signup__content {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  .newsletter-signup__heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+
+  .newsletter-signup__subheading {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    margin: 0 0 28px;
+    line-height: 1.6;
+  }
+
+  .newsletter-signup__form {
+    margin-top: 32px;
+  }
+
+  .newsletter-signup__input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  .newsletter-signup__input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 50px;
+    padding: 0 20px;
+    gap: 10px;
+    height: 52px;
+  }
+
+  .newsletter-signup__icon {
+    color: #666;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .newsletter-signup__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.9375rem;
+    color: #333;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .newsletter-signup__input::placeholder {
+    color: #aaa;
+  }
+
+  .newsletter-signup__btn {
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0 28px;
+    height: 52px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .newsletter-signup__btn:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
+
+  .newsletter-signup__success {
+    color: #c8f5c8;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .newsletter-signup__error {
+    color: #ffd6d6;
+    font-size: 0.875rem;
+    margin: 8px 0 0;
+  }
+
+  @media screen and (max-width: 600px) {
+    .newsletter-signup {
+      padding-block: 48px;
+    }
+
+    .newsletter-signup__input-row {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .newsletter-signup__input-wrap {
+      width: 100%;
+    }
+
+    .newsletter-signup__btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter Signup",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Newsletter & Promotions"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email Placeholder",
+      "default": "กรอกอีเมลของคุณ..."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "ส่ง"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Signup"
+    }
+  ]
+}
+{% endschema %}

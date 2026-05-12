@@ -598,7 +598,7 @@
     background: linear-gradient(
       var(--color-scheme-top-row) 0 var(--top-row-height),
       var(--color-scheme-bottom-row) var(--top-row-height) var(--header-height),
-      var(--color-submenu) var(--header-height) 100%
+      transparent var(--header-height) 100%
     );
     /* header-height is updated via js, the transition works automagically */
     transition: height var(--submenu-animation-speed) var(--ease-out-cubic);
@@ -637,7 +637,7 @@
     .header__underlay-open {
       background: linear-gradient(
         var(--color-scheme-top-row) 0 var(--top-row-height),
-        var(--color-submenu) var(--top-row-height) 100%
+        transparent var(--top-row-height) 100%
       );
     }
 

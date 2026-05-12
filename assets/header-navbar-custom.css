@@ -17,9 +17,30 @@
   --header-padding: var(--custom-header-vertical-padding, 10px);
 }
 
-#header-component.header .header__underlay-closed,
-#header-component.header .header__underlay-open {
+#header-component.header .header__underlay-closed {
   background: rgb(var(--header-ref-green));
+}
+
+/* When submenu opens, keep header bar green but submenu area transparent */
+#header-component.header .header__underlay-open {
+  background: linear-gradient(
+    rgb(var(--header-ref-green)) 0 var(--header-height),
+    transparent var(--header-height) 100%
+  );
+}
+
+/* Remove white card background behind submenu panel */
+.header-menu .menu-list__submenu {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Remove top border radius on the mega menu 3-panel card */
+.mega-menu-3panel {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
 
 /* Override theme color-scheme text/icon color inside rows */
@@ -340,6 +361,13 @@
   color: #ffffff;
 }
 
+/* Restore drawer close/back button icon color to match menu text */
+#header-component.header .menu-drawer__close-button,
+#header-component.header .menu-drawer__close-button .svg-wrapper,
+#header-component.header .menu-drawer__back-button .svg-wrapper {
+  color: var(--color-foreground);
+}
+
 /* Icon sizes closer to reference */
 #header-component.header .header-actions__action:not(.account-button) svg {
   width: 22px;
@@ -353,8 +381,11 @@
     border-color: transparent !important;
   }
 
-  #header-component.header .search-bar-trigger__icon {
-    color: #ffffff;
+  #header-component.header .search-bar-trigger,
+  #header-component.header .search-bar-trigger__icon,
+  #header-component.header .search-bar-trigger__icon svg,
+  #header-component.header .search-bar-trigger .svg-wrapper {
+    color: #ffffff !important;
   }
 }
 

@@ -590,6 +590,7 @@
     "actions_display_style": "รูปแบบเมนู"
   },
   "options": {
+    "adapt_image": "ปรับตามขนาดภาพ",
     "apple": "Apple",
     "arrow": "ลูกศร",
     "auto": "อัตโนมัติ",

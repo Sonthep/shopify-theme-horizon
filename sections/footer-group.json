@@ -11,29 +11,79 @@
   "type": "footer",
   "name": "Footer",
   "sections": {
+    "feature_bar_CXEqJb": {
+      "type": "feature-bar",
+      "blocks": {
+        "feature_DXVEEY": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/1.png",
+            "title": "Best Price Guarantee",
+            "description": "Best value assured with exclusive special offers"
+          }
+        },
+        "feature_HaNPaM": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/2.png",
+            "title": "Large Stock",
+            "description": "Over 35,000 items ready to meet all your needs"
+          }
+        },
+        "feature_C3rzPx": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/3.png",
+            "title": "Free Shipping",
+            "description": "On orders over ฿5,000 to Bangkok, Phuket & Samui"
+          }
+        },
+        "feature_gfq9ta": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/4.png",
+            "title": "After-Sales Service",
+            "description": "Expert support & consultation 24 hours, 365 days"
+          }
+        },
+        "feature_AeeY66": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/5.png",
+            "title": "Repair & Maintenance",
+            "description": "Inspection and repairs by certified technicians"
+          }
+        }
+      },
+      "block_order": [
+        "feature_DXVEEY",
+        "feature_HaNPaM",
+        "feature_C3rzPx",
+        "feature_gfq9ta",
+        "feature_AeeY66"
+      ],
+      "name": "Feature Bar",
+      "settings": {
+        "color_scheme": "",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "newsletter_signup_R3qV4x": {
+      "type": "newsletter-signup",
+      "name": "Newsletter Signup",
+      "settings": {
+        "background_image": "shopify://shop_images/Untitled-1-02.jpg",
+        "heading": "Newsletter & Promotions",
+        "subheading": "",
+        "placeholder": "Enter your email…",
+        "button_text": "Sent",
+        "color_scheme": "scheme-6"
+      }
+    },
     "footer_main": {
       "type": "footer",
       "blocks": {
-        "logo_a9MdXH": {
-          "type": "logo",
-          "name": "t:names.logo",
-          "settings": {
-            "inverse": false,
-            "font": "heading",
-            "unit": "pixel",
-            "percent_width": 100,
-            "pixel_height": 96,
-            "custom_mobile_size": false,
-            "unit_mobile": "percent",
-            "percent_width_mobile": 100,
-            "pixel_height_mobile": 120,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "group_help_faq": {
           "type": "group",
           "settings": {
@@ -463,7 +513,6 @@
         }
       },
       "block_order": [
-        "logo_a9MdXH",
         "group_help_faq",
         "group_service",
         "group_about_us",
@@ -472,7 +521,7 @@
       "name": "t:names.footer",
       "settings": {
         "section_width": "page-width",
-        "gap": 0,
+        "gap": 15,
         "color_scheme": "scheme-1",
         "padding-block-start": 40,
         "padding-block-end": 40
@@ -489,19 +538,10 @@
             "case": "none"
           },
           "blocks": {}
-        },
-        "footer_policy_list_VCdnpa": {
-          "type": "footer-policy-list",
-          "settings": {
-            "font_size": "0.75rem",
-            "case": "none"
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "footer_copyright_jweRK8",
-        "footer_policy_list_VCdnpa"
+        "footer_copyright_jweRK8"
       ],
       "name": "t:names.utilities",
       "settings": {
@@ -515,6 +555,8 @@
     }
   },
   "order": [
+    "feature_bar_CXEqJb",
+    "newsletter_signup_R3qV4x",
     "footer_main",
     "footer_utilities_jLGE8U"
   ]
