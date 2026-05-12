@@ -1,0 +1,639 @@
+{%- comment -%} sections/blog-listing.liquid — Custom Blog Listing with modern UX/UI {%- endcomment -%}
+
+{%- assign articles_per_page = section.settings.articles_per_page | default: 9 -%}
+{%- assign show_hero = section.settings.show_hero -%}
+{%- assign all_tags = blog.all_tags -%}
+{%- assign current_tag = current_tags | first -%}
+
+{%- paginate blog.articles by articles_per_page -%}
+
+<div class="blog-listing color-{{ section.settings.color_scheme }}">
+
+  {%- comment -%} ── PAGE HEADER ─────────────────────────────────── {%- endcomment -%}
+  <div class="blog-listing__header">
+    <div class="blog-listing__header-inner">
+      <p class="blog-listing__eyebrow">{{ section.settings.eyebrow | default: 'Our Blog' }}</p>
+      <h1 class="blog-listing__title">{{ section.settings.heading | default: blog.title }}</h1>
+      {%- if section.settings.subheading != blank -%}
+        <p class="blog-listing__subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} ── TAG FILTER ───────────────────────────────────── {%- endcomment -%}
+  {%- if all_tags.size > 0 and section.settings.show_tags -%}
+    <div class="blog-listing__tags">
+      <div class="blog-listing__tags-inner">
+        <a href="{{ blog.url }}" class="blog-tag{% unless current_tag %} is-active{% endunless %}">
+          All
+        </a>
+        {%- for tag in all_tags -%}
+          <a href="{{ blog.url }}/tagged/{{ tag | handleize }}"
+             class="blog-tag{% if current_tag == tag %} is-active{% endif %}">
+            {{ tag }}
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="blog-listing__content">
+
+    {%- comment -%} ── HERO FEATURED POST ───────────────────────── {%- endcomment -%}
+    {%- if show_hero and blog.articles.size > 0 -%}
+      {%- assign hero = blog.articles[0] -%}
+      {%- assign reading_words = hero.content | strip_html | split: ' ' -%}
+      {%- assign reading_minutes = reading_words.size | divided_by: 200 | plus: 1 -%}
+      <a href="{{ hero.url }}" class="blog-hero" aria-label="{{ hero.title }}">
+        <div class="blog-hero__image-wrap">
+          {%- if hero.image -%}
+            <img
+              src="{{ hero.image | image_url: width: 1400 }}"
+              alt="{{ hero.image.alt | escape | default: hero.title }}"
+              loading="eager"
+              width="{{ hero.image.width }}"
+              height="{{ hero.image.height }}"
+              class="blog-hero__image"
+            >
+          {%- else -%}
+            <div class="blog-hero__image blog-hero__image--placeholder"></div>
+          {%- endif -%}
+          <div class="blog-hero__overlay"></div>
+        </div>
+        <div class="blog-hero__body">
+          {%- if hero.tags.size > 0 -%}
+            <span class="blog-hero__tag">{{ hero.tags | first }}</span>
+          {%- endif -%}
+          <h2 class="blog-hero__title">{{ hero.title }}</h2>
+          <p class="blog-hero__excerpt">{{ hero.excerpt_or_content | strip_html | truncate: 160 }}</p>
+          <div class="blog-hero__meta">
+            <span class="blog-hero__date">{{ hero.published_at | date: '%B %d, %Y' }}</span>
+            <span class="blog-hero__sep">·</span>
+            <span class="blog-hero__reading-time">{{ reading_minutes }} min read</span>
+            {%- if section.settings.show_author -%}
+              <span class="blog-hero__sep">·</span>
+              <span class="blog-hero__author">{{ hero.author }}</span>
+            {%- endif -%}
+          </div>
+          <span class="blog-hero__cta">
+            Read Article
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+      </a>
+    {%- endif -%}
+
+    {%- comment -%} ── ARTICLE GRID ─────────────────────────────── {%- endcomment -%}
+    {%- assign start_index = 0 -%}
+    {%- if show_hero and current_tag == blank -%}
+      {%- assign start_index = 1 -%}
+    {%- endif -%}
+
+    {%- assign loop_articles = blog.articles -%}
+
+    <div class="blog-grid">
+      {%- for article in loop_articles -%}
+        {%- if forloop.index0 < start_index -%}{%- continue -%}{%- endif -%}
+        {%- assign words = article.content | strip_html | split: ' ' -%}
+        {%- assign mins = words.size | divided_by: 200 | plus: 1 -%}
+        <article class="blog-card">
+          <a href="{{ article.url }}" class="blog-card__image-link" tabindex="-1" aria-hidden="true">
+            <div class="blog-card__image-wrap">
+              {%- if article.image -%}
+                <img
+                  src="{{ article.image | image_url: width: 600 }}"
+                  alt="{{ article.image.alt | escape | default: article.title }}"
+                  loading="lazy"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                  class="blog-card__image"
+                >
+              {%- else -%}
+                <div class="blog-card__image blog-card__image--placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-6 4 4"/>
+                  </svg>
+                </div>
+              {%- endif -%}
+            </div>
+          </a>
+          <div class="blog-card__body">
+            {%- if article.tags.size > 0 -%}
+              <a href="{{ blog.url }}/tagged/{{ article.tags | first | handleize }}" class="blog-card__tag">
+                {{ article.tags | first }}
+              </a>
+            {%- endif -%}
+            <h2 class="blog-card__title">
+              <a href="{{ article.url }}">{{ article.title }}</a>
+            </h2>
+            {%- if section.settings.show_excerpt -%}
+              <p class="blog-card__excerpt">
+                {{ article.excerpt_or_content | strip_html | truncate: 110 }}
+              </p>
+            {%- endif -%}
+            <div class="blog-card__footer">
+              <div class="blog-card__meta">
+                <time class="blog-card__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                  {{ article.published_at | date: '%b %d, %Y' }}
+                </time>
+                <span class="blog-card__sep">·</span>
+                <span class="blog-card__reading-time">{{ mins }} min read</span>
+              </div>
+              <a href="{{ article.url }}" class="blog-card__read-more" aria-label="Read {{ article.title }}">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} ── PAGINATION ────────────────────────────────── {%- endcomment -%}
+    {%- if paginate.pages > 1 -%}
+      <nav class="blog-pagination" aria-label="Blog pagination">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="blog-pagination__btn blog-pagination__btn--prev">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Prev
+          </a>
+        {%- endif -%}
+        <div class="blog-pagination__pages">
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}" class="blog-pagination__page">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}
+              <span class="blog-pagination__page is-current">{{ part.title }}</span>
+            {%- else -%}
+              <span class="blog-pagination__ellipsis">…</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="blog-pagination__btn blog-pagination__btn--next">
+            Next
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+
+  </div>
+</div>
+
+{%- endpaginate -%}
+
+<style>
+/* ── Variables ─────────────────────────────────── */
+.blog-listing {
+  --blog-accent: #b8960c;
+  --blog-accent-light: #f5f0e0;
+  --blog-radius: 12px;
+  --blog-card-gap: 28px;
+  --blog-transition: 0.25s ease;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* ── Header ────────────────────────────────────── */
+.blog-listing__header {
+  text-align: center;
+  padding: 64px 20px 48px;
+}
+.blog-listing__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blog-accent);
+  margin-bottom: 12px;
+}
+.blog-listing__title {
+  font-size: clamp(1.75rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+.blog-listing__subheading {
+  font-size: 1rem;
+  color: #666;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Tag Filter ────────────────────────────────── */
+.blog-listing__tags {
+  margin-bottom: 40px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.blog-listing__tags-inner {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.blog-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--blog-transition);
+}
+.blog-tag:hover { border-color: var(--blog-accent); color: var(--blog-accent); }
+.blog-tag.is-active {
+  background: var(--blog-accent);
+  border-color: var(--blog-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Hero ──────────────────────────────────────── */
+.blog-hero {
+  display: block;
+  position: relative;
+  border-radius: var(--blog-radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: #fff;
+  margin-bottom: var(--blog-card-gap);
+  height: clamp(360px, 50vw, 520px);
+}
+.blog-hero:hover .blog-hero__image { transform: scale(1.04); }
+.blog-hero__image-wrap {
+  position: absolute;
+  inset: 0;
+}
+.blog-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.blog-hero__image--placeholder {
+  background: linear-gradient(135deg, #e8e0d0 0%, #c8b86a 100%);
+}
+.blog-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 55%, transparent 100%);
+}
+.blog-hero__body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px;
+}
+.blog-hero__tag {
+  display: inline-block;
+  background: var(--blog-accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+.blog-hero__title {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 12px;
+  line-height: 1.25;
+  max-width: 680px;
+}
+.blog-hero__excerpt {
+  font-size: 0.95rem;
+  opacity: 0.88;
+  margin: 0 0 20px;
+  max-width: 580px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.blog-hero__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+.blog-hero__sep { opacity: 0.5; }
+.blog-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 8px 18px;
+  border-radius: 100px;
+  transition: background var(--blog-transition);
+}
+.blog-hero:hover .blog-hero__cta { background: rgba(255,255,255,0.25); }
+
+/* ── Card Grid ─────────────────────────────────── */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--blog-card-gap);
+}
+
+.blog-card {
+  background: #fff;
+  border-radius: var(--blog-radius);
+  overflow: hidden;
+  border: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--blog-transition), transform var(--blog-transition);
+}
+.blog-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  transform: translateY(-3px);
+}
+
+.blog-card__image-link { display: block; }
+.blog-card__image-wrap {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+.blog-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+.blog-card:hover .blog-card__image { transform: scale(1.06); }
+.blog-card__image--placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f0e8 0%, #e8d8a0 100%);
+  color: #b8960c;
+}
+
+.blog-card__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.blog-card__tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blog-accent);
+  background: var(--blog-accent-light);
+  padding: 3px 9px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-bottom: 10px;
+  align-self: flex-start;
+  transition: background var(--blog-transition);
+}
+.blog-card__tag:hover { background: #ead98a; }
+
+.blog-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.4;
+  flex: 1;
+}
+.blog-card__title a {
+  color: inherit;
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.blog-card__title a:hover { color: var(--blog-accent); }
+
+.blog-card__excerpt {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+}
+.blog-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #999;
+}
+.blog-card__sep { opacity: 0.5; }
+.blog-card__read-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #e0e0e0;
+  color: #555;
+  text-decoration: none;
+  transition: all var(--blog-transition);
+  flex-shrink: 0;
+}
+.blog-card__read-more:hover {
+  background: var(--blog-accent);
+  border-color: var(--blog-accent);
+  color: #fff;
+}
+
+/* ── Pagination ────────────────────────────────── */
+.blog-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 56px;
+}
+.blog-pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  text-decoration: none;
+  transition: all var(--blog-transition);
+}
+.blog-pagination__btn:hover {
+  border-color: var(--blog-accent);
+  color: var(--blog-accent);
+}
+.blog-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.blog-pagination__page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #444;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  transition: all var(--blog-transition);
+}
+.blog-pagination__page:hover { border-color: #ddd; }
+.blog-pagination__page.is-current {
+  background: var(--blog-accent);
+  color: #fff;
+  font-weight: 700;
+}
+.blog-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  color: #aaa;
+}
+
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 900px) {
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+  .blog-hero__body { padding: 28px; }
+}
+@media (max-width: 600px) {
+  .blog-grid { grid-template-columns: 1fr; }
+  .blog-listing__header { padding: 40px 0 32px; }
+  .blog-hero {
+    height: 300px;
+  }
+  .blog-hero__title { font-size: 1.2rem; }
+  .blog-hero__excerpt { display: none; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Blog Listing",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "Our Blog"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use the blog title"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "Show featured hero post",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tag filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt in cards",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author name in hero",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles per page",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 9
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Listing",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}

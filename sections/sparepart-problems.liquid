@@ -1,0 +1,57 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="sp-section">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">{{ section.settings.eyebrow }}</div>
+      <h2 class="sp-title">{{ section.settings.title }}</h2>
+      <p class="sp-copy sp-copy--center">{{ section.settings.description }}</p>
+    </div>
+
+    <div class="sp-problem-grid">
+      {% for block in section.blocks %}
+        <div class="sp-problem-card" {{ block.shopify_attributes }}>
+          <div class="sp-problem-card__icon">{{ block.settings.icon }}</div>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.body }}</p>
+          <a href="{{ block.settings.url | default: '#' }}" class="sp-text-link">{{ block.settings.link_text }}</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - Problems",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "We Solve It" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Common Problems, Solved" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Identify your issue, find the right part, and get back to business fast." }
+  ],
+  "blocks": [
+    {
+      "type": "problem",
+      "name": "Problem",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "⚠" },
+        { "type": "text", "id": "title", "label": "Title", "default": "My refrigerator seal is worn out" },
+        { "type": "textarea", "id": "body", "label": "Description", "default": "Replace the door gasket to restore proper insulation and save energy costs. We have compatible seals for all major brands." },
+        { "type": "text", "id": "link_text", "label": "Link text", "default": "Shop Gaskets" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - Problems",
+      "blocks": [
+        { "type": "problem", "settings": { "icon": "⚠", "title": "My refrigerator seal is worn out", "body": "Replace the door gasket to restore proper insulation and save energy costs. We have compatible seals for all major brands.", "link_text": "Shop Gaskets" } },
+        { "type": "problem", "settings": { "icon": "🌡", "title": "Oven not heating properly", "body": "A faulty heating element is often the cause. Our OEM-compatible elements restore full performance quickly.", "link_text": "Shop Heating Parts" } },
+        { "type": "problem", "settings": { "icon": "💧", "title": "Ice machine not producing ice", "body": "Check the water pump assembly. We stock replacement pumps for Hoshizaki, Manitowoc, and more.", "link_text": "Shop Pumps" } },
+        { "type": "problem", "settings": { "icon": "⚡", "title": "Equipment showing error codes", "body": "PCB and control board issues are common. Get genuine replacement boards with warranty protection.", "link_text": "Shop Electronics" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,565 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "feature_bar_CXEqJb": {
+      "type": "feature-bar",
+      "blocks": {
+        "feature_DXVEEY": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/1.png",
+            "title": "Best Price Guarantee",
+            "description": "Best value assured with exclusive special offers"
+          }
+        },
+        "feature_HaNPaM": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/2.png",
+            "title": "Large Stock",
+            "description": "Over 35,000 items ready to meet all your needs"
+          }
+        },
+        "feature_C3rzPx": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/3.png",
+            "title": "Free Shipping",
+            "description": "On orders over ฿5,000 to Bangkok, Phuket & Samui"
+          }
+        },
+        "feature_gfq9ta": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/4.png",
+            "title": "After-Sales Service",
+            "description": "Expert support & consultation 24 hours, 365 days"
+          }
+        },
+        "feature_AeeY66": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/5.png",
+            "title": "Repair & Maintenance",
+            "description": "Inspection and repairs by certified technicians"
+          }
+        }
+      },
+      "block_order": [
+        "feature_DXVEEY",
+        "feature_HaNPaM",
+        "feature_C3rzPx",
+        "feature_gfq9ta",
+        "feature_AeeY66"
+      ],
+      "name": "Feature Bar",
+      "settings": {
+        "color_scheme": "",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "newsletter_signup_R3qV4x": {
+      "type": "newsletter-signup",
+      "disabled": true,
+      "custom_css": [],
+      "name": "Newsletter Signup",
+      "settings": {
+        "background_image": "shopify://shop_images/Untitled-1-02.jpg",
+        "heading": "Newsletter & Promotions",
+        "subheading": "",
+        "placeholder": "Enter your email…",
+        "button_text": "Sent",
+        "color_scheme": "scheme-6"
+      }
+    },
+    "footer_main": {
+      "type": "footer",
+      "blocks": {
+        "group_help_faq": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading_help_faq": {
+              "type": "text",
+              "settings": {
+                "text": "<p><strong>Help & FAQ</strong></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "16px",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#333333",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "links_help_faq": {
+              "type": "text",
+              "settings": {
+                "text": "<p><a href=\"/pages/how-to-pay\">How to pay</a></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading_help_faq",
+            "links_help_faq"
+          ]
+        },
+        "group_service": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading_service": {
+              "type": "text",
+              "settings": {
+                "text": "<p><strong>Service</strong></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "16px",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#333333",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "links_service": {
+              "type": "text",
+              "settings": {
+                "text": "<p><a href=\"/pages/warranty-policy\">Warranty policy</a></p><p><a href=\"/pages/delivery-and-shipping-policy\" target=\"_blank\" title=\"Delivery and shipping policy\">Delivery and shipping policy</a></p><p><a href=\"/pages/after-sales-service-warranty\" target=\"_blank\" title=\"After sales service Warranty\">After sales service</a></p><p><a href=\"/pages/installation-policy\" target=\"_blank\" title=\"Installation policy\">Installation policy</a></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading_service",
+            "links_service"
+          ]
+        },
+        "group_about_us": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "heading_about_us": {
+              "type": "text",
+              "settings": {
+                "text": "<p><strong>About Us</strong></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "16px",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#333333",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "links_about_us": {
+              "type": "text",
+              "settings": {
+                "text": "<p><a href=\"/pages/who-we-are\" target=\"_blank\" title=\"Who we are\">Who we are</a></p><p><a href=\"/pages/service-center\" target=\"_blank\" title=\"Service Center\">Service center</a></p><p><a href=\"/pages/contact-us\" target=\"_blank\" title=\"Contact Us\">Contact us</a></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading_about_us",
+            "links_about_us"
+          ]
+        },
+        "group_contact_us": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_contact_heading": {
+              "type": "text",
+              "settings": {
+                "text": "<p><strong>Contact Us</strong></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "16px",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#333333",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_email": {
+              "type": "text",
+              "settings": {
+                "text": "<p>✉ <a href=\"mailto:sales@sevenfive.co.th\">sales@sevenfive.co.th</a></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_phone": {
+              "type": "text",
+              "settings": {
+                "text": "<p>📞 <a href=\"tel:024237575\">02-423-7575</a></p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "social_links": {
+              "type": "social-links",
+              "settings": {
+                "facebook_url": "https://www.facebook.com/75sevenfive",
+                "instagram_url": "https://www.instagram.com/sevenfive.distributor/",
+                "youtube_url": "https://www.youtube.com/@Sevenfivedistributor",
+                "tiktok_url": "https://www.tiktok.com/@sevenfiveofficial",
+                "line_url": "https://page.line.me/nop6433t?oat_content=url&openQrModal=true",
+                "twitter_url": "",
+                "threads_url": "",
+                "linkedin_url": "",
+                "bluesky_url": "",
+                "snapchat_url": "",
+                "pinterest_url": "",
+                "tumblr_url": "",
+                "vimeo_url": "",
+                "custom_url": ""
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_contact_heading",
+            "text_email",
+            "text_phone",
+            "social_links"
+          ]
+        }
+      },
+      "block_order": [
+        "group_help_faq",
+        "group_service",
+        "group_about_us",
+        "group_contact_us"
+      ],
+      "name": "t:names.footer",
+      "settings": {
+        "section_width": "page-width",
+        "gap": 15,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "footer_utilities_jLGE8U": {
+      "type": "footer-utilities",
+      "blocks": {
+        "footer_copyright_jweRK8": {
+          "type": "footer-copyright",
+          "settings": {
+            "show_powered_by": false,
+            "font_size": "0.75rem",
+            "case": "none"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "footer_copyright_jweRK8"
+      ],
+      "name": "t:names.utilities",
+      "settings": {
+        "section_width": "page-width",
+        "gap": 24,
+        "divider_thickness": 1,
+        "color_scheme": "",
+        "padding-block-start": 16,
+        "padding-block-end": 24
+      }
+    }
+  },
+  "order": [
+    "feature_bar_CXEqJb",
+    "newsletter_signup_R3qV4x",
+    "footer_main",
+    "footer_utilities_jLGE8U"
+  ]
+}

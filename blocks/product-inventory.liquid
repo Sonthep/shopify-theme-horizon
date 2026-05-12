@@ -1,0 +1,120 @@
+
+
+{%- liquid
+  assign block_settings = block.settings
+  assign variant = closest.product.selected_or_first_available_variant
+  assign inventory_quantity = variant.inventory_quantity
+-%}
+
+<product-inventory
+  class="product-inventory spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}{% if block_settings.font_size != blank %}font-size: {{ block_settings.font_size }};{% endif %}{% if block_settings.text_color != blank %}color: {{ block_settings.text_color }};{% endif %}"
+  {{ block.shopify_attributes }}
+  data-product-id="{{ product.id }}"
+>
+  <span class="product-inventory__status">
+    {%- if block_settings.prefix_text != blank -%}
+      <span class="product-inventory__prefix">{{ block_settings.prefix_text }}</span>
+    {%- endif -%}
+    <span
+      class="product-inventory__text"
+      id="Inventory-{{ section.id }}"
+      role="status"
+    >
+      {{- inventory_quantity -}}
+    </span>
+  </span>
+</product-inventory>
+
+{% stylesheet %}
+  product-inventory {
+    display: block;
+  }
+
+  .product-inventory__status {
+    display: flex;
+    align-items: center;
+    font-size: inherit;
+    line-height: var(--font-paragraph--line-height);
+    gap: var(--padding-xs);
+  }
+
+  .product-inventory__text {
+    color: inherit;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_inventory",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "font_size",
+      "label": "Font size",
+      "placeholder": "e.g. 13px, 1rem, 0.85em"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "prefix_text",
+      "label": "Prefix text"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_inventory",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

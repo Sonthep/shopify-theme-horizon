@@ -1,0 +1,85 @@
+{{ 'sparepart-landing.css' | asset_url | stylesheet_tag }}
+
+<section class="sp-section sp-section--muted">
+  <div class="sp-container">
+    <div class="sp-center">
+      <div class="sp-eyebrow">{{ section.settings.eyebrow }}</div>
+      <h2 class="sp-title">{{ section.settings.title }}</h2>
+      <p class="sp-copy sp-copy--center">{{ section.settings.description }}</p>
+    </div>
+
+    <div class="sp-product-grid">
+      {% for block in section.blocks %}
+        <article class="sp-product-card" {{ block.shopify_attributes }}>
+          <div class="sp-product-card__media">
+            <div class="sp-product-card__media-icon">{{ block.settings.icon }}</div>
+            <span class="sp-badge sp-badge--{{ block.settings.stock_class }}">{{ block.settings.stock_label }}</span>
+          </div>
+          <div class="sp-product-card__body">
+            <div class="sp-product-card__category">{{ block.settings.category }}</div>
+            <h3 class="sp-product-card__title">{{ block.settings.title }}</h3>
+            <div class="sp-product-card__part">Part No: {{ block.settings.part_number }}</div>
+            <p class="sp-product-card__compatible"><strong>Compatible:</strong> {{ block.settings.compatible }}</p>
+          </div>
+          <div class="sp-product-card__actions">
+            <a href="{{ block.settings.detail_url | default: '#' }}" class="sp-btn sp-btn--primary sp-btn--block">
+              {% if block.settings.stock_class == 'inquiry' %}Request Quote{% else %}View Details{% endif %}
+            </a>
+            <a href="{{ section.settings.contact_url | default: '#' }}" class="sp-btn sp-btn--secondary">Contact</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="sp-cta-inline sp-center">
+      <a href="{{ section.settings.all_parts_url | default: '#' }}" class="sp-btn sp-btn--secondary">{{ section.settings.cta_text }}</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SP - Best Sellers",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Best Sellers" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Frequently Ordered Parts" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "High-demand replacement parts for commercial kitchens, with fast availability." },
+    { "type": "text", "id": "cta_text", "label": "CTA button text", "default": "View All Spare Parts" },
+    { "type": "url", "id": "all_parts_url", "label": "All spare parts link" },
+    { "type": "url", "id": "contact_url", "label": "Contact link" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji)", "default": "🔒" },
+        { "type": "text", "id": "category", "label": "Category", "default": "Gasket & Seal" },
+        { "type": "text", "id": "title", "label": "Product title", "default": "Door Gasket Seal – Prep Refrigerator" },
+        { "type": "text", "id": "part_number", "label": "Part number", "default": "TRA-DGS-2204" },
+        { "type": "text", "id": "compatible", "label": "Compatible models", "default": "Turbo Air MSR-23, MSR-49, TSR-23SD" },
+        { "type": "text", "id": "stock_label", "label": "Stock label", "default": "In Stock" },
+        { "type": "select", "id": "stock_class", "label": "Stock status", "options": [
+          { "value": "instock", "label": "In Stock" },
+          { "value": "limited", "label": "Low Stock" },
+          { "value": "inquiry", "label": "On Request" }
+        ], "default": "instock" },
+        { "type": "url", "id": "detail_url", "label": "Product detail link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SP - Best Sellers",
+      "blocks": [
+        { "type": "product", "settings": { "icon": "🔒", "category": "Gasket & Seal", "title": "Door Gasket Seal – Prep Refrigerator", "part_number": "TRA-DGS-2204", "compatible": "Turbo Air MSR-23, MSR-49, TSR-23SD", "stock_label": "In Stock", "stock_class": "instock" } },
+        { "type": "product", "settings": { "icon": "🔥", "category": "Heating Parts", "title": "Heating Element 1500W – Commercial Oven", "part_number": "RAT-HE-1500K", "compatible": "Rational SCC 61, SCC 101, CPC 61", "stock_label": "In Stock", "stock_class": "instock" } },
+        { "type": "product", "settings": { "icon": "✂", "category": "Blade & Knife", "title": "Bowl Blade Assembly – Food Processor", "part_number": "RC-BLD-R301S", "compatible": "Robot Coupe R301, R401, R602", "stock_label": "Low Stock", "stock_class": "limited" } },
+        { "type": "product", "settings": { "icon": "⚙", "category": "Motor & Fan", "title": "Evaporator Fan Motor – Reach-In Cooler", "part_number": "HOB-FM-4580C", "compatible": "Hobart HGS-1CG, AM15, AM-15S", "stock_label": "In Stock", "stock_class": "instock" } },
+        { "type": "product", "settings": { "icon": "⚡", "category": "Electrical & PCB", "title": "Main Control Board PCB – Blender", "part_number": "VIT-PCB-VM0101", "compatible": "Vitamix VM0101, 5200, 5300", "stock_label": "On Request", "stock_class": "inquiry" } },
+        { "type": "product", "settings": { "icon": "💧", "category": "Pump & Valve", "title": "Water Pump Assembly – Ice Machine", "part_number": "HOS-WP-B501", "compatible": "Hoshizaki KM-500M, KM-901M", "stock_label": "In Stock", "stock_class": "instock" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

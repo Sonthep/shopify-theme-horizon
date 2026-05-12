@@ -1,0 +1,403 @@
+/* Header navbar overrides to match provided reference image */
+
+:root {
+  --header-ref-green: 11 107 91; /* rgb() channels */
+}
+
+#header-component.header {
+  /* Force green bar + white foreground */
+  --color-background: rgb(var(--header-ref-green));
+  --color-background-rgb: var(--header-ref-green);
+  --color-foreground: #ffffff;
+  --color-foreground-rgb: 255 255 255;
+  --color-border: rgb(255 255 255 / 0.18);
+  --color-border-rgb: 255 255 255;
+
+  /* Allow theme editor control over header height */
+  --header-padding: var(--custom-header-vertical-padding, 10px);
+}
+
+#header-component.header .header__underlay-closed {
+  background: rgb(var(--header-ref-green));
+}
+
+/* When submenu opens, keep header bar green but submenu area transparent */
+#header-component.header .header__underlay-open {
+  background: linear-gradient(
+    rgb(var(--header-ref-green)) 0 var(--header-height),
+    transparent var(--header-height) 100%
+  );
+}
+
+/* Remove white card background behind submenu panel */
+.header-menu .menu-list__submenu {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Remove top border radius on the mega menu 3-panel card */
+.mega-menu-3panel {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+/* Override theme color-scheme text/icon color inside rows */
+#header-component.header .header__row {
+  --color-foreground: #ffffff;
+  --color-foreground-rgb: 255 255 255;
+}
+
+/* Remove row dividers for a flat bar */
+#header-component.header .header__row--top,
+#header-component.header .header__row--bottom {
+  border-bottom-color: transparent !important;
+}
+
+/* Top row spacing */
+#header-component.header .header__columns {
+  --padding-block-start: var(--custom-header-vertical-padding, 10px);
+  --padding-block-end: var(--custom-header-vertical-padding, 10px);
+  --padding-inline-start: var(--custom-header-horizontal-padding, 24px);
+  --padding-inline-end: var(--custom-header-horizontal-padding, 24px);
+}
+
+/* Menu item gap */
+#header-component.header header-menu .overflow-menu::part(list) {
+  gap: var(--custom-menu-item-gap, 8px);
+}
+
+#header-component.header header-menu .menu-list__link,
+#header-component.header header-menu .menu-list__button {
+  padding-inline: calc(var(--custom-menu-item-gap, 8px) / 2);
+}
+
+/* Remove box (background) from language selector */
+#header-component .localization-form__select {
+  background-color: transparent;
+}
+
+/* Shop by Category: 2-row carousel on desktop using CSS Grid */
+@media screen and (min-width: 750px) {
+  [id$='_collections_browse'] slideshow-component,
+  [id$='_collections_browse'] slideshow-container {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    height: auto !important;
+  }
+
+  [id$='_collections_browse'] slideshow-slides {
+    display: grid !important;
+    grid-template-rows: repeat(2, auto) !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc(100% / 4) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none;
+    height: auto !important;
+    max-height: none !important;
+    flex-wrap: initial !important;
+    scroll-snap-type: none !important;
+  }
+
+  [id$='_collections_browse'] slideshow-slides::-webkit-scrollbar {
+    display: none;
+  }
+
+  [id$='_collections_browse'] .resource-list__slide {
+    display: flex !important;
+    justify-content: center !important;
+    width: auto !important;
+    flex: none !important;
+    scroll-snap-align: none !important;
+  }
+
+  [id$='_collections_browse'] .resource-list__item {
+    width: fit-content;
+    margin-inline: auto;
+  }
+
+  [id$='_collections_browse'] .cb-custom-dots {
+    display: none !important;
+  }
+
+  [id$='_collections_browse'] .collection-card,
+  [id$='_collections_browse'] .collection-card__image,
+  [id$='_collections_browse'] .collection-card__content {
+    transition:
+      transform 220ms ease,
+      box-shadow 220ms ease,
+      filter 220ms ease,
+      color 220ms ease;
+  }
+
+  [id$='_collections_browse'] .collection-card {
+    border-radius: 18px;
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+
+  [id$='_collections_browse'] .collection-card__image {
+    transform-origin: center center;
+  }
+
+  @media (any-hover: hover) and (prefers-reduced-motion: no-preference) {
+    [id$='_collections_browse'] .collection-card:hover {
+      box-shadow: 0 16px 36px rgb(12 32 22 / 0.14);
+    }
+
+    [id$='_collections_browse'] .collection-card:hover .collection-card__image {
+      transform: scale(1.035);
+      filter: saturate(1.05);
+    }
+
+    [id$='_collections_browse'] .collection-card:hover .collection-card__content {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* Fix search icon color: foreground is white in header, but icon sits on white input background */
+#header-component .search-bar-trigger {
+  color: #1a1a1a;
+}
+
+#header-component .search-bar-trigger__icon svg,
+#header-component .search-bar-trigger__text {
+  color: #1a1a1a;
+}
+
+/* Make the center column behave like the reference (search grows) */
+@media screen and (min-width: 750px) {
+  #header-component.header .header__columns {
+    --header-center: 3fr;
+    column-gap: 18px;
+  }
+}
+
+/* Ensure logo stays left, search centered, utilities right */
+@media screen and (min-width: 750px) {
+  #header-component.header .header__columns {
+    align-items: center;
+  }
+
+  #header-component.header .header__column--left {
+    gap: 12px;
+  }
+
+  #header-component.header .header__column--right {
+    gap: 12px;
+  }
+}
+
+/* Logo vertical spacing: set 35px on top and bottom for visual balance */
+#header-component.header .logo-block {
+  margin-block: 35px;
+}
+
+/* Search pill (white, rounded) */
+#header-component.header .search-action--bar {
+  --header-search-height: var(--custom-header-search-height, 48px);
+  max-width: 520px;
+}
+
+#header-component.header .search-bar-trigger {
+  background: #ffffff !important;
+  border-color: rgb(0 0 0 / 0.08) !important;
+  min-height: var(--header-search-height);
+  height: var(--header-search-height);
+  padding-block: 0;
+  padding-inline: 18px;
+  border-radius: calc(var(--header-search-height) / 2);
+}
+
+#header-component.header .search-bar-trigger__icon,
+#header-component.header .search-bar-trigger__text {
+  color: rgb(0 0 0 / 0.75);
+  opacity: 1;
+}
+
+#header-component.header .search-bar-trigger__icon {
+  width: calc(var(--header-search-height) * 0.34);
+  height: calc(var(--header-search-height) * 0.34);
+}
+
+#header-component.header .search-bar-trigger__text {
+  line-height: 1;
+}
+
+/* Menu links row */
+@media screen and (min-width: 750px) {
+  #header-component.header .header__row--bottom {
+    display: block;
+  }
+
+  #header-component.header .header__row--bottom .header__columns {
+    --padding-block-start: 0px;
+    --padding-block-end: 10px;
+  }
+
+  #header-component.header .header__row--bottom .header__column--left,
+  #header-component.header .header__row--bottom .header__column--right {
+    display: none;
+  }
+
+  #header-component.header .header__row--bottom .header__column--center {
+    justify-content: center;
+  }
+
+  #header-component.header .header-menu .menu-list__link-title {
+    padding-inline: 10px;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.32em;
+    transition: text-decoration-color 180ms ease, opacity 180ms ease;
+  }
+
+  #header-component.header .header-menu .menu-list__link {
+    color: #ffffff;
+    opacity: 0.95;
+    background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #header-component.header .header-menu .menu-list__link:hover,
+  #header-component.header .header-menu .menu-list__link:focus,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] {
+    opacity: 1;
+  }
+
+  #header-component.header .header-menu .menu-list__link:hover .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link:focus .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] .menu-list__link-title {
+    text-decoration-color: currentColor;
+  }
+
+  #header-component.header .header-menu .menu-list__link:is(:hover, :focus, [aria-expanded='true']) {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  #header-component.header .header-menu .menu-list__link:is(.menu-list__link--active, [aria-current='page']) .menu-list__link-title {
+    text-decoration-color: transparent;
+  }
+
+  /* Force underline for all top-level menu link variations on hover/focus —
+     Some menu items (e.g. ones rendered as buttons or placed into the overflow
+     slot) may not inherit the title selector. This rule ensures underline
+     appears regardless of exact structure. */
+  #header-component.header .header-menu .menu-list__link:hover,
+  #header-component.header .header-menu .menu-list__link:focus,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'],
+  #header-component.header .header-menu .menu-list__link:hover .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link:focus .menu-list__link-title,
+  #header-component.header .header-menu .menu-list__link[aria-expanded='true'] .menu-list__link-title {
+    text-decoration-line: underline !important;
+    text-decoration-color: currentColor !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 0.32em !important;
+  }
+}
+
+/* Right-side icons */
+#header-component.header .header-actions__action {
+  color: #ffffff;
+}
+
+/* Make header icons outline-style (white stroke, no fill) like the reference */
+#header-component.header :is(.header-actions__action, .dropdown-localization__button, .header__icon--menu) {
+  color: #ffffff;
+}
+
+#header-component.header :is(.header-actions__action, .dropdown-localization__button, .header__icon--menu) svg,
+#header-component.header :is(.header-actions__action, .dropdown-localization__button, .header__icon--menu) svg * {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+/* Localization button inherits white */
+#header-component.header .dropdown-localization__button {
+  color: #ffffff;
+  background: transparent !important;
+  background-color: transparent !important;
+  --button-background-color: transparent !important;
+  --button-border-width: 0px !important;
+  --button-border-color: transparent !important;
+  --button-padding-inline: 0px !important;
+  --button-padding-block: 0px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding-inline: 0 !important;
+  margin-inline: 0 !important;
+}
+
+/* Ensure localization text stays white too */
+#header-component.header .dropdown-localization__button :is(span, .currency-code) {
+  color: #ffffff !important;
+}
+
+/* Remove any remaining "button" styling frame */
+#header-component.header .dropdown-localization__button:hover,
+#header-component.header .dropdown-localization__button:focus,
+#header-component.header .dropdown-localization__button:focus-visible,
+#header-component.header .dropdown-localization__button:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  --button-background-color: transparent !important;
+  --button-border-width: 0px !important;
+  --button-border-color: transparent !important;
+  --button-padding-inline: 0px !important;
+  --button-padding-block: 0px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* base.css applies a global *:focus-visible outline; disable it for this control */
+#header-component.header .dropdown-localization__button:focus-visible,
+#header-component.header .dropdown-localization__button :focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
+/* Some icons are wrapped; ensure wrapper inherits white */
+#header-component.header .svg-wrapper {
+  color: #ffffff;
+}
+
+/* Restore drawer close/back button icon color to match menu text */
+#header-component.header .menu-drawer__close-button,
+#header-component.header .menu-drawer__close-button .svg-wrapper,
+#header-component.header .menu-drawer__back-button .svg-wrapper {
+  color: var(--color-foreground);
+}
+
+/* Icon sizes closer to reference */
+#header-component.header .header-actions__action:not(.account-button) svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Mobile: keep green bar, but don’t force white search pill background */
+@media screen and (max-width: 749px) {
+  #header-component.header .search-bar-trigger {
+    background: transparent !important;
+    border-color: transparent !important;
+  }
+
+  #header-component.header .search-bar-trigger,
+  #header-component.header .search-bar-trigger__icon,
+  #header-component.header .search-bar-trigger__icon svg,
+  #header-component.header .search-bar-trigger .svg-wrapper {
+    color: #ffffff !important;
+  }
+}
+

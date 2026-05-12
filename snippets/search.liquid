@@ -1,0 +1,150 @@
+{%- doc -%}
+  Renders the search action button.
+
+  @param {string} [style] - The style of the search action.
+  @param {string} [class] - Additional classes for the search action.
+  @param {string} [display_style] - The display style ('icon' or 'text').
+
+  @example
+  {% render 'search', style: 'default', class: 'custom-class', display_style: 'icon' %}
+{%- enddoc -%}
+
+{% unless style == 'none' %}
+  <search-button
+    class="search-action search-action--bar{% if display_style == 'text' %} search-action--text{% endif %}{% if class != blank %} {{ class | strip }}{% endif %}"
+  >
+    <button
+      on:click="#search-modal/showDialog"
+      class="button-unstyled search-bar-trigger header-actions__action{% if display_style == 'text' %} header-actions__text-style{% endif %}"
+      aria-label="{{ 'content.search_input_label' | t }}"
+      aria-haspopup="dialog"
+    >
+      <span class="svg-wrapper search-bar-trigger__icon">
+        {{ 'icon-search.svg' | inline_asset_content }}
+      </span>
+      <span class="search-bar-trigger__text mobile:hidden">
+        {{ 'content.search_input_placeholder' | t }}
+      </span>
+    </button>
+  </search-button>
+{% endunless %}
+
+{% stylesheet %}
+  .search-action {
+    --search-border-radius: var(--style-border-radius-inputs);
+    --search-border-width: var(--style-border-width-inputs);
+
+    display: flex;
+  }
+
+  /* Search bar trigger */
+  .search-bar-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.20rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-input-background, var(--color-background));
+    color: var(--color-foreground);
+    cursor: pointer;
+    width: 100%;
+    min-width: 200px;
+    border: 1px solid var(--color-border);
+  }
+
+ 
+
+  .search-bar-trigger__icon {
+    display: flex;
+    flex-shrink: 0;
+    opacity: 0.55;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .search-bar-trigger__text {
+    flex: 1;
+    text-align: left;
+    opacity: 0.55;
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+
+  .search-bar-trigger__kbd {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    opacity: 0.45;
+  }
+
+  .search-bar-trigger__kbd kbd {
+    font-family: inherit;
+    font-size: 0.7em;
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    padding: 1px 4px;
+    background: transparent;
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 749px) {
+    .search-bar-trigger {
+      min-width: unset;
+      padding: 0.4rem;
+      border: none;
+      background: transparent;
+    }
+
+    
+  }
+
+  @media screen and (max-width: 749px) {
+    .search-action--hidden-on-drawer {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    [data-menu-style='drawer'] .search-action--hidden-on-drawer {
+      display: none;
+    }
+
+    [data-menu-style='menu'] .search-action--hidden-on-menu {
+      display: none;
+    }
+  }
+
+  [data-menu-style='menu'] .header__column--left .search-action {
+    @media screen and (min-width: 750px) {
+      margin-inline: calc(var(--padding-lg) * -1);
+    }
+  }
+
+  .header__column--right .search-action {
+    @media screen and (min-width: 750px) {
+      margin-inline: 0;
+    }
+  }
+
+  .search-action--bar {
+    flex: 1;
+    max-width: 360px;
+
+    @media screen and (max-width: 749px) {
+      flex: unset;
+      max-width: unset;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .header__column--right .search-action--text {
+      margin-inline: 0;
+    }
+
+    [data-menu-style='menu'] .header__column--left .search-action--text {
+      margin-inline: 0;
+    }
+  }
+{% endstylesheet %}

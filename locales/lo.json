@@ -1,0 +1,342 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "shopify": {
+    "checkout": {
+      "pickup_point": {
+        "could_not_resolve_address": "ບໍ່ສາມາດຊອກຫາທີ່ຢູ່ຂອງເຈົ້າໄດ້. ລອງໃໝ່ອີກຄັ້ງ ຫຼື ໃຊ້ທີ່ຢູ່ອື່ນ",
+        "no_pickup_points_near_you": "ບໍ່ພົບຈຸດຮັບເຄື່ອງຢູ່ໃກ້ທີ່ຢູ່ທີ່ເລືອກ",
+        "no_pickup_points_near_location": "ບໍ່ພົບຈຸດຮັບເຄື່ອງຢູ່ໃກ້ສະຖານທີ່ຂອງທ່ານ",
+        "pickup_unavailable_banner_title": {
+          "one": "ບໍ່ມີຈຸດຮັບສິນຄ້າສຳລັບລາຍການຂອງທ່ານ",
+          "other": "ບໍ່ມີຈຸດຮັບສິນຄ້າສຳລັບລາຍການຂອງທ່ານ"
+        },
+        "no_pickup_points_found": "ບໍ່ພົບຈຸດຮັບເຄື່ອງ",
+        "paginator": {
+          "next_accessibility_label": "ໜ້າຕໍ່ໄປ",
+          "previous_accessibility_label": "ໜ້າກ່ອນໜ້ານີ້",
+          "header": {
+            "one": "ກຳລັງສະແດງ %{first} - %{last} ໃນຈຳນວນ %{count} ຈຸດ",
+            "other": "ກຳລັງສະແດງ %{first} - %{last} ຈາກທັງໝົດ %{count} ຈຸດ"
+          },
+          "selected_pickup_point_label": {
+            "one": "ຈຸດທີ %{pickup_point_index} ຂອງ %{count} ຈຸດ",
+            "other": "ຈຸດທີ %{pickup_point_index} ຈາກ %{count} ຈຸດ"
+          },
+          "selected_page": {
+            "one": "%{first} - %{last} ຂອງ %{count} ຈຸດ",
+            "other": "%{first} - %{last} ຂອງ %{count} ຄະແນນ"
+          }
+        },
+        "number_of_pickup_points_near_location": {
+          "one": "ຈຸດຮັບເຄື່ອງ %{count} ຈຸດ ຢູ່ໃກ້ກັບສະຖານທີ່ຂອງທ່ານ",
+          "other": "ຈຸດຮັບເຄື່ອງ %{count} ຈຸດ ໃກ້ກັບສະຖານທີ່ຂອງທ່ານ"
+        },
+        "change": "ປ່ຽນສະຖານທີ່",
+        "waiting_on_pickup_point_location_notice": "ກຳລັງຊອກຫາຈຸດຮັບເຄື່ອງ...",
+        "geolocation": {
+          "shared_location_button": "ໃຊ້ຕຳແໜ່ງທີ່ຢູ່ຂອງຂ້ອຍ",
+          "errors": {
+            "unsuported_by_browser": "ຕົວທ່ອງເວັບຂອງທ່ານບໍ່ຮອງຮັບການຊອກຫາທີ່ຕັ້ງ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງ ຫຼື ໃຊ້ຕົວທ່ອງເວັບອື່ນ.",
+            "permission_not_allowed": "ອະນຸຍາດໃຫ້ແບ່ງປັນສະຖານທີ່ຂອງທ່ານ.",
+            "permission_denied": "ບໍ່ສາມາດເບິ່ງຕຳແໜ່ງຂອງທ່ານໄດ້. ລອງ​ອີກ​ຄັ້ງ."
+          }
+        }
+      },
+      "error_page": {
+        "terminal": {
+          "title": "ມີບັນຫາໃນການຈ່າຍເງິນຂອງພວກເຮົາ",
+          "message": "ໂຫຼດໜ້ານີ້ໃໝ່ ຫຼື ລອງໃໝ່ໃນອີກສອງສາມນາທີ.",
+          "action": {
+            "cta": "ໂຫຼດໜ້າຄືນໃໝ່"
+          },
+          "request_id": "ລະຫັດການຮ້ອງຂໍ: {{requestId}}"
+        },
+        "embed_errors": {
+          "storefront_password_required": "ຮ້ານນີ້ມີລະຫັດປ້ອງກັນ",
+          "customer_account_required": "ຈຳເປັນຕ້ອງມີບັນຊີລູກຄ້າເພື່ອສຳເລັດການສັ່ງຊື້",
+          "cart_completed": "ການສັ່ງຊື້ສິນຄ້ານີ້ສຳເລັດແລ້ວ",
+          "invalid_cart": "ກະຕ່າບໍ່ຖືກຕ້ອງອີກຕໍ່ໄປ",
+          "not_authorized": "ການຢືນຢັນການຈ່າຍເງິນຜິດພາດ. ກະລຸນາກວດສອບຂໍ້ມູນປະຈໍາຕົວຂອງແອັບພລິເຄຊັນຂອງທ່ານ",
+          "killswitch_enabled": "ບໍ່ສາມາດຊຳລະເງິນໄດ້ຊົ່ວຄາວ",
+          "policy_violation": "ບໍ່ສາມາດສັ່ງຊື້ສິນຄ້າໄດ້ເນື່ອງຈາກຂໍ້ຈຳກັດໃນການຕັ້ງຄ່ານະໂຍບາຍ",
+          "unrecoverable_failure": "ບໍ່ສາມາດໂຫຼດໜ້າຈ່າຍເງິນໄດ້. ລອງ​ອີກ​ຄັ້ງ."
+        }
+      },
+      "notice_banner": {
+        "return_to_cart_link_text": "ກັບຄືນໄປທີ່ກະຕ່າ",
+        "return_to_cart_to_update_quantities": "%{return_to_cart_link_text} ເພື່ອອັບເດດຈຳນວນ",
+        "subscription_changed": "ໜຶ່ງໃນການສະໝັກໃຊ້ຂອງທ່ານໄດ້ມີການປ່ຽນແປງ.",
+        "company_location_changed": "ລາຍການສິນຄ້າຂອງທ່ານໄດ້ຖືກອັບເດດແລ້ວ. ກະລຸນາກວດສອບຄືນກ່ອນການຢືນຢັນການສັ່ງຊື້.",
+        "company_location_changed_product_removed": "ກະຕ່າຂອງທ່ານໄດ້ຮັບການອັບເດດເນື່ອງຈາກສິນຄ້າບາງລາຍການບໍ່ມີໃນສະຖານທີ່ນີ້. ກະລຸນາກວດສອບຄືນການສັ່ງຊື້ຂອງທ່ານກ່ອນທີ່ຈະສົ່ງ.",
+        "violations_title": "{{violation}} ຫາຍໄປ ຫຼື ບໍ່ຖືກຕ້ອງ",
+        "individual_violations_title": {
+          "DeliveryViolations": "ທີ່ຢູ່ສຳລັບການຈັດສົ່ງສິນຄ້າ",
+          "PaymentViolations": "ທີ່ຢູ່ສຳລັບໃບບິນ",
+          "OtherViolations": "ຂໍ້ມູນຄໍາສັ່ງຊື້",
+          "UnhandledViolations": "ຂໍ້ມູນຄໍາສັ່ງຊື້"
+        },
+        "all_violations_content": "ໂທ ຫຼື {{emailLink}} ຫາພວກເຮົາເພື່ອປັບປຸງຂໍ້ມູນນີ້ ແລະ ສັ່ງຊື້ສິນຄ້າຂອງທ່ານໃຫ້ສຳເລັດ:",
+        "all_violations_email_link": "ອີເມວ",
+        "editable_shipping_address_violations_message_title": "ເພີ່ມຂໍ້ມູນນີ້ເພື່ອສັ່ງຊື້ສິນຄ້າຂອງທ່ານໃຫ້ສົມບູນ:",
+        "editable_shipping_address_violations_message_footer": "ເພື່ອອັບເດດທີ່ຢູ່ສຳລັບສະຖານທີ່ນີ້ຖາວອນ, {{emailLink}}.",
+        "editable_shipping_address_violations_email_link": "ຕິດຕໍ່ພວກເຮົາ",
+        "shipping_address_incomplete_title": "ທີ່ຢູ່ຈັດສົ່ງບໍ່ຄົບຖ້ວນ",
+        "calculating_shipping": "ກຳລັງຄິດໄລ່ຄ່າຂົນສົ່ງຢູ່. ກະລຸນາລອງໃໝ່ອີກຄັ້ງໃນສອງສາມວິນາທີ. ທ່ານຈະບໍ່ຖືກຄິດຄ່າບໍລິການ.",
+        "calculating_taxes": "ກໍາລັງຄິດໄລ່ພາສີຢູ່. ກະລຸນາລອງໃໝ່ໃນອີກສອງສາມວິນາທີ. ທ່ານຈະບໍ່ຖືກຄິດຄ່າບໍລິການ.",
+        "generic_processing_error": {
+          "title": "ມີບັນຫາໃນການດຳເນີນການສັ່ງຊື້ຂອງທ່ານ",
+          "body": "ທ່ານຍັງບໍ່ຖືກເກັບເງິນເທື່ອ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງ ຫຼື ໃຊ້ວິທີການຊຳລະເງິນແບບອື່ນ."
+        },
+        "payment_method_not_available_with_payment_terms": "ວິທີການຊຳລະເງິນທີ່ທ່ານເລືອກບໍ່ສາມາດໃຊ້ໄດ້ອີກຕໍ່ໄປ ເນື່ອງຈາກການຊຳລະຄ່າສິນຄ້າສຳລັບຄຳສັ່ງຊື້ນີ້ແມ່ນຢູ່ພາຍໃຕ້ເງື່ອນໄຂຂອງ {{paymentTerms}} ແລ້ວ.",
+        "payment_method_not_available_with_fulfillment_terms": "ວິທີການຊຳລະເງິນທີ່ທ່ານເລືອກບໍ່ສາມາດນຳໃຊ້ໄດ້ອີກຕໍ່ໄປ ເນື່ອງຈາກວ່າຕອນນີ້ການຊໍາລະເງິນສໍາລັບຄໍາສັ່ງນີ້ແມ່ນຮອດກຳນົດຊຳລະເມື່ອສຳເລັດການສັ່ງຊື້ແລ້ວ.",
+        "payment_method_not_available_with_fixed_terms": "ວິທີການຊຳລະເງິນທີ່ທ່ານເລືອກບໍ່ສາມາດໃຊ້ໄດ້ອີກຕໍ່ໄປ ເນື່ອງຈາກການຊຳລະເງິນສຳລັບການສັ່ງຊື້ຄັ້ງນີ້ຈະຮອດກຳນົດຊຳລະພາຍຫຼັງ",
+        "payment_method_not_available_with_review_requirement": "ວິທີການຊຳລະທີ່ທ່ານເລືອກບໍ່ສາມາດໃຊ້ໄດ້ແລ້ວ ເນື່ອງຈາກຈະຕ້ອງຊຳລະທັນທີເມື່ອການສັ່ງຊື້ຂອງທ່ານໄດ້ຮັບການຢືນຢັນ.",
+        "contact_information": {
+          "title": "ຂໍ້ມູນຕິດຕໍ່ບໍ່ຖືກຕ້ອງ",
+          "header": "ເພື່ອອັບເດດຂໍ້ມູນຂອງທ່ານ, {{emailLink}}.",
+          "email_link": "ຕິດຕໍ່ພວກເຮົາ"
+        },
+        "validation_errors_banner": {
+          "heading": {
+            "one": "ມີ {{count}} ຂໍ້ຜິດພາດ:",
+            "other": "ມີ {{count}} ຂໍ້ຜິດພາດ:"
+          },
+          "section_label": {
+            "delivery": "ການຈັດສົ່ງ",
+            "contact": "ຕິດຕໍ່ພົວພັນ",
+            "payment": "ການຊໍາລະເງິນ",
+            "billing": "ການເກັບເງິນ"
+          }
+        }
+      },
+      "review_address_modal": {
+        "title": "ກວດສອບທີ່ຢູ່",
+        "subtitle": {
+          "one": "ການສັ່ງຊື້ສິນຄ້ານີ້ຈະຖືກຈັດສົ່ງໄປທີ່ຢູ່ທີ່ {{merchant}} ໃຫ້ໄວ້.",
+          "other": "ຄຳສັ່ງນີ້ຈະຖືກຈັດສົ່ງໄປທີ່ຢູ່ທີ່ {{merchant}} ໃຫ້ໄວ້. ເລືອກທີ່ຢູ່ສຳລັບຈັດສົ່ງ."
+        },
+        "subtitle_no_match": "ທີ່ຢູ່ນີ້ບໍ່ກົງກັບທີ່ຢູ່ທີ່ທ່ານໄດ້ບັນທຶກໄວ້.",
+        "subtitle_must_use": "ຄໍາສັ່ງຊື້ຂອງທ່ານຈະຖືກຈັດສົ່ງໄປຫາທີ່ຢູ່ນີ້.",
+        "continue": "ສືບຕໍ່ດ້ວຍທີ່ຢູ່ນີ້",
+        "use_saved_address": "ໃຊ້ທີ່ຢູ່ອື່ນ",
+        "return_to_cart": "ກັບຄືນໄປທີ່ກະຕ່າ"
+      },
+      "marketplaces": {
+        "legal_notice": {
+          "legal_text": "ການທົບທວນຄືນ",
+          "link_label": "ເງື່ອນໄຂ ແລະ ຂໍ້ກຳນົດຂອງ {{partnerDisplayName}}"
+        }
+      },
+      "online_store_chat": {
+        "title": "ມີຄຳຖາມບໍ? ສົນທະນາກັບພວກເຮົາ"
+      },
+      "local_pickup": {
+        "title": "ສະຖານທີ່",
+        "location_address_search_label": "ທີ່ຢູ່",
+        "location_address_search_placeholder": "%{postal_code_label} ຫຼື ທີ່ຢູ່",
+        "location_closest": "ສະຖານທີ່ໃກ້ທີ່ສຸດທີ່ມີສິນຄ້າຂອງທ່ານ",
+        "location_information": {
+          "one": "ມີ %{count} ສະຖານທີ່ທີ່ມີສິນຄ້າໃກ້ທ່ານ",
+          "other": "ມີ %{count} ສະຖານທີ່ທີ່ມີສິນຄ້າໃກ້ທ່ານ"
+        },
+        "location_information_far_away": {
+          "one": "ມີສະຖານທີ່ %{count} ແຫ່ງທີ່ມີລາຍການຂອງທ່ານ",
+          "other": "ມີ %{count} ສະຖານທີ່ທີ່ມີລາຍການຂອງເຈົ້າ"
+        },
+        "location_nearby": {
+          "one": "ມີ %{count} ສະຖານທີ່ໃກ້ຄຽງທີ່ມີສິນຄ້າຂອງທ່ານ",
+          "other": "ມີ %{count} ສະຖານທີ່ໃກ້ຄຽງທີ່ມີສິນຄ້າຂອງທ່ານ"
+        },
+        "location_nearby_short": {
+          "one": "ມີສະຖານທີ່ໃກ້ຄຽງ %{count} ແຫ່ງ ທີ່ມີລາຍການຂອງທ່ານ",
+          "other": "ສະຖານທີ່ໃກ້ຄຽງ %{count} ແຫ່ງທີ່ມີລາຍການຂອງທ່ານ"
+        },
+        "location_far_away": {
+          "one": "ສະຖານທີ່ %{count} ທີ່ມີລາຍການຂອງເຈົ້າ",
+          "other": "ມີ %{count} ບ່ອນ ທີ່ມີສິນຄ້າຂອງທ່ານ"
+        },
+        "toggle_location": "ປ່ຽນສະຖານທີ່",
+        "toggle_more_locations": {
+          "one": "ອີກ %{count} ສະຖານທີ່",
+          "other": "ອີກ %{count} ສະຖານທີ່"
+        },
+        "toggle_multiple_locations": "ອີກ %{count} ສະຖານທີ່",
+        "or": "ຫຼື",
+        "cancel": "ຍົກເລີກ",
+        "your_location": "ສະຖານທີ່ຂອງທ່ານ",
+        "search_button": "ຊອກຫາຮ້ານຄ້າ"
+      }
+    }
+  },
+  "customer_accounts": {
+    "B2B": {
+      "orders": {
+        "draft_order_list": {
+          "hide_all": "ເຊື່ອງໄວ້ທັງໝົດ",
+          "show_all": "ສະແດງທັງໝົດ",
+          "hide_all_accessibility_label": "ເຊື່ອງຄຳສັ່ງທັງໝົດທີ່ກຳລັງກວດສອບ",
+          "show_all_accessibility_label": "ສະແດງທຸກຄຳສັ່ງຊື້ທີ່ກຳລັງກວດສອບ",
+          "show_all_orders_in_review": "ສະແດງທຸກຄຳສັ່ງຊື້ທີ່ກຳລັງກວດສອບ",
+          "show_less_orders_in_review": "ສະແດງຄຳສັ່ງຊື້ນ້ອຍລົງໃນການກວດສອບ",
+          "title": "ລໍຖ້າ",
+          "pending_tab_accessibility_label": {
+            "no_pending_orders": "ທ່ານບໍ່ມີຄໍາສັ່ງຄ້າງຢູ່ໃນຕອນນີ້",
+            "pending_orders": {
+              "one": "ທ່ານມີ {{count}} ລາຍການສັ່ງຊື້ທີ່ຄ້າງຢູ່",
+              "other": "ທ່ານມີຄຳສັ່ງຊື້ຄ້າງຢູ່ {{count}} ລາຍການ"
+            },
+            "more_than_pagination_length": "ທ່ານມີຫຼາຍກວ່າ {{count}} ລາຍການທີ່ຍັງຄ້າງ"
+          },
+          "pagination": {
+            "nav_accessibility_label": "ປຸ່ມທ່ອງທ່ຽວສັ່ງຊື້ໃນການກວດສອບຄືນ"
+          }
+        },
+        "order_list_column_headers_location": "ສະຖານທີ່",
+        "order_list_column_headers_contact": "ຕິດຕໍ່ພົວພັນ",
+        "order_list_column_headers_status": "ສະຖານະ",
+        "removed_company_contact_tooltip": "ຖືກປົດອອກຈາກບໍລິສັດ"
+      },
+      "draft_order_details": {
+        "draft_order_subtitle": "ຢັ້ງຢືນແລ້ວ {{date}} ຈາກໃບສັ່ງຊື້ {{draftOrderName}}",
+        "loading": "ກຳລັງໂຫຼດລາຍລະອຽດຄຳສັ່ງຊື້",
+        "loading_finished_accessibility_message": "ລາຍລະອຽດຄໍາສັ່ງໄດ້ຖືກໂຫລດແລ້ວ",
+        "payment_status": {
+          "pending": {
+            "banner_overdue": {
+              "one": "ການຊໍາລະເງິນຂອງທ່ານກາຍກຳນົດມາແລ້ວ {{count}} ມື້",
+              "other": "ການຊຳລະເງິນຂອງທ່ານເກີນກຳນົດ {{count}} ມື້ແລ້ວ"
+            },
+            "banner_due": {
+              "one": "ການຊໍາລະເງິນຂອງທ່ານແມ່ນຮອດກຳນົດພາຍໃນ {{count}} ມື້",
+              "other": "ການຊໍາລະເງິນຂອງທ່ານແມ່ນຮອດກຳນົດພາຍໃນ {{count}} ມື້"
+            },
+            "banner_due_today": "ມື້ນີ້ແມ່ນກຳນົດຊຳລະເງິນຂອງທ່ານແລ້ວ",
+            "banner_due_today_for_multiple_fulfillments": "ການຊໍາລະເງິນຄົບກໍານົດມື້ນີ້ສໍາລັບ {{count}} ການຈັດສົ່ງ",
+            "banner_overdue_for_multiple_fulfillments": "ການຊໍາລະເງິນສໍາລັບການຈັດສົ່ງ {{count}} ລາຍການ",
+            "title": "ຄົບກຳນົດຊຳລະ",
+            "title_with_date": "ກຳນົດຊຳລະວັນທີ {{date}}",
+            "title_due_on_receipt": "ຍັງບໍ່ຮອດກຳນົດຊຳລະ",
+            "title_due_on_fulfillment": "ຊໍາລະເງິນເມື່ອສຳເລັດ",
+            "description_overdue": "ການຊຳລະຂອງທ່ານຊ້າ.",
+            "description_partially_paid": "ຄໍາສັ່ງຊື້ນີ້ຖືກຊໍາລະແລ້ວບາງສ່ວນ. ທ່ານຍັງເຫຼືອຍອດທີ່ຕ້ອງຊໍາລະ.",
+            "description_authorized": "ວິທີຊຳລະເງິນຂອງທ່ານຈະຖືກເກັບຄ່າທຳນຽມໃນວັນຄົບກຳນົດ, ຫຼືທ່ານສາມາດຊຳລະຕອນນີ້.",
+            "description_waiting_for_manual_payment": "ໃບບິນນີ້ມີຍອດຄ້າງຊຳລະ. ຍອດເງິນຈະຖືກອັບເດດເມື່ອໄດ້ຮັບການຊຳລະເງິນແລ້ວ.",
+            "description_due_on_receipt": "ທ່ານຈະໄດ້ຮັບໃບເກັບເງິນເມື່ອຮອດກຳນົດຊຳລະ.",
+            "description_due_on_receipt_partially_paid": "ຄຳສັ່ງຊື້ສິນຄ້ານີ້ຖືກຈ່າຍພຽງບາງສ່ວນ. ຍອດເງິນຄົງເຫຼືອຂອງທ່ານແມ່ນ [Remaining Balance]. ທ່ານຈະໄດ້ຮັບໃບເກັບເງິນເມື່ອຮອດກຳນົດຊຳລະ.",
+            "description_due_on_fulfillment": "ການຊໍາລະເງິນແມ່ນຮອດກຳນົດເມື່ອທຸກລາຍການຕາມຄໍາສັ່ງນີ້ຖືກສໍາເລັດ.",
+            "description_due_on_fulfillment_partially_paid": "ຄຳສັ່ງຊື້ສິນຄ້ານີ້ຖືກຊຳລະແລ້ວບາງສ່ວນ. ທ່ານຍັງເຫຼືອຍອດທີ່ຕ້ອງຊຳລະ. ການຊຳລະຕ້ອງເຮັດເມື່ອສິນຄ້າທັງໝົດໃນຄຳສັ່ງຊື້ນີ້ຖືກຈັດສົ່ງຮຽບຮ້ອຍແລ້ວ.",
+            "description_due_on_fulfillment_partially_paid_next": "ຄໍາສັ່ງຊື້ນີ້ຖືກຊໍາລະແລ້ວບາງສ່ວນ. ທ່ານຍັງເຫຼືອຍອດທີ່ຕ້ອງຊໍາລະ."
+          },
+          "draft": {
+            "description": "ລາຍລະອຽດການຊໍາລະເງິນແມ່ນຖືກກໍານົດໃນເວລາທີ່ຄໍາສັ່ງໄດ້ຮັບການຢືນຢັນ.",
+            "title": "ຍັງບໍ່ເຖິງກຳນົດຊຳລະ",
+            "in_review": {
+              "description": "ລາຍລະອຽດການຊໍາລະເງິນແມ່ນຖືກກໍານົດໃນເວລາທີ່ຄໍາສັ່ງໄດ້ຮັບການຢືນຢັນ.",
+              "title": "ຍັງບໍ່ເຖິງກຳນົດຊຳລະ"
+            },
+            "submitted": {
+              "description": "ກະລຸນາຊຳລະເງິນ ເພື່ອຢືນຢັນການສັ່ງຊື້ສິນຄ້ານີ້.",
+              "title": "ຈ່າຍເງິນເພື່ອຢືນຢັນ",
+              "deposit": {
+                "title": "ເຖິງກຳນົດຊຳລະ",
+                "due_later": "ຍອດເຫຼືອແມ່ນອີງຕາມເງື່ອນໄຂ {{translatedName}} ແລະຈະຕ້ອງຊຳລະໃນວັນທີ {{dueDate}}.",
+                "due_on_fulfillment": "ຍອດເຫຼືອຈະຕ້ອງຊໍາລະຄົບຖ້ວນເມື່ອສິນຄ້າທັງໝົດໃນຄໍາສັ່ງນີ້ຖືກຈັດສົ່ງແລ້ວ.",
+                "due_on_receipt": "ທ່ານຈະໄດ້ຮັບໃບເກັບເງິນສຳລັບຍອດເຫຼືອທີ່ຍັງຄ້າງ.",
+                "due_on_date": "ຍອດເງິນຄົງຄ້າງຈະຮອດກຳນົດຊຳລະໃນວັນທີ {{dueDate}}."
+              }
+            },
+            "deposit": {
+              "due_later": "{{depositAmount}} ຈະຕ້ອງຊໍາລະເມື່ອທ່ານຢືນຢັນການສັ່ງຊື້. ຍອດເຫຼືອຈະຖືກຊໍາລະຕາມເງື່ອນໄຂຂອງ {{translatedName}}.",
+              "due_on_fulfillment": "{{depositAmount}} ຈະຕ້ອງໄດ້ຈ່າຍເມື່ອຄໍາສັ່ງຂອງທ່ານຖືກຢືນຢັນ. ຍອດເງິນຈະຕ້ອງໄດ້ຈ່າຍເມື່ອການສັ່ງຊື້ສຳເລັດ.",
+              "due_on_receipt": "ເງິນຝາກຈໍານວນ {{depositAmount}} ຈະຕ້ອງຊໍາລະເມື່ອຄໍາສັ່ງຊື້ຂອງທ່ານໄດ້ຮັບການຢືນຢັນ. ຍອດເຫຼືອຈະຕ້ອງຊໍາລະພາຍຫຼັງ.",
+              "due_on_date": "{{depositAmount}} ຈະຕ້ອງຈ່າຍເມື່ອຄໍາສັ່ງຊື້ຂອງທ່ານໄດ້ຮັບການຢືນຢັນ. ຍອດເຫຼືອຈະຕ້ອງຈ່າຍໃນວັນທີ {{dueDate}}."
+            }
+          },
+          "paid": {
+            "title": "ຈ່າຍແລ້ວ",
+            "title_with_date": "ຊໍາລະແລ້ວ {{date}}",
+            "description": "ຄຳສັ່ງຊື້ຂອງທ່ານໄດ້ຊຳລະຄົບຖ້ວນແລ້ວ."
+          },
+          "refund": {
+            "title": "ໄດ້ຮັບເງິນຄືນແລ້ວ",
+            "title_with_date": "ໄດ້ຮັບເງິນຄືນແລ້ວ {{date}}",
+            "description_full_refund": "ເຈົ້າໄດ້ຮັບເງິນຄືນເຕັມຈໍານວນສໍາລັບຄໍາສັ່ງນີ້ແລ້ວ.",
+            "description_single_refund": "ເຈົ້າໄດ້ຮັບເງິນຄືນບາງສ່ວນສໍາລັບການສັ່ງຊື້ຄັ້ງນີ້.",
+            "description_multiple_refunds": "ທ່ານໄດ້ຮັບເງິນຄືນບາງສ່ວນສໍາລັບຄໍາສັ່ງນີ້."
+          },
+          "canceled": {
+            "title": "ການຊຳລະເງິນຖືກຍົກເລີກ",
+            "description": "ເຈົ້າບໍ່ຖືກຄິດຄ່າບໍລິການ."
+          },
+          "due_date": "ຮອດວັນທີ {{date}}",
+          "total_balance": "ຍອດເຫຼືອທັງໝົດ",
+          "pay_now": "ຊໍາລະດຽວນີ້",
+          "pay_now_accessibility_label": "ຊໍາລະຕອນນີ້ສໍາລັບຄໍາສັ່ງ {{orderName}}",
+          "title": "ສະຖານະການຊຳລະເງິນ"
+        },
+        "order_timeline": {
+          "expand_events_label": "ສະແດງລາຍລະອຽດ",
+          "expand_events_accessibility_label": "ສະແດງລາຍລະອຽດການສັ່ງຊື້ສະບັບຮ່າງ",
+          "hide_events_label": "ເຊື່ອງລາຍລະອຽດ",
+          "hide_events_accessibility_label": "ເຊື່ອງລາຍລະອຽດການສັ່ງຊື້ສະບັບຮ່າງ"
+        },
+        "subtitle": "ສົ່ງວັນທີ {{date}}",
+        "title": "ສັ່ງຊື້ {{name}}"
+      },
+      "payment_methods": {
+        "payment_delete": {
+          "description_without_replacement": "ຮູບແບບການຊຳລະເງິນນີ້ຈະບໍ່ສາມາດໃຊ້ໄດ້ສຳລັບການສັ່ງຊື້ໃນຄັ້ງຕໍ່ໄປຈາກສະຖານທີ່ນີ້.",
+          "description_with_replacement": "ການລຶບວິທີການຊຳລະເງິນນີ້ຈະສົ່ງຜົນກະທົບຕໍ່ການຊຳລະເງິນທີ່ໄດ້ຮັບອະນຸຍາດລ່ວງໜ້າສຳລັບສະຖານທີ່ນີ້. ແທນທີ່ດ້ວຍວິທີການຊຳລະເງິນອື່ນເພື່ອສືບຕໍ່ຮັບຄຳສັ່ງຊື້ທີ່ຈະມາເຖິງ."
+        },
+        "payment_details": {
+          "order_label": "ສັ່ງຊື້ {{name}}",
+          "draft_label": "ຮ່າງຄໍາສັ່ງ {{name}}"
+        }
+      },
+      "purchase_order_number": {
+        "add_accessibility_label": "ເພີ່ມໝາຍເລກໃບສັ່ງຊື້",
+        "add_modal_title": "ເພີ່ມໝາຍເລກໃບສັ່ງຊື້",
+        "cancel": "ຍົກເລີກ",
+        "close_modal_accessibility_label": "ປິດໂມດູນເລກທີ່ໃບສັ່ງຊື້",
+        "discard": "ຖິ້ມ",
+        "discard_changes_modal_title": "ຍົກເລີກການປ່ຽນແປງບໍ?",
+        "edit_accessibility_label": "ແກ້ໄຂເລກທີໃບສັ່ງຊື້",
+        "edit_modal_title": "ແກ້ໄຂເລກທີໃບສັ່ງຊື້",
+        "empty_state": "ບໍ່ມີເລກທີໃບສັ່ງຊື້",
+        "modal_po_number_input_label": "ເລກທີ່ໃບສັ່ງຊື້",
+        "modal_po_number_input_max_length_error": "ໝາຍເລກໃບສັ່ງຊື້ມີຕົວອັກສອນສູງສຸດ {{maxLength}} ຕົວ.",
+        "save": "ບັນທຶກ",
+        "title": "ຄໍາສັ່ງຊື້ #{{poNumber}}"
+      }
+    },
+    "errors": {
+      "address_deletion_error": {
+        "description": "ມີບັນຫາໃນການລຶບທີ່ຢູ່ນີ້. ລອງໃໝ່ອີກຄັ້ງ ຫຼື ໂຫຼດໜ້າໃໝ່."
+      },
+      "addresses_loading_issue": {
+        "description": "ຂໍ້ຜິດພາດໃນການເຊື່ອມຕໍ່. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດຂອງທ່ານ ແລະລອງໃໝ່ອີກຄັ້ງ."
+      },
+      "banner_title": {
+        "one": "ມີຂໍ້ຜິດພາດ {{count}} ອັນ",
+        "other": "ມີ {{count}} ຂໍ້ຜິດພາດ"
+      },
+      "failed_address_creation": {
+        "description": "ມີບັນຫາໃນການສ້າງທີ່ຢູ່ຂອງທ່ານ. ລອງໂຫຼດໜ້ານີ້ໃໝ່ ຫຼື ກວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດຂອງທ່ານ."
+      },
+      "failed_address_update": {
+        "description": "ມີບັນຫາໃນການອັບເດດທີ່ຢູ່ຂອງທ່ານ. ລອງໂຫຼດໜ້າຈໍນີ້ຄືນໃໝ່ ຫຼື ກວດເບິ່ງການເຊື່ອມຕໍ່ອິນເຕີເນັດຂອງທ່ານ."
+      },
+      "load_address_form_error": {
+        "title": "ບໍ່ສາມາດໂຫຼດແບບຟອມທີ່ຢູ່ໄດ້"
+      }
+    }
+  }
+}

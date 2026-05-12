@@ -1,0 +1,1642 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "product-information",
+      "blocks": {
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true,
+          "settings": {
+            "media_presentation": "carousel",
+            "media_columns": "two",
+            "image_gap": 4,
+            "large_first_image": false,
+            "icons_style": "none",
+            "slideshow_controls_style": "counter",
+            "slideshow_mobile_controls_style": "dots",
+            "thumbnail_position": "right",
+            "thumbnail_width": 44,
+            "thumbnail_radius": 0,
+            "aspect_ratio": "adapt",
+            "constrain_to_viewport": true,
+            "media_fit": "contain",
+            "media_radius": 0,
+            "extend_media": false,
+            "zoom": true,
+            "video_loop": false,
+            "hide_variants": true,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "product-details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "custom",
+            "custom_width_mobile": 87,
+            "height": "fit",
+            "details_position": "flex-start",
+            "gap": 28,
+            "sticky_details_desktop": true,
+            "inherit_color_scheme": true,
+            "color_scheme": "scheme-1",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 24,
+            "padding-block-end": 24,
+            "padding-inline-start": 17,
+            "padding-inline-end": 21
+          },
+          "blocks": {
+            "group_icgrde": {
+              "type": "group",
+              "name": "Header",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "ai_gen_block_18baf08_c3pwwP": {
+                  "type": "ai_gen_block_18baf08",
+                  "settings": {
+                    "max_height": 60,
+                    "spacing_bottom": 16,
+                    "desktop_width_percent": 75,
+                    "text_size": 16,
+                    "text_weight": "600",
+                    "text_color": "#000000"
+                  },
+                  "blocks": {}
+                },
+                "text_xrnftG": {
+                  "type": "text",
+                  "name": "Product title",
+                  "settings": {
+                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h3",
+                    "font": "var(--font-primary--family)",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_xcJPKp": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p><strong>Product ID : </strong><strong>{{ closest.product.metafields.custom.good_id.value }}</strong></p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "#343030",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "sku_DVjhAA": {
+                  "type": "sku",
+                  "name": "t:names.product_sku",
+                  "settings": {
+                    "type_preset": "",
+                    "width": "100%",
+                    "alignment": "left",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "color": "#000000",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "price_tVjtKg": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "show_installments": false,
+                    "show_tax_info": false,
+                    "type_preset": "paragraph",
+                    "width": "100%",
+                    "alignment": "left",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "color": "#000000",
+                    "padding-block-start": 4,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "product_inventory_iQTbrn": {
+                  "type": "product-inventory",
+                  "name": "t:names.product_inventory",
+                  "settings": {
+                    "font_size": "",
+                    "text_color": "",
+                    "prefix_text": "Stock:",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "ai_gen_block_18baf08_c3pwwP",
+                "text_xrnftG",
+                "text_xcJPKp",
+                "sku_DVjhAA",
+                "price_tVjtKg",
+                "product_inventory_iQTbrn"
+              ]
+            },
+            "divider_VJhene": {
+              "type": "_divider",
+              "name": "t:names.divider",
+              "settings": {
+                "thickness": 1,
+                "corner_radius": "square",
+                "width_percent": 100,
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "variant_picker_R3rGDr": {
+              "type": "variant-picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": false,
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "buy_buttons_eYQEYi": {
+              "type": "buy-buttons",
+              "settings": {
+                "stacking": true,
+                "show_pickup_availability": false,
+                "gift_card_form": true,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quantity": {
+                  "type": "quantity",
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                },
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button"
+                  },
+                  "blocks": {}
+                },
+                "accelerated-checkout": {
+                  "type": "accelerated-checkout",
+                  "disabled": true,
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                }
+              },
+              "block_order": []
+            },
+            "accordion_RAbGda": {
+              "type": "accordion",
+              "name": "t:names.accordion",
+              "settings": {
+                "icon": "caret",
+                "dividers": true,
+                "type_preset": "h6",
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "accordion_row_NynKEm": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Detail",
+                    "open_by_default": true,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "text_RXbYeH": {
+                      "type": "text",
+                      "settings": {
+                        "text": "{{ closest.product.description }}",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "rte",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "#000000",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "text_RXbYeH"
+                  ]
+                },
+                "accordion_row_kz6mpj": {
+                  "type": "_accordion-row",
+                  "name": "t:names.accordion_row",
+                  "settings": {
+                    "heading": "Speccification",
+                    "open_by_default": true,
+                    "icon": "none",
+                    "width": 20
+                  },
+                  "blocks": {
+                    "ai_gen_block_dbe7999_aeYLqV": {
+                      "type": "specification_table",
+                      "name": "Specification table",
+                      "settings": {
+                        "heading": "",
+                        "show_header": false,
+                        "col_label": "Specification",
+                        "col_value": "",
+                        "font_size": 14,
+                        "cell_padding": 8,
+                        "border_radius": 6,
+                        "label_width": 60,
+                        "color_bg": "#ffffff",
+                        "color_stripe": "#f7f7f7",
+                        "color_hover": "#f0f0f0",
+                        "color_border": "#e0e0e0",
+                        "color_row_divider": "#eeeeee",
+                        "color_label": "#444444",
+                        "color_text": "#222222",
+                        "color_header_bg": "#f0f0f0",
+                        "color_header_text": "#111111"
+                      },
+                      "blocks": {
+                        "spec_row_01": {
+                          "type": "spec-row",
+                          "name": "Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Width (mm)",
+                            "value": "{{ closest.product.metafields.specs.width_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_WTJm7B": {
+                          "type": "spec-row",
+                          "name": "Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Length (mm)",
+                            "value": "{{ closest.product.metafields.specs.length_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_02": {
+                          "type": "spec-row",
+                          "name": "Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Depth (mm)",
+                            "value": "{{ closest.product.metafields.specs.depth_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_03": {
+                          "type": "spec-row",
+                          "name": "Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_wCC8re": {
+                          "type": "spec-row",
+                          "name": "Packing Width (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Width (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_width.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_jPBUJr": {
+                          "type": "spec-row",
+                          "name": "Packing Length (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Length (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_length_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_BC9mVj": {
+                          "type": "spec-row",
+                          "name": "Packing Length (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.packing_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_jmyijF": {
+                          "type": "spec-row",
+                          "name": "Gross Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Gross Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.gross_weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_nVcNW8": {
+                          "type": "spec-row",
+                          "name": "Net Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Net Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.net_weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7MBFBE": {
+                          "type": "spec-row",
+                          "name": "Volume (mc)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Volume (mc)",
+                            "value": "{{ closest.product.metafields.specs.volume_mc.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_UCnMdJ": {
+                          "type": "spec-row",
+                          "name": "Rack Size (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rack Size (mm)",
+                            "value": "{{ closest.product.metafields.specs.rack_size_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_78WXrx": {
+                          "type": "spec-row",
+                          "name": "Useable Chamber Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Useable Chamber Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.usable_chamber_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_aCFT64": {
+                          "type": "spec-row",
+                          "name": "Maximum Dishes Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum Dishes Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.max_dishes_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tQaqVn": {
+                          "type": "spec-row",
+                          "name": "Maximum Trays Height (mm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum Trays Height (mm)",
+                            "value": "{{ closest.product.metafields.specs.max_trays_height_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_k8RaKk": {
+                          "type": "spec-row",
+                          "name": "Door Construction",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Door Construction",
+                            "value": "{{ closest.product.metafields.specs.door_construction.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_hCUMhD": {
+                          "type": "spec-row",
+                          "name": "Tank Volume (L)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Volume (L)",
+                            "value": "{{ closest.product.metafields.specs.tank_volume_l.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_DJ6bX7": {
+                          "type": "spec-row",
+                          "name": "Tank Heating Element (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Heating Element (W)",
+                            "value": "{{ closest.product.metafields.specs.tank_heating_element_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tVWiXF": {
+                          "type": "spec-row",
+                          "name": "Tank Surface Strainers",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Tank Surface Strainers",
+                            "value": "{{ closest.product.metafields.specs.tank_surface_strainers.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_TbXadV": {
+                          "type": "spec-row",
+                          "name": "Wash Pump Type",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Pump Type",
+                            "value": "{{ closest.product.metafields.specs.wash_pump_type.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_xxpMYj": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Min Water Supply Temperature(°C)",
+                            "value": "{{ closest.product.metafields.specs.min_water_temp_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_zDMf9q": {
+                          "type": "spec-row",
+                          "name": "Max Water Supply Temperature(°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Water Supply Temperature(°C)",
+                            "value": "{{ closest.product.metafields.specs.max_water_temp_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_VNrW96": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Pressure (bar)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Min Water Supply Pressure (bar)",
+                            "value": "{{ closest.product.metafields.specs.min_water_pressure_bar.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iHi9Ti": {
+                          "type": "spec-row",
+                          "name": "Min Water Supply Pressure (bar)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Water Supply Pressure (bar)",
+                            "value": "{{ closest.product.metafields.specs.max_water_pressure_bar.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_P93aN3": {
+                          "type": "spec-row",
+                          "name": "Wash Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Temperature (°C)",
+                            "value": "{{ closest.product.metafields.specs.wash_temperature_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MjLVdB": {
+                          "type": "spec-row",
+                          "name": "Maximum real productivity (racks/hour)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum real productivity (racks/hour)",
+                            "value": "{{ closest.product.metafields.specs.max_real_productivity_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_DhjNpL": {
+                          "type": "spec-row",
+                          "name": "Maximum theoretical productivity (racks/hour)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Maximum theoretical productivity(racks/hour)",
+                            "value": "{{ closest.product.metafields.specs.max_theoretical_productivity_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_JDWA6Y": {
+                          "type": "spec-row",
+                          "name": "Boiler Volume (L)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Volume (L)",
+                            "value": "{{ closest.product.metafields.specs.boiler_volume_l.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iDnkR4": {
+                          "type": "spec-row",
+                          "name": "Boiler Type",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Type",
+                            "value": "{{ closest.product.metafields.specs.boiler_type.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_X6FrE3": {
+                          "type": "spec-row",
+                          "name": "Boiler Heating Element (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Boiler Heating Element (W)",
+                            "value": "{{ closest.product.metafields.specs.boiler_heating_element_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_r43Eii": {
+                          "type": "spec-row",
+                          "name": "Rinse Temperature (°C)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse Temperature (°C)",
+                            "value": "{{ closest.product.metafields.specs.rinse_temperature_c.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_NHCEhD": {
+                          "type": "spec-row",
+                          "name": "Rinse Water Consumption",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse Water Consumption",
+                            "value": "{{ closest.product.metafields.specs.rinse_water_consumption.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Y7XKnX": {
+                          "type": "spec-row",
+                          "name": "Wash Cycle (sec)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Cycle (sec)",
+                            "value": "{{ closest.product.metafields.specs.wash_cycle_sec.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_fRUCxL": {
+                          "type": "spec-row",
+                          "name": "Productivity Speed 1 (racks/hr)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Productivity Speed 1 (racks/hr)",
+                            "value": "{{ closest.product.metafields.specs.productivity_speed_1_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MCrFNP": {
+                          "type": "spec-row",
+                          "name": "Productivity Speed 2 (racks/hr)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Productivity Speed 2 (racks/hr)",
+                            "value": "{{ closest.product.metafields.specs.productivity_speed_2_rph.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7eEEyF": {
+                          "type": "spec-row",
+                          "name": "Power with cold water supply (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with cold water supply (W)",
+                            "value": "{{ closest.product.metafields.specs.power_cold_water_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_qYVQxN": {
+                          "type": "spec-row",
+                          "name": "Power with hot water supply (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with hot water supply (W)",
+                            "value": "{{ closest.product.metafields.specs.power_hot_water_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_8fehkX": {
+                          "type": "spec-row",
+                          "name": "Power with plus heat recovery system (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Power with plus heat recovery system (W)",
+                            "value": "{{ closest.product.metafields.specs.power_heat_recovery_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_xbnnMr": {
+                          "type": "spec-row",
+                          "name": "Max Electric Power (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Max Electric Power (W)",
+                            "value": "{{ closest.product.metafields.specs.max_electric_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_cCbPkn": {
+                          "type": "spec-row",
+                          "name": "Wash Pump Power (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wash Pump Power (W)",
+                            "value": "{{ closest.product.metafields.specs.wash_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_tfG9kA": {
+                          "type": "spec-row",
+                          "name": "Drain pump (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Drain pump(W)",
+                            "value": "{{ closest.product.metafields.specs.drain_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_mtbhwP": {
+                          "type": "spec-row",
+                          "name": "Rinse pump (W)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Rinse pump (W)",
+                            "value": "{{ closest.product.metafields.specs.rinse_pump_power_w.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_JVYB3C": {
+                          "type": "spec-row",
+                          "name": "Door/hood openin (cm)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Door/hood openin (cm)",
+                            "value": "{{ closest.product.metafields.specs.door_opening_cm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_6Gcf3j": {
+                          "type": "spec-row",
+                          "name": "Pump Warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Pump Warranty",
+                            "value": "{{ closest.product.metafields.specs.pump_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_9Ymi8d": {
+                          "type": "spec-row",
+                          "name": "Phrase ",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Phrase",
+                            "value": "{{ closest.product.metafields.specs.phrase.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_g6QVWq": {
+                          "type": "spec-row",
+                          "name": "Packing Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Packing Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.packing_weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_04": {
+                          "type": "spec-row",
+                          "name": "Weight (kg)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Weight (kg)",
+                            "value": "{{ closest.product.metafields.specs.weight_kg.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_05": {
+                          "type": "spec-row",
+                          "name": "Voltage",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Voltage",
+                            "value": "{{ closest.product.metafields.specs.voltage.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_06": {
+                          "type": "spec-row",
+                          "name": "Hz",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Hz",
+                            "value": "{{ closest.product.metafields.specs.hz.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_07": {
+                          "type": "spec-row",
+                          "name": "Wattage",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Wattage",
+                            "value": "{{ closest.product.metafields.specs.wattage.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_08": {
+                          "type": "spec-row",
+                          "name": "Ampere",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Ampere",
+                            "value": "{{ closest.product.metafields.specs.ampere.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_09": {
+                          "type": "spec-row",
+                          "name": "Chiller door amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller door amount",
+                            "value": "{{ closest.product.metafields.specs.chiller_door_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_10": {
+                          "type": "spec-row",
+                          "name": "Chiller capacity volume (liter)",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller capacity volume (liter)",
+                            "value": "{{ closest.product.metafields.specs.chiller_capacity_liter.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_AmUQV4": {
+                          "type": "spec-row",
+                          "name": "Cooking Surface",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Cooking Surface (mm)",
+                            "value": "{{ closest.product.metafields.specs.cooking_surface_mm.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_iEVzLt": {
+                          "type": "spec-row",
+                          "name": "Construction",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Construction",
+                            "value": "{{ closest.product.metafields.specs.construction.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_p3qtp8": {
+                          "type": "spec-row",
+                          "name": "Freezer Temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Temperature",
+                            "value": "{{ closest.product.metafields.specs.freezer_temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_kwd47C": {
+                          "type": "spec-row",
+                          "name": "Freezer Door Amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Door Amount",
+                            "value": "{{ closest.product.metafields.specs.freezer_door_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_UKiWyN": {
+                          "type": "spec-row",
+                          "name": "Drawer Amount",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Drawer Amount",
+                            "value": "{{ closest.product.metafields.specs.drawer_amount.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_npKqAm": {
+                          "type": "spec-row",
+                          "name": "Freezer Capacity Volume",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Freezer Capacity Volume",
+                            "value": "{{ closest.product.metafields.specs.freezer_capacity_volume.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_yfmL4f": {
+                          "type": "spec-row",
+                          "name": "Usage Time",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Usage Time",
+                            "value": "{{ closest.product.metafields.specs.usage_time.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_7pFqfE": {
+                          "type": "spec-row",
+                          "name": "Temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Temperature",
+                            "value": "{{ closest.product.metafields.specs.temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_z7bYmi": {
+                          "type": "spec-row",
+                          "name": "Safety Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Safety Features",
+                            "value": "{{ closest.product.metafields.specs.safety_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Pe7N7N": {
+                          "type": "spec-row",
+                          "name": "Special Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Special Features",
+                            "value": "{{ closest.product.metafields.specs.special_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_MWbLJM": {
+                          "type": "spec-row",
+                          "name": "Accessories",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Accessories",
+                            "value": "{{ closest.product.metafields.specs.accessories.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_J7bgzi": {
+                          "type": "spec-row",
+                          "name": "Performance Rate",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Performance Rate",
+                            "value": "{{ closest.product.metafields.specs.performance_rate.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_11": {
+                          "type": "spec-row",
+                          "name": "Chiller temperature",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Chiller temperature",
+                            "value": "{{ closest.product.metafields.specs.chiller_temperature.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_12": {
+                          "type": "spec-row",
+                          "name": "Refrigerant",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Refrigerant",
+                            "value": "{{ closest.product.metafields.specs.refrigerant.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_13": {
+                          "type": "spec-row",
+                          "name": "Spareparts warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Spareparts Warranty",
+                            "value": "{{ closest.product.metafields.specs.spareparts_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_14": {
+                          "type": "spec-row",
+                          "name": "Service warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Service Warranty",
+                            "value": "{{ closest.product.metafields.specs.service_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_YBz4YK": {
+                          "type": "spec-row",
+                          "name": "Compressor Warranty",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Compressor Warranty",
+                            "value": "{{ closest.product.metafields.specs.compressor_warranty.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_15": {
+                          "type": "spec-row",
+                          "name": "Product of",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Product of",
+                            "value": "{{ closest.product.metafields.specs.product_of.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_16": {
+                          "type": "spec-row",
+                          "name": "Certificates",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Certificates",
+                            "value": "{{ closest.product.metafields.specs.certificates.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_17": {
+                          "type": "spec-row",
+                          "name": "Compatible With",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Compatible With",
+                            "value": "{{ closest.product.metafields.custom.compatible_with | metafield_text }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_yUwGF4": {
+                          "type": "spec-row",
+                          "name": "Cutting Size",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Cutting Size",
+                            "value": "{{ closest.product.metafields.specs.cutting_size.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_3qYQfj": {
+                          "type": "spec-row",
+                          "name": "Material",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Material",
+                            "value": "{{ closest.product.metafields.specs.material.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_Ay37et": {
+                          "type": "spec-row",
+                          "name": "Installation",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Installation/Mounting",
+                            "value": "{{ closest.product.metafields.specs.installation.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_4cybJk": {
+                          "type": "spec-row",
+                          "name": "Type of Cut",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Type of Cut",
+                            "value": "{{ closest.product.metafields.specs.type_of_cut.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_j3Dmkn": {
+                          "type": "spec-row",
+                          "name": "Safety Features",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Safety Features",
+                            "value": "{{ closest.product.metafields.specs.safety_features.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_4zFPDW": {
+                          "type": "spec-row",
+                          "name": "Made in",
+                          "settings": {
+                            "show_row": true,
+                            "label": "Made in",
+                            "value": "{{ closest.product.metafields.specs.made_in.value }}"
+                          },
+                          "blocks": {}
+                        },
+                        "spec_row_deNYt8": {
+                          "type": "spec-row",
+                          "name": "Row",
+                          "settings": {
+                            "show_row": true,
+                            "label": "",
+                            "value": ""
+                          },
+                          "blocks": {}
+                        }
+                      },
+                      "block_order": [
+                        "spec_row_01",
+                        "spec_row_WTJm7B",
+                        "spec_row_02",
+                        "spec_row_03",
+                        "spec_row_wCC8re",
+                        "spec_row_jPBUJr",
+                        "spec_row_BC9mVj",
+                        "spec_row_jmyijF",
+                        "spec_row_nVcNW8",
+                        "spec_row_7MBFBE",
+                        "spec_row_UCnMdJ",
+                        "spec_row_78WXrx",
+                        "spec_row_aCFT64",
+                        "spec_row_tQaqVn",
+                        "spec_row_k8RaKk",
+                        "spec_row_hCUMhD",
+                        "spec_row_DJ6bX7",
+                        "spec_row_tVWiXF",
+                        "spec_row_TbXadV",
+                        "spec_row_xxpMYj",
+                        "spec_row_zDMf9q",
+                        "spec_row_VNrW96",
+                        "spec_row_iHi9Ti",
+                        "spec_row_P93aN3",
+                        "spec_row_MjLVdB",
+                        "spec_row_DhjNpL",
+                        "spec_row_JDWA6Y",
+                        "spec_row_iDnkR4",
+                        "spec_row_X6FrE3",
+                        "spec_row_r43Eii",
+                        "spec_row_NHCEhD",
+                        "spec_row_Y7XKnX",
+                        "spec_row_fRUCxL",
+                        "spec_row_MCrFNP",
+                        "spec_row_7eEEyF",
+                        "spec_row_qYVQxN",
+                        "spec_row_8fehkX",
+                        "spec_row_xbnnMr",
+                        "spec_row_cCbPkn",
+                        "spec_row_tfG9kA",
+                        "spec_row_mtbhwP",
+                        "spec_row_JVYB3C",
+                        "spec_row_6Gcf3j",
+                        "spec_row_9Ymi8d",
+                        "spec_row_g6QVWq",
+                        "spec_row_04",
+                        "spec_row_05",
+                        "spec_row_06",
+                        "spec_row_07",
+                        "spec_row_08",
+                        "spec_row_09",
+                        "spec_row_10",
+                        "spec_row_AmUQV4",
+                        "spec_row_iEVzLt",
+                        "spec_row_p3qtp8",
+                        "spec_row_kwd47C",
+                        "spec_row_UKiWyN",
+                        "spec_row_npKqAm",
+                        "spec_row_yfmL4f",
+                        "spec_row_7pFqfE",
+                        "spec_row_z7bYmi",
+                        "spec_row_Pe7N7N",
+                        "spec_row_MWbLJM",
+                        "spec_row_J7bgzi",
+                        "spec_row_11",
+                        "spec_row_12",
+                        "spec_row_13",
+                        "spec_row_14",
+                        "spec_row_YBz4YK",
+                        "spec_row_15",
+                        "spec_row_16",
+                        "spec_row_17",
+                        "spec_row_yUwGF4",
+                        "spec_row_3qYQfj",
+                        "spec_row_Ay37et",
+                        "spec_row_4cybJk",
+                        "spec_row_j3Dmkn",
+                        "spec_row_4zFPDW",
+                        "spec_row_deNYt8"
+                      ]
+                    }
+                  },
+                  "block_order": [
+                    "ai_gen_block_dbe7999_aeYLqV"
+                  ]
+                }
+              },
+              "block_order": [
+                "accordion_row_NynKEm",
+                "accordion_row_kz6mpj"
+              ]
+            },
+            "document_specsheet_EKAWHE": {
+              "type": "document-specsheet",
+              "name": "Document downloads",
+              "settings": {
+                "heading": "",
+                "heading_size": 24,
+                "heading_spacing": 20,
+                "heading_color": "#000000",
+                "desktop_width_percent": 100,
+                "column_1_label": "File type",
+                "column_2_label": "File name",
+                "column_3_label": "Action",
+                "download_label": "Download",
+                "show_file_size": true,
+                "use_metafield_spec": true,
+                "metafield_spec_label": "Spec Sheet",
+                "file_1": "{{ closest.product.metafields.custom.link_pdf.value }}",
+                "file_name_1": "Spec Sheet",
+                "file_size_1": "",
+                "file_2": "",
+                "file_name_2": "Installation Manual",
+                "file_size_2": "5.1 MB",
+                "file_3": "",
+                "file_name_3": "Parts Manual",
+                "file_size_3": "3.8 MB",
+                "file_4": "",
+                "file_name_4": "",
+                "file_size_4": "",
+                "file_5": "",
+                "file_name_5": "",
+                "file_size_5": "",
+                "file_6": "",
+                "file_name_6": "",
+                "file_size_6": "",
+                "file_7": "",
+                "file_name_7": "",
+                "file_size_7": "",
+                "file_8": "",
+                "file_name_8": "",
+                "file_size_8": "",
+                "file_9": "",
+                "file_name_9": "",
+                "file_size_9": "",
+                "file_10": "",
+                "file_name_10": "",
+                "file_size_10": "",
+                "table_background": "#ffffff",
+                "table_border_color": "#e6e6e6",
+                "table_border_width": 1,
+                "table_border_radius": 4,
+                "header_background": "#f5f5f5",
+                "header_text_color": "#000000",
+                "header_font_size": 14,
+                "header_border_width": 2,
+                "cell_text_color": "#000000",
+                "cell_font_size": 14,
+                "cell_padding": 16,
+                "row_border_color": "#e6e6e6",
+                "row_border_width": 1,
+                "row_hover_background": "#fafafa",
+                "file_type_color": "#666666",
+                "file_size_color": "#999999",
+                "file_size_font_size": 12,
+                "link_color": "#0891b2",
+                "link_hover_color": "#0e7490",
+                "empty_state_color": "#999999"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "group_icgrde",
+            "divider_VJhene",
+            "variant_picker_R3rGDr",
+            "buy_buttons_eYQEYi",
+            "accordion_RAbGda",
+            "document_specsheet_EKAWHE"
+          ]
+        }
+      },
+      "settings": {
+        "content_width": "content-center-aligned",
+        "desktop_media_position": "left",
+        "equal_columns": false,
+        "limit_details_width": false,
+        "gap": 48,
+        "enable_sticky_add_to_cart": true,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_44NkwB": {
+      "type": "section",
+      "blocks": {
+        "text_A7rrzq": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Description</strong></p>{{ product.description }}",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_A7rrzq"
+      ],
+      "disabled": true,
+      "name": "Section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "product_recommendations_qggXJq": {
+      "type": "product-recommendations",
+      "blocks": {
+        "text_cbcgyb": {
+          "type": "text",
+          "name": "t:names.header",
+          "settings": {
+            "text": "<h3>You may also like </h3>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h4",
+            "font": "var(--font-primary--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 8,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_card_gallery_DNizbJ": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_FXXy6k": {
+              "type": "text",
+              "name": "vendor",
+              "settings": {
+                "text": "<p><strong>{{ closest.product.vendor }}</strong></p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#404040",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_PPtJxx": {
+              "type": "text",
+              "name": "title",
+              "settings": {
+                "text": "<p><strong>{{ closest.product.title }}</strong></p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "#333333",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "sku_eCGj9c": {
+              "type": "sku",
+              "name": "t:names.product_sku",
+              "settings": {
+                "type_preset": "",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_inventory_ewPWtj": {
+              "type": "product-inventory",
+              "name": "t:names.product_inventory",
+              "settings": {
+                "font_size": "14",
+                "text_color": "",
+                "prefix_text": "Stock :",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_gLWgA6": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "#000000",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product_card_gallery_DNizbJ",
+            "text_FXXy6k",
+            "text_PPtJxx",
+            "sku_eCGj9c",
+            "product_inventory_ewPWtj",
+            "price_gLWgA6"
+          ]
+        }
+      },
+      "block_order": [
+        "text_cbcgyb"
+      ],
+      "name": "t:names.product_recommendations",
+      "settings": {
+        "product": "{{ closest.product }}",
+        "recommendation_type": "related",
+        "layout_type": "grid",
+        "carousel_on_mobile": true,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 12,
+        "rows_gap": 24,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 28,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    }
+  },
+  "order": [
+    "main",
+    "section_44NkwB",
+    "product_recommendations_qggXJq"
+  ]
+}
