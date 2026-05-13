@@ -45,130 +45,165 @@
                   assign platform = 'snapchat'
                 when 'pinterest_url'
                   assign platform = 'pinterest'
-                when 'tumblr_url'
-                  assign platform = 'tumblr'
-                when 'vimeo_url'
-                  assign platform = 'vimeo'
-                when 'custom_url'
-                  assign platform = link_url | split: '//' | last | remove: 'www.' | split: '.' | first
-                  case platform
-                    when 'x'
-                      assign platform = 'twitter'
-                    <div class="social-icons__wrapper" {{ block.shopify_attributes }}>
-                      {% assign social_links = 'facebook_url,instagram_url,line_url,youtube_url,tiktok_url,twitter_url,threads_url,linkedin_url,bluesky_url,snapchat_url,pinterest_url,tumblr_url,vimeo_url,custom_url' | split: ',' %}
-                      {% assign social_icons = 'facebook_icon,instagram_icon,line_icon,youtube_icon,tiktok_icon,twitter_icon,threads_icon,linkedin_icon,bluesky_icon,snapchat_icon,pinterest_icon,tumblr_icon,vimeo_icon,custom_icon' | split: ',' %}
+                <div class="social-icons__wrapper" {{ block.shopify_attributes }}>
+                  {% assign social_links = 'facebook_url,instagram_url,line_url,youtube_url,tiktok_url,twitter_url,threads_url,linkedin_url,bluesky_url,snapchat_url,pinterest_url,tumblr_url,vimeo_url,custom_url' | split: ',' %}
+                  {% assign social_icons = 'facebook_icon,instagram_icon,line_icon,youtube_icon,tiktok_icon,twitter_icon,threads_icon,linkedin_icon,bluesky_icon,snapchat_icon,pinterest_icon,tumblr_icon,vimeo_icon,custom_icon' | split: ',' %}
 
-                      {% for link_key in social_links %}
-                        {% assign link_url = block.settings[link_key] %}
-                        {% assign icon_setting = social_icons[forloop.index0] %}
-                        {% assign custom_icon = block.settings[icon_setting] %}
-                        {% assign render_icon = true %}
-                        {% assign platform = '' %}
+                  {% for link_key in social_links %}
+                    {% assign link_url = block.settings[link_key] %}
+                    {% assign icon_setting = social_icons[forloop.index0] %}
+                    {% assign custom_icon = block.settings[icon_setting] %}
+                    {% assign render_icon = true %}
+                    {% assign platform = '' %}
 
-                        {% if link_url != blank %}
-                          {% case link_key %}
-                            {% when 'facebook_url' %}{% assign platform = 'facebook' %}
-                            {% when 'instagram_url' %}{% assign platform = 'instagram' %}
-                            {% when 'youtube_url' %}{% assign platform = 'youtube' %}
-                            {% when 'tiktok_url' %}{% assign platform = 'tiktok' %}
-                            {% when 'line_url' %}{% assign platform = 'line' %}
-                            {% when 'twitter_url' %}{% assign platform = 'twitter' %}
-                            {% when 'threads_url' %}{% assign platform = 'threads' %}
-                            {% when 'linkedin_url' %}{% assign platform = 'linkedin' %}
-                            {% when 'bluesky_url' %}{% assign platform = 'bluesky' %}
-                            {% when 'snapchat_url' %}{% assign platform = 'snapchat' %}
-                            {% when 'pinterest_url' %}{% assign platform = 'pinterest' %}
-                            {% when 'tumblr_url' %}{% assign platform = 'tumblr' %}
-                            {% when 'vimeo_url' %}{% assign platform = 'vimeo' %}
-                            {% when 'custom_url' %}
-                              {% assign platform = link_url | split: '//' | last | remove: 'www.' | split: '.' | first %}
-                              {% case platform %}
-                                {% when 'x' %}{% assign platform = 'twitter' %}
-                                {% else %}{% assign render_icon = false %}
-                              {% endcase %}
+                    {% if link_url != blank %}
+                      {% case link_key %}
+                        {% when 'facebook_url' %}{% assign platform = 'facebook' %}
+                        {% when 'instagram_url' %}{% assign platform = 'instagram' %}
+                        {% when 'youtube_url' %}{% assign platform = 'youtube' %}
+                        {% when 'tiktok_url' %}{% assign platform = 'tiktok' %}
+                        {% when 'line_url' %}{% assign platform = 'line' %}
+                        {% when 'twitter_url' %}{% assign platform = 'twitter' %}
+                        {% when 'threads_url' %}{% assign platform = 'threads' %}
+                        {% when 'linkedin_url' %}{% assign platform = 'linkedin' %}
+                        {% when 'bluesky_url' %}{% assign platform = 'bluesky' %}
+                        {% when 'snapchat_url' %}{% assign platform = 'snapchat' %}
+                        {% when 'pinterest_url' %}{% assign platform = 'pinterest' %}
+                        {% when 'tumblr_url' %}{% assign platform = 'tumblr' %}
+                        {% when 'vimeo_url' %}{% assign platform = 'vimeo' %}
+                        {% when 'custom_url' %}
+                          {% assign platform = link_url | split: '//' | last | remove: 'www.' | split: '.' | first %}
+                          {% case platform %}
+                            {% when 'x' %}{% assign platform = 'twitter' %}
+                            {% else %}{% assign render_icon = false %}
                           {% endcase %}
+                      {% endcase %}
 
-                          {% if render_icon %}
-                            <a href="{{ link_url }}" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="{{ platform | capitalize }}">
-                              {% if custom_icon != blank %}
-                                <img src="{{ custom_icon | img_url: '32x32' }}" alt="{{ platform }} icon" class="social-icon-img" loading="lazy" />
-                              {% else %}
-                                <span class="icon-{{ platform }} social-icon-svg" aria-hidden="true"></span>
-                              {% endif %}
-                            </a>
+                      {% if render_icon %}
+                        <a href="{{ link_url }}" class="social-icon-link" target="_blank" rel="noopener noreferrer" aria-label="{{ platform | capitalize }}">
+                          {% if custom_icon != blank %}
+                            <img src="{{ custom_icon | img_url: '32x32' }}" alt="{{ platform }} icon" class="social-icon-img" loading="lazy" />
+                          {% else %}
+                            <span class="icon-{{ platform }} social-icon-svg" aria-hidden="true"></span>
                           {% endif %}
-                        {% endif %}
-                      {% endfor %}
-
-                      {% comment %} Optional DBD registered image below icons (block setting: dbd_registered_image) {% endcomment %}
-                      {% if block.settings.dbd_registered_image != blank %}
-                        <span class="social-icons__dbd-row-break" aria-hidden="true"></span>
-                        <div class="social-icons__dbd-wrapper">
-                          <img src="{{ block.settings.dbd_registered_image | img_url: '90x' }}" alt="DBD registered" class="social-icons__dbd" />
-                        </div>
+                        </a>
                       {% endif %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% comment %} Optional DBD registered image below icons (block setting: dbd_registered_image) {% endcomment %}
+                  {% if block.settings.dbd_registered_image != blank %}
+                    <span class="social-icons__dbd-row-break" aria-hidden="true"></span>
+                    <div class="social-icons__dbd-wrapper">
+                      <img src="{{ block.settings.dbd_registered_image | img_url: '90x' }}" alt="DBD registered" class="social-icons__dbd" />
                     </div>
+                  {% endif %}
+                </div>
 
-                    {% stylesheet %}
-                      .social-icons__wrapper {
-                        display: flex;
-                        gap: var(--gap-sm);
-                        flex-wrap: wrap;
-                        justify-content: center;
+                {% stylesheet %}
+                  .social-icons__wrapper {
+                    display: flex;
+                    gap: var(--gap-sm);
+                    flex-wrap: wrap;
+                    justify-content: center;
 
-                        @media screen and (min-width: 750px) {
-                          flex-wrap: nowrap;
-                          justify-content: flex-start;
-                        }
-                      }
+                    @media screen and (min-width: 750px) {
+                      flex-wrap: nowrap;
+                      justify-content: flex-start;
+                    }
+                  }
 
-                      .social-icons__icon-link {
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        width: var(--icon-size-lg);
-                        height: var(--icon-size-lg);
-                        text-decoration: none;
-                      }
+                  .social-icons__icon-link {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: var(--icon-size-lg);
+                    height: var(--icon-size-lg);
+                    text-decoration: none;
+                  }
 
-                      .social-icon-img,
-                      .social-icon-svg {
-                        width: 100%;
-                        height: 100%;
-                        display: block;
-                      }
+                  .social-icon-img,
+                  .social-icon-svg {
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                  }
 
-                      .social-icons__dbd-row-break {
-                        flex-basis: 100%;
-                        height: 0;
-                        width: 100%;
-                        display: block;
-                        content: "";
-                      }
+                  .social-icons__dbd-row-break {
+                    flex-basis: 100%;
+                    height: 0;
+                    width: 100%;
+                    display: block;
+                    content: "";
+                  }
 
-                      .social-icons__dbd-wrapper {
-                        display: flex;
-                        width: 100%;
-                        justify-content: center;
-                        margin-top: 8px;
-                        clear: both;
-                      }
+                  .social-icons__dbd-wrapper {
+                    display: flex;
+                    width: 100%;
+                    justify-content: center;
+                    margin-top: 8px;
+                    clear: both;
+                  }
 
-                      .social-icons__dbd {
-                        width: 90px;
-                        height: auto;
-                        display: block;
-                      }
+                  .social-icons__dbd {
+                    width: 90px;
+                    height: auto;
+                    display: block;
+                  }
 
-                      @media screen and (min-width: 750px) {
-                        .social-icons__dbd-wrapper {
-                          justify-content: flex-start;
-                          padding-left: 8px;
-                          margin-top: 0;
-                        }
+                  @media screen and (min-width: 750px) {
+                    .social-icons__dbd-wrapper {
+                      justify-content: flex-start;
+                      padding-left: 8px;
+                      margin-top: 0;
+                    }
 
-                        .social-icons__dbd {
-                          width: 84px;
-                        }
-                      }
-                    {% endstylesheet %}
+                    .social-icons__dbd {
+                      width: 84px;
+                    }
+                  }
+                {% endstylesheet %}
+
+                {% schema %}
+                {
+                  "name": "t:names.social_media_links",
+                  "tag": null,
+                  "settings": [
+                    { "type": "url", "id": "facebook_url", "label": "t:options.facebook" },
+                    { "type": "image_picker", "id": "facebook_icon", "label": "Facebook icon (optional)" },
+                    { "type": "url", "id": "instagram_url", "label": "t:options.instagram" },
+                    { "type": "image_picker", "id": "instagram_icon", "label": "Instagram icon (optional)" },
+                    { "type": "url", "id": "youtube_url", "label": "t:options.youtube" },
+                    { "type": "image_picker", "id": "youtube_icon", "label": "YouTube icon (optional)" },
+                    { "type": "url", "id": "tiktok_url", "label": "t:options.tiktok" },
+                    { "type": "image_picker", "id": "tiktok_icon", "label": "TikTok icon (optional)" },
+                    { "type": "url", "id": "line_url", "label": "LINE" },
+                    { "type": "image_picker", "id": "line_icon", "label": "LINE icon (optional)" },
+                    { "type": "url", "id": "twitter_url", "label": "t:options.twitter" },
+                    { "type": "image_picker", "id": "twitter_icon", "label": "Twitter icon (optional)" },
+                    { "type": "url", "id": "threads_url", "label": "t:options.threads" },
+                    { "type": "image_picker", "id": "threads_icon", "label": "Threads icon (optional)" },
+                    { "type": "url", "id": "linkedin_url", "label": "t:options.linkedin" },
+                    { "type": "image_picker", "id": "linkedin_icon", "label": "LinkedIn icon (optional)" },
+                    { "type": "url", "id": "bluesky_url", "label": "t:options.bluesky" },
+                    { "type": "image_picker", "id": "bluesky_icon", "label": "Bluesky icon (optional)" },
+                    { "type": "url", "id": "snapchat_url", "label": "t:options.snapchat" },
+                    { "type": "image_picker", "id": "snapchat_icon", "label": "Snapchat icon (optional)" },
+                    { "type": "url", "id": "pinterest_url", "label": "t:options.pinterest" },
+                    { "type": "image_picker", "id": "pinterest_icon", "label": "Pinterest icon (optional)" },
+                    { "type": "url", "id": "tumblr_url", "label": "t:options.tumblr" },
+                    { "type": "image_picker", "id": "tumblr_icon", "label": "Tumblr icon (optional)" },
+                    { "type": "url", "id": "vimeo_url", "label": "t:options.vimeo" },
+                    { "type": "image_picker", "id": "vimeo_icon", "label": "Vimeo icon (optional)" },
+                    { "type": "url", "id": "custom_url", "label": "t:settings.custom_link" },
+                    { "type": "image_picker", "id": "custom_icon", "label": "Custom icon (optional)" },
+                    { "type": "image_picker", "id": "dbd_registered_image", "label": "DBD registered image (optional)" }
+                  ],
+                  "presets": [
+                    {
+                      "name": "t:names.social_media_links",
+                      "category": "t:categories.footer"
+                    }
+                  ]
+                }
+                {% endschema %}
