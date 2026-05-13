@@ -22,7 +22,8 @@
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: 28 %}
     --product-title-gap: {{ section.settings.product_title_gap }}px;
-    --hotspot-size: 36px;
+    --hotspot-size: {{ section.settings.hotspot_size | default: 36 }}px;
+    --hotspot-size-mobile: {{ section.settings.hotspot_size_mobile | default: 28 }}px;
     --minimum-width-dialog: 260px;
     --maximum-width-dialog: 330px;
     --width-product-image-dialog: 110px;
@@ -228,40 +229,69 @@
   }
 
   @media screen and (max-width: 749px) {
+    /* === Mobile: horizontal scroll carousel, 1 slide at a time === */
     .hotspots-mosaic__grid {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto auto;
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 4px;
       aspect-ratio: unset;
+      /* hide scrollbar but keep scrollable */
+      scrollbar-width: none;
     }
 
-    .hotspots-mosaic__cell--main {
-      grid-column: 1 / 3;
-      grid-row: 1;
-      aspect-ratio: 4 / 3;
+    .hotspots-mosaic__grid::-webkit-scrollbar {
+      display: none;
     }
 
-    .hotspots-mosaic__cell--center-top {
-      grid-column: 1;
-      grid-row: 2;
-      aspect-ratio: 1;
+    .hotspots-mosaic__cell {
+      flex: 0 0 100%;
+      height: 70vw;
+      scroll-snap-align: start;
     }
 
-    .hotspots-mosaic__cell--center-bottom {
-      grid-column: 2;
-      grid-row: 2;
-      aspect-ratio: 1;
+    /* hide duplicate bottom-right cell */
+    .hotspots-mosaic__cell--bottom-right {
+      display: none;
     }
 
-    .hotspots-mosaic__cell--side-top {
-      grid-column: 1;
-      grid-row: 3;
-      aspect-ratio: 1;
+    /* hotspot container must follow carousel scroll — pin to first cell */
+    .hotspots-container {
+      display: none;
     }
 
-    .hotspots-mosaic__cell--side-bottom {
-      grid-column: 2;
-      grid-row: 3;
-      aspect-ratio: 1;
+    /* smaller hotspot trigger size */
+    .hotspot-trigger {
+      width: var(--hotspot-size-mobile);
+      height: var(--hotspot-size-mobile);
+    }
+
+    .hotspot-trigger::after {
+      width: calc(var(--hotspot-size-mobile) * 0.4);
+      height: calc(var(--hotspot-size-mobile) * 0.4);
+    }
+
+    /* text hero adjustments */
+    .hotspots-mosaic__text-hero {
+      padding: 16px;
+    }
+
+    .hotspots-mosaic__text-hero-title {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .hotspots-mosaic__text-hero-sub {
+      font-size: 0.9rem;
+    }
+
+    /* scroll dots indicator */
+    .hotspots-mosaic__grid::after {
+      content: '';
+      flex: 0 0 1px;
+      scroll-snap-align: end;
     }
   }
 
@@ -841,6 +871,30 @@
       "label": "t:settings.bullseye_color",
       "default": "#ffffff",
       "alpha": true
+    },
+    {
+      "type": "header",
+      "content": "ขนาด Hotspot"
+    },
+    {
+      "type": "range",
+      "id": "hotspot_size",
+      "label": "ขนาด Hotspot (Desktop)",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "hotspot_size_mobile",
+      "label": "ขนาด Hotspot (Mobile)",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
     },
     {
       "type": "color_scheme",

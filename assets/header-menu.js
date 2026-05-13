@@ -22,6 +22,12 @@ class HeaderMenu extends Component {
    */
   #submenuMutationObserver = null;
 
+  /**
+   * Timer for delayed deactivation to bridge the gap between menu item and submenu
+   * @type {ReturnType<typeof setTimeout> | null}
+   */
+  #deactivateTimer = null;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -35,6 +41,10 @@ class HeaderMenu extends Component {
     window.removeEventListener('resize', this.#resizeListener);
     this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
     this.#cleanupMutationObserver();
+    if (this.#deactivateTimer) {
+      clearTimeout(this.#deactivateTimer);
+      this.#deactivateTimer = null;
+    }
   }
 
   /**
@@ -46,8 +56,34 @@ class HeaderMenu extends Component {
 
 
   #overflowSubmenuListener = () => {
-    this.#deactivate();
+    this.#scheduleDeactivate();
   };
+
+  /**
+   * Fires when the pointer leaves the active submenu — schedules close unless moving back to menu item
+   * @param {PointerEvent} event
+   */
+  #submenuLeaveListener = (event) => {
+    const activeItem = this.#state.activeItem;
+    const isMovingToMenuItem = event.relatedTarget instanceof Node && activeItem?.parentElement?.contains(event.relatedTarget);
+    if (!isMovingToMenuItem) {
+      this.#scheduleDeactivate();
+    }
+    // Always remove listener after it fires — reattached on next activate
+    const submenu = findSubmenu(activeItem);
+    submenu?.removeEventListener('pointerleave', this.#submenuLeaveListener);
+  };
+
+  /**
+   * Schedule deactivation after a short delay to allow mouse to travel to submenu
+   */
+  #scheduleDeactivate() {
+    if (this.#deactivateTimer) clearTimeout(this.#deactivateTimer);
+    this.#deactivateTimer = setTimeout(() => {
+      this.#deactivateTimer = null;
+      this.#deactivate();
+    }, 150);
+  }
 
   /**
    * @type {State}
@@ -80,6 +116,12 @@ class HeaderMenu extends Component {
    * @param {PointerEvent | FocusEvent} event
    */
   activate = (event) => {
+    // Cancel any pending deactivation when activating a menu item
+    if (this.#deactivateTimer) {
+      clearTimeout(this.#deactivateTimer);
+      this.#deactivateTimer = null;
+    }
+
     this.dispatchEvent(new MegaMenuHoverEvent());
 
     if (!(event.target instanceof Element) || !this.headerComponent) return;
@@ -112,6 +154,9 @@ class HeaderMenu extends Component {
     if (submenu) {
       // Mark submenu as active for content-visibility optimization
       submenu.dataset.active = '';
+
+      // Add pointerleave listener on submenu so it triggers close when mouse leaves
+      submenu.addEventListener('pointerleave', this.#submenuLeaveListener);
 
       // Cleanup any existing mutation observer from previous menu activations
       this.#cleanupMutationObserver();
@@ -170,14 +215,20 @@ class HeaderMenu extends Component {
 
     const menu = findSubmenu(this.#state.activeItem);
     const isMovingWithinMenu = event.relatedTarget instanceof Node && menu?.contains(document.activeElement);
+    // Check for both blur and pointer events when moving to submenu
     const isMovingToSubmenu =
-      event.relatedTarget instanceof Node && event.type === 'blur' && menu?.contains(event.relatedTarget);
+      event.relatedTarget instanceof Node && menu?.contains(event.relatedTarget);
     const isMovingToOverflowMenu =
       event.relatedTarget instanceof Node && event.relatedTarget.parentElement?.matches('[slot="overflow"]');
 
     if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) return;
 
-    this.#deactivate();
+    // Use a delay for pointer events to bridge the visual gap between menu item and submenu
+    if (event.type === 'pointerleave') {
+      this.#scheduleDeactivate();
+    } else {
+      this.#deactivate();
+    }
   }
 
   /**
@@ -190,6 +241,10 @@ class HeaderMenu extends Component {
     // Don't deactivate if the overflow menu or overflow list is still being hovered
     if (this.overflowListHovered || this.overflowMenu?.matches(':hover')) return;
 
+    // Don't deactivate if the active submenu is currently being hovered
+    const activeSubmenu = findSubmenu(item);
+    if (activeSubmenu?.matches(':hover')) return;
+
     this.headerComponent?.style.setProperty('--submenu-height', '0px');
     this.#setFullOpenHeaderHeight(0);
     this.style.setProperty('--submenu-opacity', '0');
@@ -201,9 +256,10 @@ class HeaderMenu extends Component {
     this.ariaExpanded = 'false';
     item.ariaExpanded = 'false';
 
-    // Remove active state from submenu after animation completes
+    // Remove active state from submenu after animation completes and clean up listeners
     if (submenu) {
       delete submenu.dataset.active;
+      submenu.removeEventListener('pointerleave', this.#submenuLeaveListener);
     }
   };
 

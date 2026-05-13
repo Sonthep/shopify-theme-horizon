@@ -77,7 +77,7 @@
   
   {%- comment -%} Discount Badge + Stock Status {%- endcomment -%}
   {% unless onboarding %}
-    {% if product.compare_at_price > product.price %}
+    {% if product.compare_at_price > product.price and settings.show_discount_badge %}
       {% assign discount = product.compare_at_price | minus: product.price %}
       {% assign discount_percent = discount | times: 100.0 | divided_by: product.compare_at_price | round %}
       <span class="badge-discount">-{{ discount_percent }}%</span>

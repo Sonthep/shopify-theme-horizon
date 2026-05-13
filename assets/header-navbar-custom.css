@@ -59,6 +59,18 @@
 #header-component.header .header__columns {
   --padding-block-start: var(--custom-header-vertical-padding, 10px);
   --padding-block-end: var(--custom-header-vertical-padding, 10px);
+  --padding-inline-start: var(--custom-header-horizontal-padding, 24px);
+  --padding-inline-end: var(--custom-header-horizontal-padding, 24px);
+}
+
+/* Menu item gap */
+#header-component.header header-menu .overflow-menu::part(list) {
+  gap: var(--custom-menu-item-gap, 8px);
+}
+
+#header-component.header header-menu .menu-list__link,
+#header-component.header header-menu .menu-list__button {
+  padding-inline: calc(var(--custom-menu-item-gap, 8px) / 2);
 }
 
 /* Remove box (background) from language selector */

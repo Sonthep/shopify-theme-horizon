@@ -44,13 +44,16 @@
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
     --width: {{ block_settings.width }};
+    {% if block_settings.price_text_color != blank %}color: {{ block_settings.price_text_color }};{% endif %}
   "
   {{ block.shopify_attributes }}
 >
   {% render 'price',
     show_unit_price: true,
     product_resource: product_resource,
-    show_sale_price_first: block_settings.show_sale_price_first
+    show_sale_price_first: block_settings.show_sale_price_first,
+    show_discount_badge: block_settings.show_discount_badge,
+    price_color: block_settings.price_text_color
   %}
 
   {% if block_settings.show_tax_info %}
@@ -132,6 +135,12 @@
       "type": "checkbox",
       "id": "show_sale_price_first",
       "label": "t:settings.show_sale_price_first",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "แสดง % ส่วนลด",
       "default": true
     },
     {
@@ -402,6 +411,13 @@
     {
       "type": "header",
       "content": "t:content.padding"
+    },
+    {
+      "type": "color",
+      "id": "price_text_color",
+      "label": "สีตัวหนังสือราคา (optional)",
+      "default": "#000000",
+      "alpha": true
     },
     {
       "type": "range",

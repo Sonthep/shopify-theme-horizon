@@ -75,6 +75,18 @@
   endif
 -%}
 
+{% liquid
+  assign price_color = price_color | default: settings.product_price_color
+  assign price_style = ''
+  assign price_style_sale = ''
+  assign price_style_regular = ''
+  if price_color != blank
+    assign price_style_sale = 'color: ' | append: price_color | append: ' !important;'
+  endif
+  assign default_price_color = '#000000'
+  assign price_style_regular = 'color: ' | append: default_price_color | append: ' !important;'
+-%}
+
 <div ref="priceContainer">
   {% if has_volume_pricing %}
     {% comment %} Volume pricing display {% endcomment %}
@@ -86,7 +98,7 @@
     {% endif %}
     <span class="price-item__group">
       <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
-      <span class="price">{{ price_min }} - {{ price_max }}</span>
+      <span class="price"{% if price_style != blank %} style="{{ price_style }}"{% endif %}>{{ price_min }} - {{ price_max }}</span>
     </span>
   {% else %}
     {% comment %} Standard pricing display {% endcomment %}
@@ -98,7 +110,7 @@
         {% endif %}
       "
     >
-      <span class="price">{{ price | default: '&nbsp;' }}</span>
+      <span class="price"{% if price_style_regular != blank %} style="{{ price_style_regular }}"{% endif %}>{{ price | default: '&nbsp;' }}</span>
     </div>
     <div
       class="
@@ -111,8 +123,8 @@
       {% if show_sale_price_first %}
         <span class="price-item__group">
           <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
-          {% if discount_pct > 0 %}<span class="inline-discount-badge">-{{ discount_pct }}%</span>{% endif %}
+          <span class="price-item--sale price"{% if price_style_sale != blank %} style="{{ price_style_sale }}"{% endif %}>{{ price | default: '&nbsp;' }}</span>
+          {% if discount_pct > 0 and show_discount_badge != false %}<span class="inline-discount-badge">-{{ discount_pct }}%</span>{% endif %}
         </span>
         <span class="price-item__group">
           <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
@@ -125,8 +137,8 @@
         </span>
         <span class="price-item__group">
           <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-          <span class="price-item--sale price">{{ price | default: '&nbsp;' }}</span>
-          {% if discount_pct > 0 %}<span class="inline-discount-badge">-{{ discount_pct }}%</span>{% endif %}
+          <span class="price-item--sale price"{% if price_style_sale != blank %} style="{{ price_style_sale }}"{% endif %}>{{ price | default: '&nbsp;' }}</span>
+          {% if discount_pct > 0 and show_discount_badge != false %}<span class="inline-discount-badge">-{{ discount_pct }}%</span>{% endif %}
         </span>
       {% endif %}
     </div>

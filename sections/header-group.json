@@ -19,7 +19,7 @@
           "static": true,
           "settings": {
             "hide_logo_on_home_page": false,
-            "padding-block-start": 20,
+            "padding-block-start": 10,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -51,7 +51,7 @@
       },
       "settings": {
         "logo_position": "left",
-        "menu_position": "left",
+        "menu_position": "center",
         "menu_row": "bottom",
         "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
@@ -68,6 +68,8 @@
         "section_width": "page-width",
         "section_height": "standard",
         "header_vertical_padding": 4,
+        "header_horizontal_padding": 20,
+        "menu_item_gap": 20,
         "enable_sticky_header": "always",
         "divider_width": 0,
         "divider_size": "page-width",

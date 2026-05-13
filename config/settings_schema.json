@@ -1434,6 +1434,12 @@
     "name": "t:names.badges",
     "settings": [
       {
+        "type": "checkbox",
+        "id": "show_discount_badge",
+        "label": "แสดง % ส่วนลด",
+        "default": true
+      },
+      {
         "type": "select",
         "id": "badge_position",
         "options": [
@@ -2062,6 +2068,14 @@
         "id": "currency_code_enabled_cart_total",
         "label": "t:settings.cart_total",
         "default": true
+      }
+      ,
+      {
+        "type": "color",
+        "id": "product_price_color",
+        "label": "สีราคาสินค้า (Product Price Color)",
+        "default": "#000000",
+        "alpha": true
       }
     ]
   },

@@ -10,7 +10,7 @@
 {
   "current": {
     "logo": "shopify://shop_images/CI_logo_75_2026-01.jpg",
-    "logo_height": 90,
+    "logo_height": 80,
     "logo_height_mobile": 45,
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
@@ -55,7 +55,8 @@
     "button_border_radius_primary": 14,
     "secondary_button_border_width": 1,
     "button_border_radius_secondary": 14,
-    "cart_type": "drawer",
+    "cart_type": "page",
+    "product_title_case": "uppercase",
     "cart_price_font": "secondary",
     "show_cart_note": false,
     "show_add_discount_code": true,

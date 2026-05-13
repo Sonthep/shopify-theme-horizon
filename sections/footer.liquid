@@ -37,6 +37,10 @@
     style="
       {%  render 'spacing-style', settings: section.settings %}
       --footer-gap: {{ section.settings.gap }}px;
+      --footer-margin-top: {{ section.settings.margin-block-start | default: 0 }}px;
+      --footer-margin-bottom: {{ section.settings.margin-block-end | default: 0 }}px;
+      --footer-margin-left: {{ section.settings.margin-inline-start | default: 0 }}px;
+      --footer-margin-right: {{ section.settings.margin-inline-end | default: 0 }}px;
       --grid-columns: {{ grid_columns }};
       --last-row-count: {{ last_row_count }};
       --tablet-last-row-count: {{ tablet_last_row_count }};
@@ -56,6 +60,10 @@
     border-block-start: 1px solid #e0e0e0;
     padding-block-start: calc(var(--footer-gap) + 16px);
     padding-block-end: calc(var(--footer-gap) + 16px);
+    margin-block-start: var(--footer-margin-top, 0px);
+    margin-block-end: var(--footer-margin-bottom, 0px);
+    margin-inline-start: var(--footer-margin-left, 0px);
+    margin-inline-end: var(--footer-margin-right, 0px);
   }
 
   @media screen and (min-width: 750px) and (max-width: 989px) {
@@ -75,10 +83,12 @@
   }
 
   @media screen and (min-width: 990px) {
-    /* First column (logo/contact) gets 1.6x width; rest split equally */
+    /* Equal columns, centered */
     .footer-content {
-      grid-template-columns: 1.6fr repeat(calc(var(--grid-columns) - 1), 1fr);
+      grid-template-columns: repeat(var(--grid-columns), minmax(160px, auto));
+      justify-content: center;
       align-items: start;
+      justify-items: start;
       column-gap: calc(var(--footer-gap) + 8px);
     }
 
@@ -229,6 +239,50 @@
       "step": 1,
       "unit": "px",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Margin"
+    },
+    {
+      "type": "range",
+      "id": "margin-block-start",
+      "label": "Margin บน",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-block-end",
+      "label": "Margin ล่าง",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-inline-start",
+      "label": "Margin ซ้าย",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-inline-end",
+      "label": "Margin ขวา",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

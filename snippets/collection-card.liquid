@@ -90,14 +90,34 @@
     height: 100%;
   }
 
+  .collection-card {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .collection-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+  }
+
   .collection-card__inner {
     gap: var(--gap);
+    overflow: hidden;
 
     a,
     button {
       /* only allow interactive elements to be clickable separate from .collection-card__link */
       pointer-events: auto;
     }
+  }
+
+  .collection-card__inner img,
+  .collection-card__inner .collection-card__image {
+    transition: transform 0.4s ease;
+  }
+
+  .collection-card:hover .collection-card__inner img,
+  .collection-card:hover .collection-card__inner .collection-card__image {
+    transform: scale(1.05);
   }
 
   /* allow all blocks to be selectable in editor preview */

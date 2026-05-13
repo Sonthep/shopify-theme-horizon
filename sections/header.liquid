@@ -311,6 +311,8 @@
     --color-scheme-top-row: rgba({{ section.settings.color_scheme_top.settings.background.rgba }});
     --color-scheme-bottom-row: rgba({{ section.settings.color_scheme_bottom.settings.background.rgba }});
     --custom-header-vertical-padding: {{ section.settings.header_vertical_padding | default: 10 }}px;
+    --custom-header-horizontal-padding: {{ section.settings.header_horizontal_padding | default: 24 }}px;
+    --custom-menu-item-gap: {{ section.settings.menu_item_gap | default: 8 }}px;
     --custom-header-search-height: {{ section.settings.search_control_height | default: 48 }}px;
     {% if section.settings.actions_display_style == 'text' %}
       --header-actions-font-size: {{ section.settings.actions_font_size | default: '1rem' }};
@@ -1413,14 +1415,38 @@
       "default": "standard"
     },
     {
+      "type": "header",
+      "content": "การปรับระยะห่าง"
+    },
+    {
       "type": "range",
       "id": "header_vertical_padding",
-      "label": "Header height",
+      "label": "ระยะห่างบน-ล่าง (Header height)",
       "min": 4,
-      "max": 24,
+      "max": 40,
       "step": 1,
       "unit": "px",
       "default": 10
+    },
+    {
+      "type": "range",
+      "id": "header_horizontal_padding",
+      "label": "ระยะห่างซ้าย-ขวา (Horizontal padding)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "menu_item_gap",
+      "label": "ระยะห่างระหว่าง menu items",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
     },
     {
       "type": "select",
