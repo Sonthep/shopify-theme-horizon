@@ -122,7 +122,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-end": 20
           },
           "blocks": {
             "heading_help_faq": {
@@ -217,7 +217,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-end": 50
           },
           "blocks": {
             "heading_service": {
@@ -311,8 +311,8 @@
             "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-start": 5,
+            "padding-inline-end": 50
           },
           "blocks": {
             "heading_about_us": {
@@ -406,7 +406,7 @@
             "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
-            "padding-inline-start": 0,
+            "padding-inline-start": 5,
             "padding-inline-end": 0
           },
           "blocks": {
@@ -489,10 +489,15 @@
               "type": "social-links",
               "settings": {
                 "facebook_url": "https://www.facebook.com/75sevenfive",
+                "facebook_icon": "shopify://shop_images/Design_Web_75_2026_Icon-06.png",
                 "instagram_url": "https://www.instagram.com/sevenfive.distributor/",
+                "instagram_icon": "shopify://shop_images/Design_Web_75_2026_Icon-07.png",
                 "youtube_url": "https://www.youtube.com/@Sevenfivedistributor",
+                "youtube_icon": "shopify://shop_images/Design_Web_75_2026_Icon-09.png",
                 "tiktok_url": "https://www.tiktok.com/@sevenfiveofficial",
+                "tiktok_icon": "shopify://shop_images/Design_Web_75_2026_Icon-10.png",
                 "line_url": "https://page.line.me/nop6433t?oat_content=url&openQrModal=true",
+                "line_icon": "shopify://shop_images/Design_Web_75_2026_Icon-08.png",
                 "twitter_url": "",
                 "threads_url": "",
                 "linkedin_url": "",
@@ -509,7 +514,9 @@
               "type": "dbd-badge",
               "name": "DBD Badge",
               "settings": {
-                "dbd_image": "shopify://shop_images/1k.jpg"
+                "dbd_image": "shopify://shop_images/1k.jpg",
+                "dbd_link": "https://datawarehouse.dbd.go.th/company/profile/50105525020237",
+                "dbd_width": 90
               },
               "blocks": {}
             }

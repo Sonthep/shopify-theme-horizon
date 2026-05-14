@@ -468,7 +468,9 @@
           "janitorial-supplies",
           "hotel-supplies",
           "bakery-utensils",
-          "bar-supplies"
+          "bar-supplies",
+          "services",
+          "spapart"
         ],
         "show_view_all": false,
         "view_all_text": "View All Product",
@@ -517,7 +519,7 @@
             "background_color": "#00000026",
             "corner_radius": 33,
             "padding-block-start": 0,
-            "padding-block-end": 0,
+            "padding-block-end": 10,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -921,17 +923,6 @@
     "product_hotspots_carousel_jftUAn": {
       "type": "product-hotspots-Carousel",
       "blocks": {
-        "hotspot_product_idLTBp": {
-          "type": "_hotspot-product",
-          "name": "t:names.hotspot_product",
-          "settings": {
-            "product": "hood-dishwasher-500x500mm-rack",
-            "x-position": 50,
-            "y-position": 50,
-            "slide_index": "1"
-          },
-          "blocks": {}
-        },
         "hotspot_product_F9wwgV": {
           "type": "_hotspot-product",
           "name": "t:names.hotspot_product",
@@ -1038,7 +1029,6 @@
         }
       },
       "block_order": [
-        "hotspot_product_idLTBp",
         "hotspot_product_F9wwgV",
         "hotspot_product_zHrR9F",
         "hotspot_product_rUhGNK",
