@@ -29,7 +29,7 @@
     {% endstyle %}
   {% endif %}
 
-  <div class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}">
+  <div class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}"{% if preview_image %} style="aspect-ratio: {{ preview_image.aspect_ratio }};"{% endif %}>
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -169,18 +169,20 @@
     background-color: transparent;
   }
 
+  /* Make the image container preserve aspect ratio so images don't distort
+     Use aspect-ratio set inline (when available) so all slides share the same
+     container sizing but images continue to use object-fit: cover */
   slideshow-slide > .slide__image-container {
-    display: flex;
+    display: block;
     width: 100%;
-    height: 100%;
     overflow: hidden;
-    position: absolute;
+    position: relative;
   }
 
   .slide__image-container > .slide__image,
   .slide__image-container > .slide__video,
   .slide__image-container > .slide__video-poster {
-    position: relative;
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
