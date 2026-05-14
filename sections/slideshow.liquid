@@ -66,6 +66,27 @@
   class="slideshow-section spacing-style section {{ section_width_class }} color-{{ section.settings.color_scheme }} disable-section-top-offset"
   style="{% render 'spacing-padding', settings: section.settings %}; --slideshow-gap: {{ section.settings.slideshow_gap }}px;{% if rounded_slide_corners %} --corner-radius: {{ section.settings.corner_radius }}px;{% endif %}"
 >
+  {% comment %} Calculate first slide preview image aspect ratio and pass an inline style
+     to set the slideshow min-height when `slide_height` is `adapt_image`. {% endcomment %}
+  {% assign first_preview_image = '' %}
+  {% for b in section.blocks %}
+    {% assign settings_b = b.settings %}
+    {% assign candidate = settings_b.image_1 %}
+    {% if settings_b.media_type_1 == 'video' %}
+      {% assign candidate = settings_b.video_1.preview_image %}
+    {% endif %}
+    {% if candidate != blank %}
+      {% assign first_preview_image = candidate %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% assign adapt_style = '' %}
+  {% if section.settings.slide_height == 'adapt_image' and first_preview_image != blank and first_preview_image.aspect_ratio > 0 %}
+    {% assign min_h = 1 | divided_by: first_preview_image.aspect_ratio | times: 100 %}
+    {% assign adapt_style = '--slide-min-height: ' | append: min_h | append: 'vw; --slide-min-height-desktop: ' | append: min_h | append: 'vw;' %}
+  {% endif %}
+
   {% render 'slideshow',
     class: slideshow_class,
     controls: controls,
@@ -76,8 +97,10 @@
     autoplay_speed: section.settings.autoplay_speed,
     slides: slides,
     slide_count: section.blocks.size,
-    slide_size: section.settings.slide_height
+    slide_size: section.settings.slide_height,
+    style: adapt_style
   %}
+
 </div>
 
 {% stylesheet %}
