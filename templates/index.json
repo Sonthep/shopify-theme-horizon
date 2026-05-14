@@ -12,38 +12,12 @@
     "slideshow_jEnJaK": {
       "type": "slideshow",
       "blocks": {
-        "slide_tHC7r6": {
-          "type": "_slide",
-          "name": "t:names.slide",
-          "settings": {
-            "media_type_1": "video",
-            "video_1": "shopify://files/videos/Company profile -Notext.mp4",
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "center",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "inherit_color_scheme": false,
-            "color_scheme": "scheme-6",
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "padding-inline-start": 48,
-            "padding-inline-end": 48
-          },
-          "blocks": {}
-        },
         "slide_BV3gwp": {
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/bannerc9deb0007252d07843f9a48c87ea73f1.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-01.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-02.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "center",
@@ -69,7 +43,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/Banner_web_NTS_2025-14.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-03.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-04.jpg",
             "content_direction": "row",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -95,7 +70,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner23ce20b5ec634a4c81dc2ebdb29c585d.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-05.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-06.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -121,7 +97,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner3f55f7fc93d498e7d5a175c786fb82eb.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-07.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-08.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -147,7 +124,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner142b35c39c93e5a1fc5e3b740ef95833.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-09.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-10.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -173,7 +151,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/bannere2c4ea6f9d724289ad4a0459c838cc92.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-11.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-12.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -199,7 +178,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner02443dac7f672bede98ccdc4885f84af.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-15.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-16.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -225,7 +205,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner120f7ea6cdfeaf1033af1d57fc6c4c6c.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-13.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-14.jpg",
             "content_direction": "row",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -251,33 +232,8 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/Banner_web_NTS_2025-08.jpg",
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "center",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "inherit_color_scheme": false,
-            "color_scheme": "scheme-6",
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "padding-inline-start": 48,
-            "padding-inline-end": 48
-          },
-          "blocks": {}
-        },
-        "slide_wACR46": {
-          "type": "_slide",
-          "settings": {
-            "media_type_1": "image",
-            "image_1": "shopify://shop_images/Banner_web_NTS_2025-17.jpg",
+            "image_1": "shopify://shop_images/Banner_2026-17.jpg",
+            "image_1_mobile": "shopify://shop_images/Banner_2026-18.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -301,7 +257,6 @@
         }
       },
       "block_order": [
-        "slide_tHC7r6",
         "slide_BV3gwp",
         "slide_3JaBkh",
         "slide_HGP4LT",
@@ -310,8 +265,7 @@
         "slide_NfhNd3",
         "slide_9aggLm",
         "slide_eTB637",
-        "slide_wpq8pV",
-        "slide_wACR46"
+        "slide_wpq8pV"
       ],
       "name": "Slideshow: Banner",
       "settings": {
@@ -927,7 +881,7 @@
           "type": "_hotspot-product",
           "name": "t:names.hotspot_product",
           "settings": {
-            "product": "",
+            "product": "hood-dishwasher-500x500mm-rack",
             "x-position": 17,
             "y-position": 50,
             "slide_index": "1"
