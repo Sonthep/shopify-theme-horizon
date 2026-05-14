@@ -16,16 +16,13 @@
       assign rounded_image_corners = true
     endif
   %}
-  {% if section.settings.slide_height == 'adapt_image' and block_index == 0 and preview_image != blank %}
+  {% if section.settings.slide_height == 'adapt_image' and block_index == 0 and preview_image != blank and preview_image.aspect_ratio > 0 %}
     {%
       # Great example of why it can be helpful for a section to be able to read the settings of its direct child blocks.
       # In this case, we want the section to be able to read the image aspect ratio of the first slide and apply it to the slideshow slides and slides.
     %}
     {% style %}
-      /* Use the first slide's aspect ratio to set the slideshow container height
-         but avoid forcing the same min-height on every individual slide element
-         which can cause the first image to appear distorted when slides have
-         different aspect ratios. */
+      /* Apply min-height to the slides container (not each slide) to avoid distortion */
       .shopify-section-{{ section.id }} slideshow-slides {
         min-height: {{ 1 | divided_by: preview_image.aspect_ratio | times: 100 }}vw;
       }
