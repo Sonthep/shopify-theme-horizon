@@ -78,7 +78,6 @@
               block_settings.image_1
               | image_url: width: 3840
               | image_tag:
-                height: height,
                 sizes: sizes,
                 widths: widths,
                 class: 'slide__image',
@@ -90,7 +89,7 @@
           {{
             block_settings.image_1
             | image_url: width: 3840
-            | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
+            | image_tag: sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
           }}
         {%- endif -%}
       {%- else -%}
@@ -100,7 +99,6 @@
             block_settings.video_1.preview_image
             | image_url: width: 3840
             | image_tag:
-              height: height,
               sizes: sizes,
               widths: widths,
               loading: loading,
