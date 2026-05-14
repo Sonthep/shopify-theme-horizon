@@ -316,6 +316,8 @@ class PredictiveSearchComponent extends Component {
     const url = new URL(Theme.routes.predictive_search_url, location.origin);
     url.searchParams.set('q', searchTerm);
     url.searchParams.set('resources[limit_scope]', 'each');
+    // Ensure the predictive search returns product fields we need (title, variants and sku, tags)
+    url.searchParams.set('resources[options][fields]', 'title,variants.title,variants.sku,tag');
 
     const { predictiveSearchResults } = this.refs;
 
