@@ -85,7 +85,7 @@ product-card.product-card {
   padding: 5px 10px;
   border-radius: 8px;
   background: #ef4444;
-  color: #fff;
+  color: #fff !important;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .01em;
@@ -102,6 +102,22 @@ product-card.product-card {
 .product-grid__card > .text-block,
 .product-grid__card > a.contents {
   padding-inline: var(--_card-pad);
+}
+
+/* ---- Product card title clamp ---- */
+.product-grid__card > a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card > product-title .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card product-title a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card .product-card__title,
+.product-card :is(h3, h4, .product-card__title) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 1.4;
+  min-height: calc(1.4em * 3);
 }
 
 .product-grid__card > :last-child {
@@ -163,10 +179,16 @@ product-card.product-card {
   color: #1f2937;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   overflow: hidden;
   margin: 0;
   transition: color .2s ease;
+  line-height: 1.5;
+  min-height: calc(1.5em * 3);
+  max-height: calc(1.5em * 3);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
 }
 
 @media (any-pointer: fine) {
@@ -192,19 +214,31 @@ product-card.product-card {
   gap: 6px;
 }
 
-.product-grid__card product-price .price--on-sale .price__regular {
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: line-through;
-  color: #9ca3af;
-  order: 1;
+.product-grid__card product-price .price__regular .price {
+  color: #111827;
 }
 
-.product-grid__card product-price .price--on-sale .price__sale {
-  color: #ef4444;
-  font-weight: 800;
-}
+.product-grid__card product-price .price__sale .price-item--sale,
+  .product-grid__card product-price .price--on-sale .price-item--sale,
+  .product-grid__card product-price .price--on-sale .price__sale,
+  .price-item--sale {
+    color: #ef4444 !important;
+    font-weight: 800;
+  }
 
+  .product-grid__card product-price .price__regular .price,
+  .product-grid__card product-price .price__regular .price-item--regular,
+  .price__regular .price {
+    color: #111827 !important;
+  }
+
+  .product-grid__card product-price .price--on-sale .price__regular {
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: line-through;
+    color: #9ca3af;
+    order: 1;
+  }
 /* ---- Stock status badge ---- */
 .product-card__stock-wrap {
   padding: 4px var(--_card-pad) 0;
@@ -287,7 +321,7 @@ product-card.product-card {
 .inline-discount-badge {
   display: inline-block;
   background-color: #e53935;
-  color: #fff;
+  color: #fff !important;
   font-size: 0.75em;
   font-weight: 700;
   line-height: 1;

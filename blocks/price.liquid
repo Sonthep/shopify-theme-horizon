@@ -1,5 +1,3 @@
-
-
 {%- liquid
   assign block_settings = block.settings
   assign product_resource = closest.product
@@ -44,47 +42,47 @@
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
     --width: {{ block_settings.width }};
-    {% if block_settings.price_text_color != blank %}color: {{ block_settings.price_text_color }};{% endif %}
-  "
-  {{ block.shopify_attributes }}
->
-  {% render 'price',
-    show_unit_price: true,
-    product_resource: product_resource,
-    show_sale_price_first: block_settings.show_sale_price_first,
-    show_discount_badge: block_settings.show_discount_badge,
-    price_color: block_settings.price_text_color
-  %}
+      {% if block_settings.price_text_color != blank %}color: {{ block_settings.price_text_color }};{% endif %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    {% render 'price',
+      show_unit_price: true,
+      product_resource: product_resource,
+      show_sale_price_first: block_settings.show_sale_price_first,
+      show_discount_badge: block_settings.show_discount_badge,
+      price_color: block_settings.price_text_color
+    %}
 
-  {% if block_settings.show_tax_info %}
-    <div class="tax-note">
-      {%- if cart.duties_included and cart.taxes_included -%}
-        {{ 'content.duties_and_taxes_included' | t }}
-      {%- elsif cart.taxes_included -%}
-        {{ 'content.taxes_included' | t }}
-      {%- elsif cart.duties_included -%}
-        {{ 'content.duties_included' | t }}
-      {%- endif -%}
+    {% if block_settings.show_tax_info %}
+      <div class="tax-note">
+        {%- if cart.duties_included and cart.taxes_included -%}
+          {{ 'content.duties_and_taxes_included' | t }}
+        {%- elsif cart.taxes_included -%}
+          {{ 'content.taxes_included' | t }}
+        {%- elsif cart.duties_included -%}
+          {{ 'content.duties_included' | t }}
+        {%- endif -%}
 
-      {%- if shop.shipping_policy.body != blank -%}
-        {{ 'content.shipping_policy' | t }}
-      {%- endif -%}
-    </div>
-  {% endif %}
+        {%- if shop.shipping_policy.body != blank -%}
+          {{ 'content.shipping_policy' | t }}
+        {%- endif -%}
+      </div>
+    {% endif %}
 
-  {%- if selected_variant != blank and block_settings.show_installments -%}
-    <div class="installments">
-      {%- assign product_form_installment_id = 'product-form-installment-' | append: block.id -%}
-      {%- form 'product', product_resource, id: product_form_installment_id, class: 'payment-terms' -%}
-        <input
-          type="hidden"
-          name="id"
-          value="{{ selected_variant.id }}"
-        >
-        {{ form | payment_terms }}
-      {%- endform -%}
-    </div>
-  {%- endif -%}
+    {%- if selected_variant != blank and block_settings.show_installments -%}
+      <div class="installments">
+        {%- assign product_form_installment_id = 'product-form-installment-' | append: block.id -%}
+        {%- form 'product', product_resource, id: product_form_installment_id, class: 'payment-terms' -%}
+          <input
+            type="hidden"
+            name="id"
+            value="{{ selected_variant.id }}"
+          >
+          {{ form | payment_terms }}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
 </product-price>
 
 {% # theme-check-disable %}
@@ -115,6 +113,24 @@
     letter-spacing: normal;
     text-transform: none;
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .inline-discount-badge,
+  product-price .inline-discount-badge {
+    display: inline-block;
+    background: #ef4444 !important;
+    color: #fff !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    font-size: 0.85em !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.02em !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+    margin-left: 6px !important;
+    box-shadow: 0 1px 4px rgba(239,68,68,0.10);
+    border: none !important;
   }
 {% endstylesheet %}
 
@@ -415,7 +431,7 @@
     {
       "type": "color",
       "id": "price_text_color",
-      "label": "สีตัวหนังสือราคา (optional)",
+      "label": "สีราคาสินค้า (optional)",
       "default": "#000000",
       "alpha": true
     },
