@@ -134,19 +134,6 @@
           {%- endif -%}
         </li>
       {% endfor %}
-      <li
-        class="menu-list__list-item"
-        role="presentation"
-        slot="more"
-        on:focus="/activate"
-        on:blur="/deactivate"
-        on:pointerenter="/activate"
-        on:pointerleave="/deactivate"
-      >
-        <button role="listitem" class="menu-list__link button-unstyled">
-          <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
-        </button>
-      </li>
     {% endcapture %}
 
     <header-menu
@@ -161,16 +148,11 @@
           aria-label="{{ 'accessibility.header_navigation_label' | t }}"
           style="{% render 'menu-font-styles', settings: block_settings %}"
         >
-          {% assign class = 'overflow-menu' | append: color_scheme_classes %}
-          {% render 'overflow-list',
-            class: class,
-            ref: 'overflowMenu',
-            children: children,
-            minimum-items: 2,
-            data-testid: 'header-menu-overflow-list',
-            attributes: 'data-skip-node-update'
-          %}
+          <ul class="menu-list__list list-unstyled">
+            {{ children }}
+          </ul>
         </nav>
+        <div ref="overflowMenu" hidden></div>
       </div>
 
       <script
@@ -257,6 +239,19 @@
   .menu-list__list {
     display: flex;
     justify-content: var(--grid-area-alignment);
+    gap: 0.5rem;
+  }
+
+  .header-menu {
+    --menu-horizontal-gap: 0.8rem;
+  }
+
+  .menu-list__link {
+    font-size: 0.95rem;
+  }
+
+  .menu-list__link-title {
+    padding-inline: 0.35rem;
   }
 
   .menu-list__list-item {
@@ -298,7 +293,16 @@
   }
 
   .menu-list__link-title {
-    padding-inline: calc(var(--gap-xl) / 2);
+    padding-inline: 0.35rem !important;
+  }
+  .header-menu .menu-list__link {
+    font-size: 0.95rem !important;
+  }
+  .header-menu .menu-list__list {
+    gap: 0.45rem !important;
+  }
+  .overflow-menu::part(more) {
+    display: none !important;
   }
   [slot='overflow'] .menu-list__link-title {
     padding-inline: 0;
@@ -370,7 +374,7 @@
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu,
   .overflow-menu::part(overflow) {
     --submenu-content-opacity: 0;
-    --submenu-content-animation: opacity calc(var(--submenu-animation-speed) * 0.75) var(--animation-easing);
+    --submenu-content-animation: opacity var(--submenu-animation-speed) var(--animation-easing), transform var(--submenu-animation-speed) var(--animation-easing);
 
     visibility: hidden;
     position: absolute;
@@ -381,7 +385,7 @@
     padding-inline: var(--padding-inline);
     /* Clip path starts at header height so it doesn't mess with the pointer events in the header */
     clip-path: rect(var(--header-height) 100% var(--full-open-header-height) 0); /* stylelint-disable-line */
-    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic); /* stylelint-disable-line */
+    transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic), top var(--submenu-animation-speed) var(--ease-out-cubic), visibility 0s linear var(--submenu-animation-speed); /* stylelint-disable-line */
   }
 
   [data-submenu-overlap-bottom-row] {
@@ -401,6 +405,7 @@
     --submenu-content-opacity: 1;
 
     visibility: visible;
+    transition-delay: 0s, 0s;
   }
 
   .overflow-menu::part(overflow) {

@@ -38,6 +38,13 @@ product-card.product-card {
 .product-grid__card .card-gallery {
   position: relative;
   background: #f9fafb;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.product-grid__card .card-gallery > * {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .product-grid__card .card-gallery img {
@@ -85,7 +92,7 @@ product-card.product-card {
   padding: 5px 10px;
   border-radius: 8px;
   background: #ef4444;
-  color: #fff !important;
+  color: #fff;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .01em;
@@ -107,17 +114,30 @@ product-card.product-card {
 /* ---- Product card title clamp ---- */
 .product-grid__card > a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
 .product-grid__card > product-title .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card product-title .text-block :is(h1, h2, h3, h4, h5, h6, p),
 .product-grid__card product-title a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
 .product-grid__card .product-card__title,
-.product-card :is(h3, h4, .product-card__title) {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  line-height: 1.4;
-  min-height: calc(1.4em * 3);
+.product-card :is(h3, h4, .product-card__title),
+.product-recommendations product-card a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-recommendations product-card .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-recommendations product-card .product-card__title,
+.product-recommendations product-card :is(h3, h4, .product-card__title) {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;
+  line-height: 1.5 !important;
+  height: calc(1.5em * 3) !important;
+  box-sizing: border-box !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.product-recommendations product-card .text-block {
+  min-height: calc(1.5em * 3) !important;
+  display: block !important;
 }
 
 .product-grid__card > :last-child {
@@ -125,7 +145,27 @@ product-card.product-card {
 }
 
 .product-grid__card > .card-gallery + * {
-  padding-top: 14px;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.product-grid__card product-title,
+.product-grid__card a.contents,
+.product-grid__card > product-title,
+.product-grid__card > a.contents,
+.product-grid__card > * + product-title,
+.product-grid__card > * + a.contents {
+  margin-top: calc(var(--product-card-gap) * -1) !important;
+  padding-top: 0 !important;
+}
+
+.product-grid__card product-title *,
+.product-grid__card a.contents *,
+.product-grid__card > product-title *,
+.product-grid__card > a.contents * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
 }
 
 /* ---- Brand / Vendor ---- */
@@ -164,31 +204,88 @@ product-card.product-card {
 }
 
 /* ---- Product Title ---- */
-.product-grid__card a.contents {
+.product-grid__card a.contents,
+.product-grid__card > product-title,
+.product-grid__card product-title {
   display: block;
 }
 
-.product-grid__card a.contents .text-block {
-  padding-inline: 0;
+.product-grid__card > product-title,
+.product-grid__card product-title,
+.product-grid__card > product-title a.contents,
+.product-grid__card product-title a.contents,
+.product-grid__card > product-title .text-block,
+.product-grid__card product-title .text-block {
+  padding-block-start: 0 !important;
+  margin-block-start: 0 !important;
 }
 
-.product-grid__card a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p) {
+.product-grid__card > product-title,
+.product-grid__card product-title,
+.product-grid__card > product-title .text-block,
+.product-grid__card product-title .text-block {
+  max-height: calc(1.5em * 3) !important;
+  overflow: hidden !important;
+}
+
+.product-grid__card a.contents .text-block,
+.product-grid__card > product-title .text-block,
+.product-grid__card product-title a.contents .text-block,
+.product-grid__card product-title .text-block {
+  padding-inline: 0;
+  padding-block-start: 0 !important;
+  padding-block-end: 0 !important;
+  margin-block-start: 0 !important;
+  margin-block-end: 0 !important;
+  display: block;
+  align-items: flex-start !important;
+}
+
+.product-grid__card product-title,
+.product-grid__card product-title *,
+.product-grid__card > product-title,
+.product-grid__card > product-title * {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.product-grid__card > product-title .text-block,
+.product-grid__card > product-title .text-block *,
+.product-grid__card > a.contents .text-block,
+.product-grid__card > a.contents .text-block *,
+.product-grid__card > .card-gallery + product-title .text-block,
+.product-grid__card > .card-gallery + product-title .text-block *,
+.product-grid__card > .card-gallery + a.contents .text-block,
+.product-grid__card > .card-gallery + a.contents .text-block * {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.product-grid__card a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card > product-title .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card product-title a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card product-title .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-grid__card > product-title .text-block > *,
+.product-grid__card product-title .text-block > * {
   font-size: 13.5px !important;
   font-weight: 600 !important;
-  line-height: 1.5;
-  color: #1f2937;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  margin: 0;
-  transition: color .2s ease;
-  line-height: 1.5;
-  min-height: calc(1.5em * 3);
-  max-height: calc(1.5em * 3);
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  box-sizing: border-box;
+  line-height: 1.5 !important;
+  color: #1f2937 !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: color .2s ease !important;
+  min-height: calc(1.5em * 3) !important;
+  max-height: calc(1.5em * 3) !important;
+  height: calc(1.5em * 3) !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  box-sizing: border-box !important;
 }
 
 @media (any-pointer: fine) {
@@ -321,7 +418,7 @@ product-card.product-card {
 .inline-discount-badge {
   display: inline-block;
   background-color: #e53935;
-  color: #fff !important;
+  color: #fff;
   font-size: 0.75em;
   font-weight: 700;
   line-height: 1;
