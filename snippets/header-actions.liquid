@@ -49,6 +49,43 @@
   {% endif %}
   {{- block.shopify_attributes -}}
 >
+  {%- if localization.available_languages.size > 1 -%}
+    {%- assign form_id = 'MobileLanguageForm-' | append: section.id -%}
+    {%- assign input_id = 'MobileLanguageCode-' | append: section.id -%}
+    {%- form 'localization', id: form_id, class: 'desktop:hidden mobile-language-form', return_to: request.path -%}
+      <input type="hidden" name="language_code" id="{{ input_id }}" value="{{ localization.language.iso_code }}">
+      <div class="mobile-language-switcher">
+        {%- for language in localization.available_languages -%}
+          <button
+            type="button"
+            class="mobile-language-btn{% if language.iso_code == localization.language.iso_code %} is-active{% endif %}"
+            {% if language.iso_code != localization.language.iso_code %}
+              onclick="changeMobileLanguage('{{ language.iso_code }}', '{{ form_id }}', '{{ input_id }}')"
+            {% endif %}
+          >
+            {{ language.iso_code | upcase }}
+          </button>
+          {%- unless forloop.last -%}
+            <span class="mobile-language-separator">/</span>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endform -%}
+
+    <script>
+      if (typeof changeMobileLanguage !== 'function') {
+        window.changeMobileLanguage = function(langCode, formId, inputId) {
+          var form = document.getElementById(formId);
+          var input = document.getElementById(inputId);
+          if (form && input) {
+            input.value = langCode;
+            form.submit();
+          }
+        };
+      }
+    </script>
+  {%- endif -%}
+
   {% if shop.customer_accounts_enabled %}
     {% liquid
       assign account_actions_style = ''
@@ -683,6 +720,60 @@
 
     .header__column--right .header-actions--text {
       margin-inline-start: 0;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    header-actions {
+      grid-column: 4 / 6;
+      justify-self: flex-end;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-language-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-language-switcher {
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .mobile-language-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      color: inherit;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      transition: color var(--animation-speed) ease;
+    }
+
+    .mobile-language-btn:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .mobile-language-btn.is-active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .mobile-language-separator {
+      margin-inline: 4px;
+      color: rgba(255, 255, 255, 0.3);
     }
   }
 {% endstylesheet %}
