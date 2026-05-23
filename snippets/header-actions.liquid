@@ -51,39 +51,29 @@
 >
   {%- if localization.available_languages.size > 1 -%}
     {%- assign form_id = 'MobileLanguageForm-' | append: section.id -%}
-    {%- assign input_id = 'MobileLanguageCode-' | append: section.id -%}
     {%- form 'localization', id: form_id, class: 'desktop:hidden mobile-language-form', return_to: request.path -%}
-      <input type="hidden" name="language_code" id="{{ input_id }}" value="{{ localization.language.iso_code }}">
-      <div class="mobile-language-switcher">
-        {%- for language in localization.available_languages -%}
-          <button
-            type="button"
-            class="mobile-language-btn{% if language.iso_code == localization.language.iso_code %} is-active{% endif %}"
-            {% if language.iso_code != localization.language.iso_code %}
-              onclick="changeMobileLanguage('{{ language.iso_code }}', '{{ form_id }}', '{{ input_id }}')"
-            {% endif %}
-          >
-            {{ language.iso_code | upcase }}
-          </button>
-          {%- unless forloop.last -%}
-            <span class="mobile-language-separator">/</span>
-          {%- endunless -%}
-        {%- endfor -%}
+      <div class="mobile-language-dropdown-wrapper">
+        <select
+          name="language_code"
+          class="mobile-language-select"
+          onchange="document.getElementById('{{ form_id }}').submit();"
+        >
+          {%- for language in localization.available_languages -%}
+            <option
+              value="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}
+                selected
+              {% endif %}
+            >
+              {{ language.iso_code | upcase }}
+            </option>
+          {%- endfor -%}
+        </select>
+        <span class="svg-wrapper icon-caret icon-caret--mobile">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </div>
     {%- endform -%}
-
-    <script>
-      if (typeof changeMobileLanguage !== 'function') {
-        window.changeMobileLanguage = function(langCode, formId, inputId) {
-          var form = document.getElementById(formId);
-          var input = document.getElementById(inputId);
-          if (form && input) {
-            input.value = langCode;
-            form.submit();
-          }
-        };
-      }
-    </script>
   {%- endif -%}
 
   {% if shop.customer_accounts_enabled %}
@@ -738,42 +728,64 @@
       justify-content: center;
     }
 
-    .mobile-language-switcher {
+    .mobile-language-dropdown-wrapper {
+      position: relative;
       display: inline-flex;
       align-items: center;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: 0.05em;
-      color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 4px 28px 4px 10px;
+      transition: all var(--animation-speed) ease;
     }
 
-    .mobile-language-btn {
-      background: none;
+    .mobile-language-dropdown-wrapper:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .mobile-language-select {
+      background: transparent;
       border: none;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
       padding: 0;
       margin: 0;
-      color: inherit;
-      font-family: inherit;
-      font-size: inherit;
-      font-weight: inherit;
-      letter-spacing: inherit;
-      cursor: pointer;
-      transition: color var(--animation-speed) ease;
+      outline: none;
+      width: auto;
     }
 
-    .mobile-language-btn:hover {
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .mobile-language-btn.is-active {
+    .mobile-language-select option {
+      background: #0b6b5b; /* Match theme teal background */
       color: #ffffff;
-      font-weight: 700;
+      font-weight: 500;
     }
 
-    .mobile-language-separator {
-      margin-inline: 4px;
-      color: rgba(255, 255, 255, 0.3);
+    .mobile-language-dropdown-wrapper .icon-caret--mobile {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 10px;
+      height: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-language-dropdown-wrapper .icon-caret--mobile svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
     }
   }
 {% endstylesheet %}
