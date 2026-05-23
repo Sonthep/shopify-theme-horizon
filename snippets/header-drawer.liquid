@@ -526,17 +526,69 @@
                                   </li>
                                 {%- endfor -%}
                               {% else %}
-                                {% paginate featured_products_collection.products by max_featured_items %}
-                                  {%- for product in featured_products_collection.products limit: max_featured_items -%}
-                                    <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                                      {% render 'resource-card',
-                                        resource: product,
-                                        resource_type: 'product',
-                                        image_aspect_ratio: ratio,
-                                        image_sizes: 'auto, 400px'
-                                      %}
-                                    </li>
-                                  {%- endfor -%}
+                                {% paginate featured_products_collection.products by 250 %}
+                                  {% liquid
+                                    assign filtered_products = "" | split: ","
+                                    for p in featured_products_collection.products
+                                      assign vendor_handle = p.vendor | handleize
+                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                                      
+                                      assign matched = false
+                                      if vendor_handle == 'cambro' and sku_prefix == 'CAM1'
+                                        assign matched = true
+                                      elsif vendor_handle == 'sirman' and sku_prefix == 'SIR1'
+                                        assign matched = true
+                                      elsif vendor_handle == 'roband' and sku_prefix == 'ROB1'
+                                        assign matched = true
+                                      endif
+                                      
+                                      if matched
+                                        assign p_arr = p | sort
+                                        assign filtered_products = filtered_products | concat: p_arr
+                                      endif
+                                    endfor
+                                    
+                                    assign filtered_size = filtered_products.size
+                                    assign max_items = max_featured_items | default: 4 | plus: 0
+                                    
+                                    if filtered_size > 0
+                                      assign random_seed_sec = "now" | date: "%S" | plus: 0
+                                      assign random_index = random_seed_sec | modulo: filtered_size
+                                    endif
+                                  %}
+                                  {%- if filtered_size > 0 -%}
+                                    {%- assign rendered_count = 0 -%}
+                                    {%- for i in (0..filtered_size) -%}
+                                      {%- if rendered_count >= max_items -%}
+                                        {%- break -%}
+                                      {%- endif -%}
+                                      {%- assign index = i | plus: random_index | modulo: filtered_size -%}
+                                      {%- assign product = filtered_products[index] -%}
+                                      {%- if product -%}
+                                        <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                                          {% render 'resource-card',
+                                            resource: product,
+                                            resource_type: 'product',
+                                            image_aspect_ratio: ratio,
+                                            image_sizes: 'auto, 400px'
+                                          %}
+                                        </li>
+                                        {%- assign rendered_count = rendered_count | plus: 1 -%}
+                                      {%- endif -%}
+                                    {%- endfor -%}
+                                  {%- else -%}
+                                    {%- for product in featured_products_collection.products limit: max_items -%}
+                                      <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                                        {% render 'resource-card',
+                                          resource: product,
+                                          resource_type: 'product',
+                                          image_aspect_ratio: ratio,
+                                          image_sizes: 'auto, 400px'
+                                        %}
+                                      </li>
+                                    {%- endfor -%}
+                                  {%- endif -%}
                                 {% endpaginate %}
                               {% endif %}
                             </ul>
@@ -734,17 +786,69 @@
                 </li>
               {%- endfor -%}
             {% elsif top_level_featured_products_collection.products_count > 0 %}
-              {% paginate top_level_featured_products_collection.products by max_featured_items %}
-                {%- for product in top_level_featured_products_collection.products limit: max_featured_items -%}
-                  <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                    {% render 'resource-card',
-                      resource: product,
-                      resource_type: 'product',
-                      image_aspect_ratio: ratio,
-                      image_sizes: 'auto, 400px'
-                    %}
-                  </li>
-                {%- endfor -%}
+              {% paginate top_level_featured_products_collection.products by 250 %}
+                {% liquid
+                  assign filtered_products = "" | split: ","
+                  for p in top_level_featured_products_collection.products
+                    assign vendor_handle = p.vendor | handleize
+                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                    
+                    assign matched = false
+                    if vendor_handle == 'cambro' and sku_prefix == 'CAM1'
+                      assign matched = true
+                    elsif vendor_handle == 'sirman' and sku_prefix == 'SIR1'
+                      assign matched = true
+                    elsif vendor_handle == 'roband' and sku_prefix == 'ROB1'
+                      assign matched = true
+                    endif
+                    
+                    if matched
+                      assign p_arr = p | sort
+                      assign filtered_products = filtered_products | concat: p_arr
+                    endif
+                  endfor
+                  
+                  assign filtered_size = filtered_products.size
+                  assign max_items = max_featured_items | default: 4 | plus: 0
+                  
+                  if filtered_size > 0
+                    assign random_seed_sec = "now" | date: "%S" | plus: 0
+                    assign random_index = random_seed_sec | modulo: filtered_size
+                  endif
+                %}
+                {%- if filtered_size > 0 -%}
+                  {%- assign rendered_count = 0 -%}
+                  {%- for i in (0..filtered_size) -%}
+                    {%- if rendered_count >= max_items -%}
+                      {%- break -%}
+                    {%- endif -%}
+                    {%- assign index = i | plus: random_index | modulo: filtered_size -%}
+                    {%- assign product = filtered_products[index] -%}
+                    {%- if product -%}
+                      <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                        {% render 'resource-card',
+                          resource: product,
+                          resource_type: 'product',
+                          image_aspect_ratio: ratio,
+                          image_sizes: 'auto, 400px'
+                        %}
+                      </li>
+                      {%- assign rendered_count = rendered_count | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- else -%}
+                  {%- for product in top_level_featured_products_collection.products limit: max_items -%}
+                    <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                      {% render 'resource-card',
+                        resource: product,
+                        resource_type: 'product',
+                        image_aspect_ratio: ratio,
+                        image_sizes: 'auto, 400px'
+                      %}
+                    </li>
+                  {%- endfor -%}
+                {%- endif -%}
               {% endpaginate %}
             {% endif %}
           </ul>
