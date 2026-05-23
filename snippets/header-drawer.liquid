@@ -529,6 +529,38 @@
                                 {% paginate featured_products_collection.products by 250 %}
                                   {% liquid
                                     assign filtered_products = "" | split: ","
+                                    
+                                    # Load from Cambro collection
+                                    for p in collections['cambro'].products
+                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                                      if sku_prefix == 'CAM1'
+                                        assign p_arr = p | sort
+                                        assign filtered_products = filtered_products | concat: p_arr
+                                      endif
+                                    endfor
+                                    
+                                    # Load from Sirman collection
+                                    for p in collections['sirman'].products
+                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                                      if sku_prefix == 'SIR1'
+                                        assign p_arr = p | sort
+                                        assign filtered_products = filtered_products | concat: p_arr
+                                      endif
+                                    endfor
+                                    
+                                    # Load from Roband collection
+                                    for p in collections['roband'].products
+                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                                      if sku_prefix == 'ROB1'
+                                        assign p_arr = p | sort
+                                        assign filtered_products = filtered_products | concat: p_arr
+                                      endif
+                                    endfor
+                                    
+                                    # Also search active collection
                                     for p in featured_products_collection.products
                                       assign vendor_handle = p.vendor | handleize
                                       assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
@@ -544,8 +576,18 @@
                                       endif
                                       
                                       if matched
-                                        assign p_arr = p | sort
-                                        assign filtered_products = filtered_products | concat: p_arr
+                                        assign already_added = false
+                                        for fp in filtered_products
+                                          if fp.id == p.id
+                                            assign already_added = true
+                                            break
+                                          endif
+                                        endfor
+                                        
+                                        if already_added == false
+                                          assign p_arr = p | sort
+                                          assign filtered_products = filtered_products | concat: p_arr
+                                        endif
                                       endif
                                     endfor
                                     
@@ -789,6 +831,38 @@
               {% paginate top_level_featured_products_collection.products by 250 %}
                 {% liquid
                   assign filtered_products = "" | split: ","
+                  
+                  # Load from Cambro collection
+                  for p in collections['cambro'].products
+                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                    if sku_prefix == 'CAM1'
+                      assign p_arr = p | sort
+                      assign filtered_products = filtered_products | concat: p_arr
+                    endif
+                  endfor
+                  
+                  # Load from Sirman collection
+                  for p in collections['sirman'].products
+                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                    if sku_prefix == 'SIR1'
+                      assign p_arr = p | sort
+                      assign filtered_products = filtered_products | concat: p_arr
+                    endif
+                  endfor
+                  
+                  # Load from Roband collection
+                  for p in collections['roband'].products
+                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+                    if sku_prefix == 'ROB1'
+                      assign p_arr = p | sort
+                      assign filtered_products = filtered_products | concat: p_arr
+                    endif
+                  endfor
+                  
+                  # Also search active collection
                   for p in top_level_featured_products_collection.products
                     assign vendor_handle = p.vendor | handleize
                     assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
@@ -804,8 +878,18 @@
                     endif
                     
                     if matched
-                      assign p_arr = p | sort
-                      assign filtered_products = filtered_products | concat: p_arr
+                      assign already_added = false
+                      for fp in filtered_products
+                        if fp.id == p.id
+                          assign already_added = true
+                          break
+                        endif
+                      endfor
+                      
+                      if already_added == false
+                        assign p_arr = p | sort
+                        assign filtered_products = filtered_products | concat: p_arr
+                      endif
                     endif
                   endfor
                   
