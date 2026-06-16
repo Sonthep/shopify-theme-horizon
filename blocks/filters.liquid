@@ -515,6 +515,11 @@
   .facets-block-wrapper--vertical {
     @media screen and (min-width: 750px) {
       grid-column: var(--grid-column--desktop);
+      position: sticky;
+      top: calc(var(--sticky-header-offset, var(--header-height, 0)));
+      align-self: start;
+      z-index: var(--layer-sticky);
+      background-color: var(--color-background);
     }
   }
 
@@ -666,15 +671,15 @@
       padding-block: var(--padding-block-start) var(--padding-block-end);
       display: flex;
       align-items: center;
-      position: relative;
+      position: sticky;
+      top: calc(var(--sticky-header-offset, var(--header-height, 0)));
       z-index: var(--facets-upper-z-index);
       border: none;
       height: auto;
-      top: initial;
-      bottom: initial;
       max-height: none;
       width: auto;
       overflow: visible;
+      background-color: var(--color-background);
     }
   }
 

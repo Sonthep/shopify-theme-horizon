@@ -2069,14 +2069,6 @@
         "label": "t:settings.cart_total",
         "default": true
       }
-      ,
-      {
-        "type": "color",
-        "id": "product_price_color",
-        "label": "สีราคาสินค้า (Product Price Color)",
-        "default": "#000000",
-        "alpha": true
-      }
     ]
   },
   {

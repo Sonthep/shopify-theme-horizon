@@ -26,10 +26,17 @@
       .shopify-section-{{ section.id }} slideshow-slides {
         min-height: {{ 1 | divided_by: preview_image.aspect_ratio | times: 100 }}vw;
       }
+      {% if block_settings.image_1_mobile and block_settings.image_1_mobile.aspect_ratio > 0 %}
+        @media (max-width: 749px) {
+          .shopify-section-{{ section.id }} slideshow-slides {
+            min-height: {{ 1 | divided_by: block_settings.image_1_mobile.aspect_ratio | times: 100 }}vw;
+          }
+        }
+      {% endif %}
     {% endstyle %}
   {% endif %}
 
-  <div class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}"{% if preview_image %} style="aspect-ratio: {{ preview_image.aspect_ratio }};"{% endif %}>
+  <div class="slide__image-container slide__image-container--block-{{ block.id }} slide__image-container--with-aspect-{{ block.id }}{% if rounded_image_corners %} slide__image-container--rounded{% endif %}">
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -62,28 +69,24 @@
 
       {%- if block_settings.media_type_1 == 'image' -%}
         {%- if block_settings.image_1_mobile -%}
+          {%- liquid
+            assign widths_array = widths | split: ', '
+          -%}
           <picture>
             <source
-              media="(max-width: 749px)"
-              srcset="
-                {%- for mobile_width in mobile_widths_array -%}
-                  {{ block_settings.image_1_mobile | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %},{% endunless %}
-                {%- endfor -%}
-              "
-              sizes="{{ sizes_mobile }}"
-              width="{{ block_settings.image_1_mobile.width }}"
-              height="{{ block_settings.image_1_mobile.height }}"
+              media="(min-width: 750px)"
+              srcset="{%- for w in widths_array -%}{{ block_settings.image_1 | image_url: width: w }} {{ w }}w{% unless forloop.last %}, {% endunless %}{%- endfor -%}"
+              sizes="{{ sizes }}"
             >
-            {{
-              block_settings.image_1
-              | image_url: width: 3840
-              | image_tag:
-                sizes: sizes,
-                widths: widths,
-                class: 'slide__image',
-                loading: loading,
-                fetchpriority: fetchpriority
-            }}
+            <img
+              src="{{ block_settings.image_1_mobile | image_url: width: 1200 }}"
+              srcset="{%- for mobile_width in mobile_widths_array -%}{{ block_settings.image_1_mobile | image_url: width: mobile_width }} {{ mobile_width }}w{% unless forloop.last %}, {% endunless %}{%- endfor -%}"
+              sizes="{{ sizes_mobile }}"
+              class="slide__image"
+              loading="{{ loading }}"
+              fetchpriority="{{ fetchpriority }}"
+              {% if block_settings.image_1_mobile.alt %}alt="{{ block_settings.image_1_mobile.alt }}"{% endif %}
+            />
           </picture>
         {%- else -%}
           {{
@@ -120,6 +123,36 @@
       {{ placeholder_name | placeholder_svg_tag: 'slide__image' }}
     {%- endif -%}
   </div>
+  {%- if block_settings.image_1_mobile -%}
+    <style>
+      @media (max-width: 749px) {
+        .shopify-section-{{ section.id }} .slide--block-{{ block.id }} {
+          --grid-template-rows: auto 1fr !important;
+        }
+        .shopify-section-{{ section.id }} .slide--block-{{ block.id }} > .slide__image-container--block-{{ block.id }} {
+          aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }} !important;
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        .shopify-section-{{ section.id }} .slide--block-{{ block.id }} > .slide__image-container--block-{{ block.id }} > .slide__image,
+        .shopify-section-{{ section.id }} .slide--block-{{ block.id }} > .slide__image-container--block-{{ block.id }} > .slide__video-poster {
+          width: 100% !important;
+          height: auto !important;
+          object-fit: contain !important;
+          object-position: center top !important;
+        }
+      }
+    </style>
+    {%- if preview_image -%}
+      <style>
+        @media (min-width: 750px) {
+          .shopify-section-{{ section.id }} .slide__image-container--with-aspect-{{ block.id }} {
+            aspect-ratio: {{ preview_image.aspect_ratio }};
+          }
+        }
+      </style>
+    {%- endif -%}
+  {%- endif -%}
   <div
     class="spacing-style slide__content{% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}{% if preview_image or block_settings.toggle_overlay %} background-transparent{% endif %}"
     style="{% render 'spacing-style', settings: block_settings %}"
@@ -145,7 +178,7 @@
 
 {% render 'slideshow-slide',
   index: block_index,
-  class: class,
+  class: class | append: ' slide--block-' | append: block.id,
   children: children,
   attributes: block.shopify_attributes,
   slide_size: section.settings.slide_height,

@@ -1,0 +1,51 @@
+{
+  "sections": {
+    "hero": {
+      "type": "project-detail-hero",
+      "settings": {
+      }
+    },
+    "overview": {
+      "type": "project-detail-overview",
+      "settings": {
+      }
+    },
+    "gallery": {
+      "type": "project-detail-gallery",
+      "blocks": {
+        "image_1": {
+          "type": "image"
+        },
+        "image_2": {
+          "type": "image"
+        },
+        "image_3": {
+          "type": "image"
+        },
+        "image_4": {
+          "type": "image"
+        }
+      },
+      "block_order": [
+        "image_1",
+        "image_2",
+        "image_3",
+        "image_4"
+      ],
+      "settings": {
+      }
+    },
+    "cta": {
+      "type": "project-landing-cta",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "overview",
+    "gallery",
+    "cta"
+  ]
+}
+

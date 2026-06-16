@@ -48,7 +48,13 @@ class DeferredMedia extends Component {
    * Shows the deferred media content
    */
   showDeferredMedia = () => {
+    const shouldPlay = !this.getAttribute('data-media-loaded');
+
     this.loadContent(true);
+    if (shouldPlay) {
+      this.playMedia();
+    }
+
     this.isPlaying = true;
     this.updatePlayPauseHint(this.isPlaying);
   };
@@ -78,6 +84,18 @@ class DeferredMedia extends Component {
     if (content instanceof HTMLVideoElement && content.getAttribute('autoplay')) {
       // force autoplay for safari
       content.play();
+    }
+
+    if (content instanceof HTMLIFrameElement) {
+      content.addEventListener(
+        'load',
+        () => {
+          if (this.isPlaying) {
+            this.playMedia();
+          }
+        },
+        { once: true }
+      );
     }
   }
 

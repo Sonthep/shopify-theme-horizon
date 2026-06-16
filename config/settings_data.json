@@ -12,6 +12,7 @@
     "logo": "shopify://shop_images/CI_logo_75_2026-01.jpg",
     "logo_height": 90,
     "logo_height_mobile": 45,
+    "favicon": "shopify://shop_images/logo_75-02.png",
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
     "type_heading_font": "inter_n7",
@@ -93,11 +94,6 @@
           "button_vertical_position": "lowest",
           "greeting_message": ""
         }
-      },
-      "18016633001993233047": {
-        "type": "shopify://apps/convi/blocks/convi/184186c9-de0c-425b-81d2-06ba701ba286",
-        "disabled": false,
-        "settings": {}
       }
     },
     "color_schemes": {

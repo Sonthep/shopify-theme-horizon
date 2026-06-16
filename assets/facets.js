@@ -185,6 +185,41 @@ class FacetInputsComponent extends Component {
 
   cancelPrefetchPage = () => this.prefetchPage.cancel();
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('input', this.#handleFacetSearch);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('input', this.#handleFacetSearch);
+  }
+
+  /**
+   * Handles brand filter search input
+   * @param {InputEvent} event
+   */
+  #handleFacetSearch = (event) => {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    if (!event.target.matches('[data-facet-search]')) return;
+
+    const searchValue = event.target.value.trim().toLowerCase();
+    const list = this.querySelector('.facets__inputs-list');
+    if (!(list instanceof HTMLElement)) return;
+
+    const items = Array.from(list.querySelectorAll('.facets__inputs-list-item'));
+
+    for (const item of items) {
+      const labelText = item.textContent?.trim().toLowerCase() ?? '';
+      const matches = searchValue === '' || labelText.includes(searchValue);
+      if (matches) {
+        item.removeAttribute('data-filter-search-hidden');
+      } else {
+        item.setAttribute('data-filter-search-hidden', 'true');
+      }
+    }
+  };
+
   /**
    * Updates the selected facet summary
    */

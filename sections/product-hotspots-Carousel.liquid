@@ -229,11 +229,14 @@
   }
 
   @media screen and (max-width: 749px) {
-    /* === Mobile: horizontal scroll carousel, 1 slide at a time === */
-    /* Hide entire product hotspots section on mobile devices */
     .section-product-hotspots {
       display: none !important;
+      visibility: hidden;
+      height: 0;
+      overflow: hidden;
     }
+
+    /* === Mobile: horizontal scroll carousel, 1 slide at a time === */
     .hotspots-mosaic__grid {
       display: flex;
       flex-direction: row;

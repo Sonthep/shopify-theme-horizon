@@ -53,10 +53,6 @@
     {%- assign form_id = 'MobileLanguageForm-' | append: section.id -%}
     {%- form 'localization', id: form_id, class: 'desktop:hidden mobile-language-form', return_to: request.path -%}
       <div class="mobile-language-dropdown-wrapper">
-        <span class="mobile-language-display">{{ localization.language.iso_code | upcase }}</span>
-        <span class="svg-wrapper icon-caret icon-caret--mobile">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
         <select
           name="language_code"
           class="mobile-language-select"
@@ -73,6 +69,9 @@
             </option>
           {%- endfor -%}
         </select>
+        <span class="svg-wrapper icon-caret icon-caret--mobile">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
       </div>
     {%- endform -%}
   {%- endif -%}
@@ -736,13 +735,8 @@
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 6px;
-      padding: 6px 28px 6px 12px;
+      padding: 4px 28px 4px 10px;
       transition: all var(--animation-speed) ease;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      line-height: 1;
     }
 
     .mobile-language-dropdown-wrapper:hover {
@@ -750,17 +744,14 @@
       border-color: rgba(255, 255, 255, 0.3);
     }
 
-    .mobile-language-display {
-      pointer-events: none;
-    }
-
     .mobile-language-select {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.05em;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
@@ -768,6 +759,13 @@
       padding: 0;
       margin: 0;
       outline: none;
+      width: auto;
+    }
+
+    .mobile-language-select option {
+      background: #0b6b5b; /* Match theme teal background */
+      color: #ffffff;
+      font-weight: 500;
     }
 
     .mobile-language-dropdown-wrapper .icon-caret--mobile {

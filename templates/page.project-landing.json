@@ -1,0 +1,179 @@
+{
+  "sections": {
+    "hero": {
+      "type": "project-landing-hero",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "number": "43+",
+            "label": "Years of Experience"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "number": "50,000+",
+            "label": "Products Available"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "number": "Trusted by",
+            "label": "Leading Hospitality Brands"
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3"
+      ],
+      "settings": {}
+    },
+    "stats": {
+      "type": "project-landing-stats-bar",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "heading": "ONE STOP SERVICE",
+            "subtext": "บริการครบวงจรในที่เดียว"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "heading": "PROFESSIONAL TEAM",
+            "subtext": "ทีมงานมืออาชีพมากประสบการณ์"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "heading": "PREMIUM QUALITY",
+            "subtext": "คัดสรรอุปกรณ์คุณภาพระดับโลก"
+          }
+        },
+        "stat_4": {
+          "type": "stat",
+          "settings": {
+            "heading": "AFTER SALES SERVICE",
+            "subtext": "บริการหลังการขายที่คุณไว้วางใจ"
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3",
+        "stat_4"
+      ],
+      "settings": {}
+    },
+    "capabilities": {
+      "type": "project-landing-capabilities",
+      "blocks": {
+        "cap_1": {
+          "type": "capability",
+          "settings": {
+            "title": "Design",
+            "text": "Smart, efficient kitchen layouts engineered for performance, compliance and workflow.",
+            "link_label": "Explore Design"
+          }
+        },
+        "cap_2": {
+          "type": "capability",
+          "settings": {
+            "title": "Build",
+            "text": "Modular, precision-built kitchens using certified trades and quality equipment.",
+            "link_label": "Explore Build"
+          }
+        },
+        "cap_3": {
+          "type": "capability",
+          "settings": {
+            "title": "Install",
+            "text": "Expert installation with minimal disruption and a focus on safety and quality.",
+            "link_label": "Explore Install"
+          }
+        },
+        "cap_4": {
+          "type": "capability",
+          "settings": {
+            "title": "Service",
+            "text": "24/7 maintenance, parts and warranty support to keep your kitchen running.",
+            "link_label": "Explore Service"
+          }
+        }
+      },
+      "block_order": [
+        "cap_1",
+        "cap_2",
+        "cap_3",
+        "cap_4"
+      ],
+      "settings": {}
+    },
+    "featured": {
+      "type": "project-landing-featured",
+      "blocks": {
+        "proj_1": {
+          "type": "project",
+          "settings": {
+            "tag": "RESTAURANT",
+            "title": "The Grand Bistro",
+            "scope": "Kitchen Design & Build",
+            "area": "280 sq.m."
+          }
+        },
+        "proj_2": {
+          "type": "project",
+          "settings": {
+            "tag": "HOTEL",
+            "title": "Oceanview Resort & Spa",
+            "scope": "Kitchen Design & Build",
+            "area": "650 sq.m."
+          }
+        },
+        "proj_3": {
+          "type": "project",
+          "settings": {
+            "tag": "CAFÉ & BAKERY",
+            "title": "Artisan Coffee House",
+            "scope": "Kitchen Design & Build",
+            "area": "120 sq.m."
+          }
+        },
+        "proj_4": {
+          "type": "project",
+          "settings": {
+            "tag": "HOSPITAL",
+            "title": "City Central Hospital",
+            "scope": "Kitchen Design & Build",
+            "area": "350 sq.m."
+          }
+        }
+      },
+      "block_order": [
+        "proj_1",
+        "proj_2",
+        "proj_3",
+        "proj_4"
+      ],
+      "settings": {}
+    },
+    "cta": {
+      "type": "project-landing-cta",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "stats",
+    "capabilities",
+    "featured",
+    "cta"
+  ]
+}

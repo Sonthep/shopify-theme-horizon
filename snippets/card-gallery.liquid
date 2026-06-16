@@ -173,16 +173,21 @@
       %}
     </a>
   {% elsif product != blank and product.media.size == 0 %}
-    <product-title class="product-card-gallery__title-placeholder">
-      <a
-        class="contents"
-        ref="productTitleLink"
-        href="{{ product.selected_or_first_available_variant.url }}"
-        aria-hidden="true"
-      >
-        <span class="title-text">{{- product.title -}}</span>
-      </a>
-    </product-title>
+    <a
+      class="contents"
+      ref="cardGalleryLink"
+      href="{{ product.selected_or_first_available_variant.url }}"
+      aria-label="{{- product.title -}}"
+    >
+      <img
+        src="{{ 'commig_soon.jpg' | asset_url }}"
+        class="product-media-container media-fit product-media-container--image"
+        alt="{{ product.title | escape }}"
+        width="800"
+        height="800"
+        loading="lazy"
+      />
+    </a>
   {% elsif product == blank %}
     {% liquid
       capture placeholder_image

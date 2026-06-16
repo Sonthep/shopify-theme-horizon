@@ -1,0 +1,437 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .project-hero {
+    position: relative;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .project-hero__bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 60%;
+    z-index: 0;
+  }
+
+  .project-hero__bg img,
+  .project-hero__bg svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .project-hero__bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 50%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  }
+
+  .project-hero__content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .project-hero__content {
+    max-width: 600px;
+  }
+
+  .project-hero__preheading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1F6B4D;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  .project-hero__heading {
+    font-size: 56px;
+    line-height: 64px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-family: var(--font-heading-family);
+  }
+
+  .project-hero__text {
+    font-size: 16px;
+    line-height: 24px;
+    color: #5E6A63;
+    margin-bottom: 40px;
+    max-width: 500px;
+  }
+
+  .project-hero__buttons {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 64px;
+    flex-wrap: wrap;
+  }
+
+  .project-hero__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1F6B4D;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    min-height: 44px;
+    transition: background-color 0.2s ease;
+  }
+
+  .project-hero__btn-primary:hover {
+    background-color: #123B2B;
+    color: #FFFFFF;
+  }
+
+  .project-hero__btn-primary svg {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .project-hero__btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFFFFF;
+    color: #1C1F1D;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid #D9E3DD;
+    text-decoration: none;
+    min-height: 44px;
+    transition: all 0.2s ease;
+  }
+
+  .project-hero__btn-secondary:hover {
+    border-color: #1F6B4D;
+    color: #1F6B4D;
+  }
+
+  .project-hero__stats {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-top: 1px solid #D9E3DD;
+    padding-top: 32px;
+    max-width: 650px;
+  }
+
+  .project-hero__stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .project-hero__stat-icon {
+    width: 24px;
+    height: 24px;
+    color: #1F6B4D;
+  }
+
+  .project-hero__stat-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-hero__stat-number {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1C1F1D;
+    line-height: 1.2;
+  }
+
+  .project-hero__stat-label {
+    font-size: 12px;
+    color: #5E6A63;
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .project-hero__bg {
+      width: 50%;
+    }
+    .project-hero__heading {
+      font-size: 40px;
+      line-height: 48px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .project-hero {
+      flex-direction: column;
+      padding-top: 0 !important;
+    }
+    .project-hero__bg {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      margin-bottom: 32px;
+    }
+    .project-hero__bg::after {
+      top: auto;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(to top, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    }
+    .project-hero__content {
+      max-width: 100%;
+    }
+    .project-hero__heading {
+      font-size: 32px;
+      line-height: 40px;
+    }
+    .project-hero__stats {
+      gap: 24px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+{%- endstyle -%}
+
+<div class="project-hero section-{{ section.id }}-padding">
+  {%- if section.settings.image != blank -%}
+    <div class="project-hero__bg">
+      {{ section.settings.image | image_url: width: 1500 | image_tag: loading: 'lazy' }}
+    </div>
+  {%- else -%}
+    <div class="project-hero__bg">
+      <img src="{{ 'project-landing-hero.jpg' | asset_url }}" alt="Commercial Kitchen Specialists" loading="eager" width="1500" height="800">
+    </div>
+  {%- endif -%}
+
+  <div class="project-hero__content-wrapper">
+    <div class="project-hero__content">
+      {%- if section.settings.preheading != blank -%}
+        <div class="project-hero__preheading">{{ section.settings.preheading }}</div>
+      {%- endif -%}
+      
+      {%- if section.settings.heading != blank -%}
+        <h1 class="project-hero__heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="project-hero__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      <div class="project-hero__buttons">
+        {%- if section.settings.btn_1_label != blank -%}
+          <a href="{{ section.settings.btn_1_link | default: '/pages/contact-us' }}" class="project-hero__btn-primary">
+            {{ section.settings.btn_1_label }}
+            <svg viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M8.537.808a.5.5 0 01.817-.162l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.793 5.5H1a.5.5 0 010-1h10.793L8.646 1.354a.5.5 0 01-.109-.546z" fill="currentColor"/>
+            </svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.btn_2_label != blank -%}
+          <a href="{{ section.settings.btn_2_link }}" class="project-hero__btn-secondary">
+            {{ section.settings.btn_2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="project-hero__stats">
+          {%- for block in section.blocks -%}
+            <div class="project-hero__stat-item" {{ block.shopify_attributes }}>
+              <div class="project-hero__stat-icon">
+                {%- if block.settings.icon != blank -%}
+                  {{ block.settings.icon }}
+                {%- else -%}
+                  {%- if forloop.index == 1 -%}
+                    <!-- Shield/Check Icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      <path d="M9 11l2 2 4-4"/>
+                    </svg>
+                  {%- elsif forloop.index == 2 -%}
+                    <!-- Package/Box Icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                      <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                  {%- else -%}
+                    <!-- Users/Trusted Icon -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+              <div class="project-hero__stat-text">
+                <span class="project-hero__stat-number">{{ block.settings.number }}</span>
+                <span class="project-hero__stat-label">{{ block.settings.label }}</span>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Project Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "preheading",
+      "label": "Pre-heading",
+      "default": "COMMERCIAL KITCHEN SPECIALISTS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Kitchens engineered for the way you actually cook."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "We design, build, install and service modular smart-line kitchens for hotels, restaurants and 24-hour operations across Thailand."
+    },
+    {
+      "type": "text",
+      "id": "btn_1_label",
+      "label": "Primary Button Label",
+      "default": "Request a Consultation"
+    },
+    {
+      "type": "url",
+      "id": "btn_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "btn_2_label",
+      "label": "Secondary Button Label",
+      "default": "View Projects"
+    },
+    {
+      "type": "url",
+      "id": "btn_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 95
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 95
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat Item",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon (SVG code)"
+        },
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number/Value",
+          "default": "43+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Years of Experience"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Project Hero",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "number": "43+",
+            "label": "Years of Experience"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "50,000+",
+            "label": "Products Available"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "Trusted by",
+            "label": "Leading Hospitality Brands"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

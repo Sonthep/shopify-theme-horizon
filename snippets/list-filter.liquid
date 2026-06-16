@@ -160,10 +160,33 @@
           endif
         %}
 
+        {% liquid
+          assign is_brand_filter = false
+          if filter.param_name contains 'vendor' or filter.label == 'Brand'
+            assign is_brand_filter = true
+          endif
+        %}
+
         <div
           class="facets__inputs-wrapper{% if is_swatch or is_image or should_use_pills %} facets__inputs-wrapper--row{% endif %}"
           ref="showMoreContent"
         >
+          {% if is_brand_filter %}
+            <div class="facets__search-wrapper">
+              <label class="visually-hidden" for="facet-search-{{ sectionId }}-{{ filter.param_name | escape | replace: '.', '-' }}">
+                Search Brand
+              </label>
+              <input
+                type="search"
+                id="facet-search-{{ sectionId }}-{{ filter.param_name | escape | replace: '.', '-' }}"
+                class="facets__search-input"
+                placeholder="Search Brand"
+                autocomplete="off"
+                data-facet-search
+              >
+            </div>
+          {% endif %}
+
           {% liquid
             if is_swatch
               assign swatch_columns = filter.values.size
@@ -510,6 +533,31 @@
   .facets__status-wrapper {
     display: flex;
     align-items: center;
+  }
+
+  .facets__search-wrapper {
+    margin-bottom: var(--padding-sm);
+  }
+
+  .facets__search-input {
+    width: 100%;
+    min-height: var(--minimum-touch-target);
+    padding: calc(var(--padding-xs) * 0.875) var(--padding-sm);
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
+    border-radius: var(--style-border-radius-md);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    transition: border-color var(--animation-speed) var(--animation-easing), box-shadow var(--animation-speed) var(--animation-easing);
+  }
+
+  .facets__search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.12);
+  }
+
+  .facets__inputs-list-item[data-filter-search-hidden="true"] {
+    display: none !important;
   }
 
   .facets--drawer .facets__status-wrapper {

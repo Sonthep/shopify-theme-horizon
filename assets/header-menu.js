@@ -34,6 +34,9 @@ class HeaderMenu extends Component {
     onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
+
+    // Force the overflow list to show all top-level items so the header menu does not collapse into a More button.
+    setTimeout(() => this.refs.overflowMenu?.showAll?.(), 0);
   }
 
   disconnectedCallback() {

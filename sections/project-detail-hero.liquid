@@ -1,0 +1,272 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .project-detail-hero {
+    background-color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-detail-hero__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .project-detail-hero__inner {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 64px;
+    }
+  }
+
+  .project-detail-hero__media {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 60%; /* 5:3 Aspect Ratio approx */
+  }
+
+  @media screen and (min-width: 990px) {
+    .project-detail-hero__media {
+      flex: 1 1 65%;
+      padding-bottom: 45%;
+    }
+  }
+
+  .project-detail-hero__media img,
+  .project-detail-hero__media svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-detail-hero__placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #F3F8F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project-detail-hero__content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .project-detail-hero__content {
+      flex: 1 1 35%;
+      position: sticky;
+      top: 40px;
+    }
+  }
+
+  .project-detail-hero__tag {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #1F6B4D;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+  }
+
+  .project-detail-hero__title {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0;
+    font-family: var(--font-heading-family);
+  }
+
+  @media screen and (min-width: 750px) {
+    .project-detail-hero__title {
+      font-size: 40px;
+      line-height: 48px;
+    }
+  }
+
+  .project-detail-hero__meta-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    background-color: #F3F8F5;
+    border-radius: 12px;
+  }
+
+  .project-detail-hero__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .project-detail-hero__meta-label {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    color: #5E6A63;
+    margin: 0;
+  }
+
+  .project-detail-hero__meta-value {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    color: #1C1F1D;
+    margin: 0;
+  }
+{%- endstyle -%}
+
+<div class="project-detail-hero section-{{ section.id }}-padding">
+  <div class="project-detail-hero__inner">
+    
+    <div class="project-detail-hero__media">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '550, 750, 1100, 1500' }}
+      {%- else -%}
+        <div class="project-detail-hero__placeholder">
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="project-detail-hero__content">
+      <div>
+        {%- if section.settings.tag != blank -%}
+          <p class="project-detail-hero__tag">{{ section.settings.tag }}</p>
+        {%- endif -%}
+        <h1 class="project-detail-hero__title">
+          {%- if request.page_type == 'page' and section.settings.use_page_title -%}
+            {{ page.title }}
+          {%- else -%}
+            {{ section.settings.title }}
+          {%- endif -%}
+        </h1>
+      </div>
+      
+      <div class="project-detail-hero__meta-list">
+        {%- if section.settings.scope != blank -%}
+          <div class="project-detail-hero__meta-item">
+            <span class="project-detail-hero__meta-label">Scope</span>
+            <span class="project-detail-hero__meta-value">{{ section.settings.scope }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.area != blank -%}
+          <div class="project-detail-hero__meta-item">
+            <span class="project-detail-hero__meta-label">Area</span>
+            <span class="project-detail-hero__meta-value">{{ section.settings.area }}</span>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.location != blank -%}
+          <div class="project-detail-hero__meta-item">
+            <span class="project-detail-hero__meta-label">Location</span>
+            <span class="project-detail-hero__meta-value">{{ section.settings.location }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Project Detail Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Project Main Image"
+    },
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Project Tag/Category",
+      "default": "RESTAURANT"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_page_title",
+      "label": "Use page title as heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Project Title",
+      "info": "Used if 'Use page title' is unchecked or not on a page template",
+      "default": "The Grand Bistro"
+    },
+    {
+      "type": "text",
+      "id": "scope",
+      "label": "Scope of Work",
+      "default": "Kitchen Design & Build"
+    },
+    {
+      "type": "text",
+      "id": "area",
+      "label": "Area",
+      "default": "280 sq.m."
+    },
+    {
+      "type": "text",
+      "id": "location",
+      "label": "Location",
+      "default": "Bangkok, Thailand"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Project Detail Hero"
+    }
+  ]
+}
+{% endschema %}

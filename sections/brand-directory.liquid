@@ -53,9 +53,18 @@
           <div class="brand-group__logos">
       {% endif %}
 
+      {% assign brand_image_src = '' %}
+      {% if col.image and col.image.src %}
+        {% assign brand_image_src = col.image.src | default: '' %}
+      {% endif %}
+
+      {% if brand_image_src == blank and col.title == blank %}
+        {% continue %}
+      {% endif %}
+
       <a class="brand-logo-card" href="{{ col.url }}" title="{{ col.title }}">
-        {% if col.image %}
-          {{ col.image | image_url: width: 300 | image_tag: alt: col.title, loading: 'lazy', class: '' }}
+        {% if brand_image_src != blank %}
+          {{ brand_image_src | image_url: width: 300 | image_tag: alt: col.title, loading: 'lazy', class: '' }}
         {% else %}
           <span class="brand-logo-card__text">{{ col.title }}</span>
         {% endif %}
