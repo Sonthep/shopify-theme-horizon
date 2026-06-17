@@ -72,50 +72,6 @@
       ],
       "settings": {}
     },
-    "capabilities": {
-      "type": "project-landing-capabilities",
-      "blocks": {
-        "cap_1": {
-          "type": "capability",
-          "settings": {
-            "title": "Design",
-            "text": "Smart, efficient kitchen layouts engineered for performance, compliance and workflow.",
-            "link_label": "Explore Design"
-          }
-        },
-        "cap_2": {
-          "type": "capability",
-          "settings": {
-            "title": "Build",
-            "text": "Modular, precision-built kitchens using certified trades and quality equipment.",
-            "link_label": "Explore Build"
-          }
-        },
-        "cap_3": {
-          "type": "capability",
-          "settings": {
-            "title": "Install",
-            "text": "Expert installation with minimal disruption and a focus on safety and quality.",
-            "link_label": "Explore Install"
-          }
-        },
-        "cap_4": {
-          "type": "capability",
-          "settings": {
-            "title": "Service",
-            "text": "24/7 maintenance, parts and warranty support to keep your kitchen running.",
-            "link_label": "Explore Service"
-          }
-        }
-      },
-      "block_order": [
-        "cap_1",
-        "cap_2",
-        "cap_3",
-        "cap_4"
-      ],
-      "settings": {}
-    },
     "featured": {
       "type": "project-landing-featured",
       "blocks": {
@@ -172,7 +128,6 @@
   "order": [
     "hero",
     "stats",
-    "capabilities",
     "featured",
     "cta"
   ]

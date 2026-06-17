@@ -253,19 +253,19 @@
     </div>
 
     <div class="landing-featured__filters">
-      <button class="landing-featured__filter active">ALL</button>
-      <button class="landing-featured__filter">RESTAURANT</button>
-      <button class="landing-featured__filter">HOTEL</button>
-      <button class="landing-featured__filter">CAFÉ & BAKERY</button>
-      <button class="landing-featured__filter">CENTRAL KITCHEN</button>
-      <button class="landing-featured__filter">HOSPITAL</button>
-      <button class="landing-featured__filter">SCHOOL & UNIVERSITY</button>
-      <button class="landing-featured__filter">FACTORY</button>
+      <button class="landing-featured__filter active" data-filter="all">ALL</button>
+      <button class="landing-featured__filter" data-filter="RESTAURANT">RESTAURANT</button>
+      <button class="landing-featured__filter" data-filter="HOTEL">HOTEL</button>
+      <button class="landing-featured__filter" data-filter="CAFÉ & BAKERY">CAFÉ & BAKERY</button>
+      <button class="landing-featured__filter" data-filter="CENTRAL KITCHEN">CENTRAL KITCHEN</button>
+      <button class="landing-featured__filter" data-filter="HOSPITAL">HOSPITAL</button>
+      <button class="landing-featured__filter" data-filter="SCHOOL & UNIVERSITY">SCHOOL & UNIVERSITY</button>
+      <button class="landing-featured__filter" data-filter="FACTORY">FACTORY</button>
     </div>
 
-    <div class="landing-featured__grid">
+    <div class="landing-featured__grid" id="landing-featured-grid-{{ section.id }}">
       {%- for block in section.blocks -%}
-        <a href="{{ block.settings.link }}" class="landing-project-card" {{ block.shopify_attributes }}>
+        <a href="{{ block.settings.link }}" class="landing-project-card" data-tag="{{ block.settings.tag | upcase }}" {{ block.shopify_attributes }}>
           <div class="landing-project-card__image-wrap">
             {%- if block.settings.image != blank -%}
               {{ block.settings.image | image_url: width: 800 | image_tag: class: 'landing-project-card__image', loading: 'lazy' }}
@@ -319,6 +319,36 @@
     </div>
   </div>
 </div>
+
+<script>
+  (function() {
+    const sectionEl = document.querySelector('#landing-featured-grid-{{ section.id }}');
+    if (!sectionEl) return;
+
+    const filterContainer = sectionEl.closest('.landing-featured__inner');
+    if (!filterContainer) return;
+
+    const filterBtns = filterContainer.querySelectorAll('.landing-featured__filter');
+    const cards = sectionEl.querySelectorAll('.landing-project-card');
+
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const filter = btn.getAttribute('data-filter');
+
+        // Toggle active state
+        filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        // Show/hide cards
+        cards.forEach(function(card) {
+          const tag = (card.getAttribute('data-tag') || '').trim().toUpperCase();
+          const show = filter === 'all' || tag === filter.toUpperCase();
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {

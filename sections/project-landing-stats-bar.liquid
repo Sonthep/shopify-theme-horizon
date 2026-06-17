@@ -33,7 +33,7 @@
 
   @media screen and (min-width: 1024px) {
     .landing-stats-bar__inner {
-      grid-template-columns: repeat({{ section.blocks.size }}, 1fr);
+      grid-template-columns: repeat({{ section.blocks.size | default: 4 | at_most: 4 }}, 1fr);
       gap: 32px;
     }
   }

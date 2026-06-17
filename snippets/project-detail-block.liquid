@@ -1,0 +1,183 @@
+{%- case block.type -%}
+  {%- when 'overview' -%}
+    <div class="project-detail-block block-overview" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-overview__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if block.settings.text != blank -%}
+        <div class="block-overview__text">
+          {{ block.settings.text }}
+        </div>
+      {%- endif -%}
+    </div>
+
+  {%- when 'equipment' -%}
+    <div class="project-detail-block block-equipment" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-equipment__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-equipment__grid">
+        {%- for i in (1..4) -%}
+          {%- capture product_key -%}item{{ i }}_product{%- endcapture -%}
+          {%- capture status_key -%}item{{ i }}_status{%- endcapture -%}
+          
+          {%- assign equip_product = block.settings[product_key] -%}
+          {%- if equip_product != blank -%}
+            <a href="{{ equip_product.url }}" class="equipment-card" style="text-decoration: none; color: inherit;">
+              <div class="equipment-card__image">
+                {%- if equip_product.featured_image != blank -%}
+                  {{ equip_product.featured_image | image_url: width: 100 | image_tag: loading: 'lazy' }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+              <div class="equipment-card__info">
+                <p class="equipment-card__name">{{ equip_product.title }}</p>
+                {%- if equip_product.variants.first.sku != blank -%}
+                  <p class="equipment-card__serial">SKU: {{ equip_product.variants.first.sku }}</p>
+                {%- endif -%}
+              </div>
+              {%- if block.settings[status_key] != blank -%}
+                <span class="equipment-card__status equipment-card__status--{{ block.settings[status_key] }}">
+                  {{ block.settings[status_key] }}
+                </span>
+              {%- endif -%}
+            </a>
+          {%- else -%}
+            <div class="equipment-card">
+              <div class="equipment-card__image">
+                 <img src="{{ 'mockup-equip' | append: i | append: '.png' | asset_url }}" alt="Equipment" loading="lazy" width="100" height="100">
+              </div>
+              <div class="equipment-card__info">
+                <p class="equipment-card__name">Select a Product</p>
+                <p class="equipment-card__serial">Please assign in Theme Editor</p>
+              </div>
+              {%- if block.settings[status_key] != blank -%}
+                <span class="equipment-card__status equipment-card__status--{{ block.settings[status_key] }}">
+                  {{ block.settings[status_key] }}
+                </span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'gallery' -%}
+    <div class="project-detail-block block-gallery" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-gallery__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-gallery__grid">
+        {%- for i in (1..5) -%}
+          {%- capture image_key -%}image_{{ i }}{%- endcapture -%}
+          {%- assign gallery_image = block.settings[image_key] -%}
+          {%- assign mockup_index = i -%}
+          {%- if i == 4 -%}{%- assign mockup_index = 1 -%}{%- endif -%}
+          {%- if i == 5 -%}{%- assign mockup_index = 2 -%}{%- endif -%}
+          
+          {%- if gallery_image != blank -%}
+            <div class="block-gallery__item">
+              {{ gallery_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '300, 600, 1200' }}
+            </div>
+          {%- else -%}
+            <div class="block-gallery__item">
+              <img src="{{ 'mockup-gal' | append: mockup_index | append: '.png' | asset_url }}" alt="Gallery" loading="lazy" width="600" height="450">
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'video' -%}
+    <div class="project-detail-block block-video" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-video__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-video__wrapper">
+        {%- if block.settings.video != blank -%}
+          {{ block.settings.video | video_tag: image_size: '1200x', loop: true, controls: true, muted: false }}
+        {%- elsif block.settings.video_url != blank -%}
+          {%- if block.settings.video_url.type == 'youtube' -%}
+            <iframe src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          {%- elsif block.settings.video_url.type == 'vimeo' -%}
+            <iframe src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+          {%- endif -%}
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+    </div>
+
+  {%- when 'tech_summary' -%}
+    <div class="project-detail-block block-tech-summary" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h3 class="block-tech-summary__heading">{{ block.settings.heading }}</h3>
+      {%- endif -%}
+      <div class="block-tech-summary__list">
+        {%- for i in (1..4) -%}
+          {%- capture label_key -%}row{{ i }}_label{%- endcapture -%}
+          {%- capture value_key -%}row{{ i }}_value{%- endcapture -%}
+          {%- capture highlight_key -%}row{{ i }}_highlight{%- endcapture -%}
+          
+          {%- assign row_label = block.settings[label_key] -%}
+          {%- assign row_value = block.settings[value_key] -%}
+          
+          {%- if row_label != blank and row_value != blank -%}
+            <div class="block-tech-summary__row">
+              <span class="block-tech-summary__label">{{ row_label }}</span>
+              <span class="block-tech-summary__value {% if block.settings[highlight_key] %}block-tech-summary__value--highlight{% endif %}">{{ row_value }}</span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'testimonial' -%}
+    <div class="project-detail-block block-testimonial" {{ block.shopify_attributes }}>
+      <div class="block-testimonial__quote-icon">“</div>
+      
+      <div class="block-testimonial__header">
+        <div class="block-testimonial__image">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 80 | image_tag: loading: 'lazy' }}
+          {%- else -%}
+             <img src="{{ 'mockup-author.png' | asset_url }}" alt="Author" loading="lazy" width="80" height="80">
+          {%- endif -%}
+        </div>
+        <div class="block-testimonial__author-info">
+          <p class="block-testimonial__name">{{ block.settings.author }}</p>
+          <p class="block-testimonial__role">{{ block.settings.role }}</p>
+        </div>
+      </div>
+      
+      {%- if block.settings.quote != blank -%}
+        <p class="block-testimonial__text">{{ block.settings.quote }}</p>
+      {%- endif -%}
+    </div>
+
+  {%- when 'location' -%}
+    <div class="project-detail-block block-location" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-location__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-location__map">
+        {%- if block.settings.map_iframe != blank -%}
+          {{ block.settings.map_iframe }}
+        {%- elsif block.settings.map_image != blank -%}
+          {{ block.settings.map_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 800' }}
+        {%- else -%}
+          <img src="{{ 'mockup-map.png' | asset_url }}" alt="Map" loading="lazy" width="800" height="400">
+        {%- endif -%}
+        
+        {%- if block.settings.map_iframe == blank -%}
+          <div class="block-location__pin">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            {%- if block.settings.location_text != blank -%}
+              <span class="block-location__pin-text">{{ block.settings.location_text }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+{%- endcase -%}
