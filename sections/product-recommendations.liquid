@@ -23,14 +23,26 @@
     echo '--column-count: ' | append: section.settings.columns | append: ';'
     echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
   endcapture
+
+  assign current_product = section.settings.product | default: product
+  assign current_sku = current_product.selected_or_first_available_variant.sku
+  assign prefix = current_sku | split: '-' | first | strip
+  assign first_word = current_product.title | strip | split: ' ' | first
+
+  if section.settings.filter_by_prefix and prefix != blank and current_sku contains '-'
+    assign search_query = prefix | append: '* ' | append: first_word | append: '* -handle:' | append: current_product.handle
+    assign data_url = routes.search_url | append: '?q=' | append: search_query | append: '&type=product&limit=' | append: section.settings.max_products
+  else
+    assign data_url = routes.product_recommendations_url | append: '?limit=' | append: section.settings.max_products
+  endif
 %}
 
 <product-recommendations
   id="product-recommendations-{{ section.id }}"
   class="product-recommendations"
-  data-url="{{ routes.product_recommendations_url }}?limit={{ section.settings.max_products }}"
+  data-url="{{ data_url }}"
   data-section-id="{{ section.id }}"
-  data-product-id="{{ section.settings.product.id | default: product.id }}"
+  data-product-id="{{ current_product.id }}"
   data-intent="{{ section.settings.recommendation_type }}"
   data-testid="product-recommendations-section"
   data-recommendations-performed="{{ recommendations.performed }}"
@@ -56,9 +68,11 @@
       {% content_for 'blocks' %}
     </div>
 
-    {%- if recommendations.performed or section.settings.product == blank -%}
+    {%- if search.performed or recommendations.performed or section.settings.product == blank -%}
       {% liquid
-        if section.settings.product == blank
+        if search.performed
+          assign products = search.results
+        elsif section.settings.product == blank
           assign products = null
           # Onboarding mode: Show placeholder products
           for i in (1..section.settings.max_products)
@@ -124,7 +138,7 @@
             {% render 'resource-list-carousel',
               ref: 'resourceListCarousel',
               slides: slides,
-              slide_count: recommendations.products.size,
+              slide_count: products.size,
               settings: section.settings
             %}
         {% endcase %}
@@ -148,7 +162,7 @@
           {% render 'resource-list-carousel',
             ref: 'resourceListCarouselMobile',
             slides: slides,
-            slide_count: recommendations.products.size,
+            slide_count: products.size,
             settings: section.settings
           %}
         </div>
@@ -227,6 +241,13 @@
         }
       ],
       "default": "related"
+    },
+    {
+      "type": "checkbox",
+      "id": "filter_by_prefix",
+      "label": "Filter by product prefix",
+      "info": "Filters recommendations to products sharing the same prefix (e.g. text before the first '-')",
+      "default": true
     },
     {
       "type": "paragraph",

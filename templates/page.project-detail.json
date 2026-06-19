@@ -1,8 +1,26 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "project-detail-hero",
-      "settings": {}
+      "settings": {
+        "badge_text": "COMPLETED PROJECT",
+        "use_page_title": false,
+        "title": "Metropolitan Hotel Central Kitchen",
+        "location": "Bangkok",
+        "date": "Jan 2024",
+        "area": "4,500 SQFT",
+        "padding_top": 160,
+        "padding_bottom": 65
+      }
     },
     "main": {
       "type": "project-detail-main",
@@ -10,31 +28,56 @@
         "overview": {
           "type": "overview",
           "settings": {
-            "column": "left"
-          }
-        },
-        "equipment": {
-          "type": "equipment",
-          "settings": {
-            "column": "left"
-          }
-        },
-        "gallery": {
-          "type": "gallery",
-          "settings": {
-            "column": "left"
+            "column": "left",
+            "heading": "Project Overview",
+            "text": "<p>Project details go here.</p>"
           }
         },
         "tech_summary": {
           "type": "tech_summary",
           "settings": {
-            "column": "right"
+            "column": "right",
+            "heading": "Technical Summary",
+            "row1_label": "Project Scope",
+            "row1_value": "Design • Supply • Installation",
+            "row2_label": "Installation Lead Time",
+            "row2_value": "Within 14 Working Days",
+            "row3_label": "Kitchen Readiness",
+            "row3_value": "Ready for Commercial Operation",
+            "row4_label": "After-Sales Support",
+            "row4_value": "Warranty • Spare Parts • Service Team",
+            "row4_highlight": true
+          }
+        },
+        "equipment": {
+          "type": "equipment",
+          "settings": {
+            "column": "left",
+            "heading": "Equipment Spec",
+            "item1_product": "10-tray-gn-1-1-combi-oven-with-boiler",
+            "item1_status": "active",
+            "item2_product": "3-deck-gas-oven-with-steam",
+            "item2_status": "active",
+            "item3_product": "ice-maker-220kg-w-r-filter",
+            "item3_status": "active",
+            "item4_product": "work-table-knock-down-l1200xw700xh850-without-undershelf-ss304",
+            "item4_status": "active"
+          }
+        },
+        "gallery": {
+          "type": "gallery",
+          "settings": {
+            "column": "left",
+            "heading": "Installation Gallery"
           }
         },
         "location": {
           "type": "location",
           "settings": {
-            "column": "right"
+            "column": "right",
+            "heading": "Site Location",
+            "map_iframe": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d158857.7281066703!2d-0.24168153706180374!3d51.52877184087611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2s!4v1718606400000!5m2!1sen!2s\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+            "location_text": "London, UK"
           }
         }
       },
@@ -45,11 +88,23 @@
         "gallery",
         "location"
       ],
-      "settings": {}
+      "settings": {
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
     },
     "cta": {
       "type": "project-landing-cta",
-      "settings": {}
+      "settings": {
+        "heading": "Ready to build a kitchen that performs every day?",
+        "text": "Let's talk about your project. Our team is here to help.",
+        "btn_1_label": "Request a Consultation",
+        "btn_1_link": "",
+        "btn_2_label": "Call 02-423-7575",
+        "btn_2_link": "",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
     }
   },
   "order": [
