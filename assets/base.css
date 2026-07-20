@@ -53,8 +53,8 @@ body {
   --hover-transition-timing: ease-out;
   --surface-transition-duration: 0.3s;
   --surface-transition-timing: var(--ease-out-quad);
-  --submenu-animation-speed: 520ms;
-  --submenu-animation-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --submenu-animation-speed: 360ms;
+  --submenu-animation-easing: cubic-bezier(.28,.11,.32,1);
 }
 
 html {

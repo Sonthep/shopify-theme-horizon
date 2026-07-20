@@ -28,6 +28,12 @@ class HeaderMenu extends Component {
    */
   #deactivateTimer = null;
 
+  /**
+   * Timer for delayed activation to prevent accidental hover opening (Apple style)
+   * @type {ReturnType<typeof setTimeout> | null}
+   */
+  #activateTimer = null;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -47,6 +53,10 @@ class HeaderMenu extends Component {
     if (this.#deactivateTimer) {
       clearTimeout(this.#deactivateTimer);
       this.#deactivateTimer = null;
+    }
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
     }
   }
 
@@ -78,14 +88,14 @@ class HeaderMenu extends Component {
   };
 
   /**
-   * Schedule deactivation after a short delay to allow mouse to travel to submenu
+   * Schedule deactivation after a delay (WebstaurantStore hover exit delay: 300ms)
    */
   #scheduleDeactivate() {
     if (this.#deactivateTimer) clearTimeout(this.#deactivateTimer);
     this.#deactivateTimer = setTimeout(() => {
       this.#deactivateTimer = null;
       this.#deactivate();
-    }, 150);
+    }, 300);
   }
 
   /**
@@ -115,7 +125,7 @@ class HeaderMenu extends Component {
   }
 
   /**
-   * Activate the selected menu item immediately
+   * Activate the selected menu item immediately or with delay
    * @param {PointerEvent | FocusEvent} event
    */
   activate = (event) => {
@@ -125,15 +135,34 @@ class HeaderMenu extends Component {
       this.#deactivateTimer = null;
     }
 
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
+    }
+
+    const target = event.target;
+    if (!(target instanceof Element) || !this.headerComponent) return;
+
+    if (this.#state.activeItem === null) {
+      // Menu is closed. Delay opening 300ms to verify intent
+      this.#activateTimer = setTimeout(() => {
+        this.#activateTimer = null;
+        this.#doActivate(target);
+      }, 300);
+    } else {
+      // Menu is already open. Switch categories immediately (0ms delay)
+      this.#doActivate(target);
+    }
+  };
+
+  #doActivate(target) {
     this.dispatchEvent(new MegaMenuHoverEvent());
 
-    if (!(event.target instanceof Element) || !this.headerComponent) return;
-
-    let item = findMenuItem(event.target);
+    let item = findMenuItem(target);
 
     if (!item || item == this.#state.activeItem) return;
 
-    const isDefaultSlot = event.target.slot === '';
+    const isDefaultSlot = target.slot === '';
 
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
 
@@ -207,13 +236,18 @@ class HeaderMenu extends Component {
     this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
     this.#setFullOpenHeaderHeight(finalHeight);
     this.style.setProperty('--submenu-opacity', '1');
-  };
+  }
 
   /**
-   * Deactivate the active item after a delay
+   * Deactivate the active item after a delay (Apple style)
    * @param {PointerEvent | FocusEvent} event
    */
   deactivate(event) {
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
+    }
+
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);

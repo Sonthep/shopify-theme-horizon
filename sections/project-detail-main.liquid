@@ -213,6 +213,105 @@
     object-fit: cover;
   }
 
+  /* Cover / thumbnail */
+  .block-video__cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+  }
+  .block-video__cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .block-video__cover:hover .block-video__cover-img {
+    transform: scale(1.03);
+  }
+  .block-video__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(18,59,43,0.55) 0%, rgba(18,59,43,0.15) 60%, transparent 100%);
+    transition: background 0.3s ease;
+  }
+  .block-video__cover:hover .block-video__overlay {
+    background: linear-gradient(to top, rgba(18,59,43,0.7) 0%, rgba(18,59,43,0.25) 60%, transparent 100%);
+  }
+
+  /* Play button */
+  .block-video__play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 3;
+    transition: transform 0.25s ease;
+  }
+  .block-video__play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  .block-video__play-icon svg {
+    width: 72px;
+    height: 72px;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.45));
+    transition: filter 0.25s ease;
+  }
+  .block-video__play-btn:hover .block-video__play-icon svg {
+    filter: drop-shadow(0 6px 24px rgba(0,0,0,0.65));
+  }
+  .block-video__play-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  }
+
+  /* Iframe wrapper (same 16:9 fill) */
+  .block-video__iframe-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .block-video__iframe-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* Caption */
+  .block-video__caption {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: #5E6A63;
+    text-align: center;
+    font-style: italic;
+  }
+
   /* Block: Technical Summary */
   .block-tech-summary {
     background-color: #2D373B; /* Dark grayish-blue from design */
@@ -810,13 +909,45 @@
           "type": "video_url",
           "id": "video_url",
           "accept": ["youtube", "vimeo"],
-          "label": "Video URL",
+          "label": "Video URL (YouTube / Vimeo)",
           "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
         },
         {
           "type": "video",
           "id": "video",
-          "label": "Shopify-hosted video (Overrides URL)"
+          "label": "Shopify-hosted video (overrides URL)"
+        },
+        {
+          "type": "image_picker",
+          "id": "video_poster",
+          "label": "Custom Thumbnail / Poster Image",
+          "info": "For YouTube: leave blank to auto-fetch YouTube thumbnail. For Vimeo: upload a custom image. For Shopify video: overrides the auto-generated poster."
+        },
+        {
+          "type": "checkbox",
+          "id": "video_loop",
+          "label": "Loop video",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "video_muted",
+          "label": "Mute Shopify-hosted video",
+          "default": false,
+          "info": "Only applies to Shopify-hosted videos."
+        },
+        {
+          "type": "text",
+          "id": "play_label",
+          "label": "Play button label",
+          "default": "Watch Video",
+          "info": "Text shown below the play icon on the thumbnail."
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "info": "Optional text shown below the video player."
         }
       ]
     },
