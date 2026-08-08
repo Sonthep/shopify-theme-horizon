@@ -36,6 +36,34 @@
     {% endstyle %}
   {% endif %}
 
+  {% if section.settings.slide_height == 'adapt_image' and section.settings.content_position == 'on-media' and preview_image != blank and preview_image.aspect_ratio > 0 %}
+    {% style %}
+      /*
+        base.css sets content-visibility: hidden on inactive <slideshow-slide> elements,
+        which skips layout of their children entirely. Without a size set directly on the
+        <slideshow-slide> element itself (not a descendant), a slide that has never been
+        active has no remembered intrinsic size, so it collapses to 0 height. The first
+        time it's revealed (autoplay/scroll), its real height appears and shifts the whole
+        slideshow row. Reserving aspect-ratio on the slide element itself (which is sized
+        normally even while its contents are skipped) keeps every slide's height stable
+        from the start, not just the first one.
+        Scoped to content_position 'on-media': in 'below-media' mode slideshow-slide is a
+        CSS grid with its own explicit row sizing (--grid-template-rows), and forcing an
+        aspect-ratio there would fight that layout instead of just reserving space.
+      */
+      .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+        aspect-ratio: {{ preview_image.aspect_ratio }};
+      }
+      {% if block_settings.image_1_mobile and block_settings.image_1_mobile.aspect_ratio > 0 %}
+        @media (max-width: 749px) {
+          .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+            aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }};
+          }
+        }
+      {% endif %}
+    {% endstyle %}
+  {% endif %}
+
   <div class="slide__image-container slide__image-container--block-{{ block.id }} slide__image-container--with-aspect-{{ block.id }}{% if rounded_image_corners %} slide__image-container--rounded{% endif %}">
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
