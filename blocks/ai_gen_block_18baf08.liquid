@@ -53,7 +53,7 @@
         src="{{ vendor_collection.featured_image | image_url: width: 400 }}"
         alt="{{ product.vendor | escape }}"
         class="ai-vendor-logo-image-{{ ai_gen_id }}"
-        loading="lazy"
+        loading="eager"
         width="{{ vendor_collection.featured_image.width }}"
         height="{{ vendor_collection.featured_image.height }}"
       >

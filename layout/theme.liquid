@@ -36,6 +36,16 @@
     {% endif %}
 
     {{ content_for_header }}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Sevenfive",
+      "url": "https://www.sevenfive.co.th",
+      "logo": "https://cdn.shopify.com/s/files/1/0766/9976/2887/files/logo_75-02.png?v=1778896906"
+    }
+    </script>
   </head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
@@ -132,5 +142,114 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {%- comment -%} Floating Chat Button {%- endcomment -%}
+    <style>
+      .floating-chat {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+      }
+
+      .floating-chat__label {
+        background-color: #1C1F1D;
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 14px;
+        border-radius: 100px;
+        white-space: nowrap;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        opacity: 0;
+        transform: translateX(8px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+      }
+
+      .floating-chat:hover .floating-chat__label {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .floating-chat__btn {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        background-color: #1F6B4D;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 20px rgba(31, 107, 77, 0.45);
+        transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .floating-chat__btn:hover {
+        background-color: #123B2B;
+        transform: scale(1.08);
+        box-shadow: 0 6px 28px rgba(31, 107, 77, 0.55);
+      }
+
+      .floating-chat__btn svg {
+        width: 26px;
+        height: 26px;
+        fill: #FFFFFF;
+        flex-shrink: 0;
+      }
+
+      /* Pulse ring */
+      .floating-chat__btn::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid rgba(31, 107, 77, 0.5);
+        animation: chat-pulse 2.4s ease-out infinite;
+      }
+
+      @keyframes chat-pulse {
+        0%   { opacity: 1;   transform: scale(1); }
+        70%  { opacity: 0;   transform: scale(1.5); }
+        100% { opacity: 0;   transform: scale(1.5); }
+      }
+
+      @media screen and (max-width: 749px) {
+        .floating-chat {
+          bottom: 20px;
+          right: 20px;
+        }
+        .floating-chat__btn {
+          width: 50px;
+          height: 50px;
+        }
+        .floating-chat__btn svg {
+          width: 22px;
+          height: 22px;
+        }
+      }
+    </style>
+
+    <div class="floating-chat">
+      <span class="floating-chat__label">สอบถามข้อมูล</span>
+      <a
+        href="https://line.me/R/ti/p/@sevenfive"
+        class="floating-chat__btn"
+        target="_blank"
+        rel="noopener"
+        aria-label="Chat with us on LINE"
+      >
+        <!-- LINE icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+        </svg>
+      </a>
+    </div>
+
   </body>
 </html>

@@ -331,6 +331,51 @@
   >
     {{ 'product-apparel-1' | placeholder_svg_tag: 'product-media-gallery__placeholder-image' }}
   </div>
+{% elsif selected_product.media.size == 0 %}
+  <media-gallery
+    class="
+      spacing-style
+      sticky-content
+      media-gallery--carousel
+      {% if block_settings.slideshow_mobile_controls_style == 'hint' %}
+        media-gallery--hint
+      {% endif %}
+      {% if block_settings.extend_media %}
+        media-gallery--extend
+      {% endif %}
+    "
+    style="{% render 'spacing-style', settings: block_settings %} --thumbnail-width: {{ block_settings.thumbnail_width }}px; --media-radius: {{ block_settings.media_radius }}px; --image-gap: {{ block_settings.image_gap }}px;{% unless block_settings.aspect_ratio == 'adapt' %} --gallery-aspect-ratio: {{ block_settings.aspect_ratio }};{% endunless %}"
+    data-presentation="{{ media_presentation }}"
+    {{ block_shopify_attributes }}
+  >
+    {% capture placeholder_image %}
+      <img
+        src="{{ 'commig_soon.jpg' | asset_url }}"
+        class="product-media-gallery__placeholder-image"
+        alt="{{ selected_product.title | escape }}"
+        width="800"
+        height="800"
+        loading="lazy"
+      />
+    {% endcapture %}
+
+    {% capture slides %}
+      {% render 'slideshow-slide',
+        index: 0,
+        children: placeholder_image,
+        class: 'product-media-container media-fit product-media-container--image product-media-container--placeholder',
+        slide_size: 'small',
+        media_fit: block_settings.media_fit
+      %}
+    {% endcapture %}
+
+    {% render 'slideshow',
+      ref: 'slideshow',
+      slides: slides,
+      slide_count: 1,
+      attributes: 'disabled="true"'
+    %}
+  </media-gallery>
 {% else %}
   <media-gallery
     class="
@@ -338,7 +383,7 @@
       sticky-content
       {% if media_presentation == 'grid' %}
         media-gallery--{{ block_settings.media_columns }}-column
-        {% if block_settings.media_columns == "two" and block_settings.large_first_image%}media-gallery--large-first-image{% endif %}
+        {% if block_settings.media_columns == "two" and block_settings.large_first_image %}media-gallery--large-first-image{% endif %}
       {% endif %}
       media-gallery--{{ media_presentation }}
       {% if block_settings.slideshow_mobile_controls_style == 'hint' %}

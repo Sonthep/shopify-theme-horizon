@@ -1,0 +1,251 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .landing-why-us {
+    background-color: #FFFFFF;
+  }
+
+  .landing-why-us__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+  }
+
+  .landing-why-us__left {
+    flex: 1 1 300px;
+    max-width: 400px;
+  }
+
+  .landing-why-us__preheading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1F6B4D;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .landing-why-us__heading {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0;
+    font-family: var(--font-heading-family);
+  }
+
+  .landing-why-us__right {
+    flex: 2 1 600px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .landing-why-us__right {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .landing-why-us__feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .landing-why-us__icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #F3F8F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: #1F6B4D;
+  }
+
+  .landing-why-us__icon-wrap svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .landing-why-us__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    font-family: var(--font-heading-family);
+  }
+
+  .landing-why-us__text {
+    font-size: 12px;
+    line-height: 18px;
+    color: #5E6A63;
+    margin: 0;
+  }
+{%- endstyle -%}
+
+<div class="landing-why-us section-{{ section.id }}-padding">
+  <div class="landing-why-us__inner">
+    <div class="landing-why-us__left">
+      {%- if section.settings.preheading != blank -%}
+        <div class="landing-why-us__preheading">{{ section.settings.preheading }}</div>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="landing-why-us__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+    </div>
+
+    <div class="landing-why-us__right">
+      {%- for block in section.blocks -%}
+        <div class="landing-why-us__feature" {{ block.shopify_attributes }}>
+          <div class="landing-why-us__icon-wrap">
+            {%- if block.settings.icon != blank -%}
+              {{ block.settings.icon }}
+            {%- else -%}
+              {%- if forloop.index == 1 -%}
+                <!-- Users/Trusted Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              {%- elsif forloop.index == 2 -%}
+                <!-- Shield/Check Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M9 11l2 2 4-4"/>
+                </svg>
+              {%- elsif forloop.index == 3 -%}
+                <!-- Clock Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              {%- else -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 8v4l3 3"></path>
+                </svg>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+          <h3 class="landing-why-us__title">{{ block.settings.title }}</h3>
+          <p class="landing-why-us__text">{{ block.settings.text }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Why Choose Us",
+  "settings": [
+    {
+      "type": "text",
+      "id": "preheading",
+      "label": "Pre-heading",
+      "default": "WHY SEVENFIVE"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built on experience. Focused on results."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icon (SVG code)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Feature description text goes here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Choose Us",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Hospitality Specialists",
+            "text": "We understand the pace and pressures of commercial kitchens and design for real-world performance."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Quality You Can Trust",
+            "text": "Certified equipment, expert trades and rigorous quality control from design to handover."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Support That Lasts",
+            "text": "We're with you long after installation with proactive service and 24/7 support when you need it."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

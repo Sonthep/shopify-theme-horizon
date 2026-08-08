@@ -28,12 +28,31 @@ class HeaderMenu extends Component {
    */
   #deactivateTimer = null;
 
+  /**
+   * Timer for delayed activation to prevent accidental hover opening (Apple style)
+   * @type {ReturnType<typeof setTimeout> | null}
+   */
+  #activateTimer = null;
+
+  /**
+   * Timer for the deferred `showAll()` call below, cleared on disconnect so a stale
+   * callback can't run against refs from an instance that's already been removed.
+   * @type {ReturnType<typeof setTimeout> | null}
+   */
+  #showAllTimer = null;
+
   connectedCallback() {
     super.connectedCallback();
 
     onDocumentLoaded(this.#preloadImages);
     window.addEventListener('resize', this.#resizeListener);
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
+
+    // Force the overflow list to show all top-level items so the header menu does not collapse into a More button.
+    this.#showAllTimer = setTimeout(() => {
+      this.#showAllTimer = null;
+      this.refs.overflowMenu?.showAll?.();
+    }, 0);
   }
 
   disconnectedCallback() {
@@ -41,9 +60,17 @@ class HeaderMenu extends Component {
     window.removeEventListener('resize', this.#resizeListener);
     this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
     this.#cleanupMutationObserver();
+    if (this.#showAllTimer) {
+      clearTimeout(this.#showAllTimer);
+      this.#showAllTimer = null;
+    }
     if (this.#deactivateTimer) {
       clearTimeout(this.#deactivateTimer);
       this.#deactivateTimer = null;
+    }
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
     }
   }
 
@@ -75,14 +102,14 @@ class HeaderMenu extends Component {
   };
 
   /**
-   * Schedule deactivation after a short delay to allow mouse to travel to submenu
+   * Schedule deactivation after a delay (WebstaurantStore hover exit delay: 300ms)
    */
   #scheduleDeactivate() {
     if (this.#deactivateTimer) clearTimeout(this.#deactivateTimer);
     this.#deactivateTimer = setTimeout(() => {
       this.#deactivateTimer = null;
       this.#deactivate();
-    }, 150);
+    }, 300);
   }
 
   /**
@@ -112,7 +139,7 @@ class HeaderMenu extends Component {
   }
 
   /**
-   * Activate the selected menu item immediately
+   * Activate the selected menu item immediately or with delay
    * @param {PointerEvent | FocusEvent} event
    */
   activate = (event) => {
@@ -122,15 +149,36 @@ class HeaderMenu extends Component {
       this.#deactivateTimer = null;
     }
 
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
+    }
+
+    const target = event.target;
+    if (!(target instanceof Element) || !this.headerComponent) return;
+
+    // Keyboard focus should activate immediately — delaying it drops the submenu
+    // when a keyboard user tabs past an item faster than the delay window.
+    if (this.#state.activeItem === null && event.type !== 'focus') {
+      // Menu is closed. Delay opening 300ms to verify intent
+      this.#activateTimer = setTimeout(() => {
+        this.#activateTimer = null;
+        this.#doActivate(target);
+      }, 300);
+    } else {
+      // Menu is already open, or activation was triggered by keyboard focus: switch/open immediately
+      this.#doActivate(target);
+    }
+  };
+
+  #doActivate(target) {
     this.dispatchEvent(new MegaMenuHoverEvent());
 
-    if (!(event.target instanceof Element) || !this.headerComponent) return;
-
-    let item = findMenuItem(event.target);
+    let item = findMenuItem(target);
 
     if (!item || item == this.#state.activeItem) return;
 
-    const isDefaultSlot = event.target.slot === '';
+    const isDefaultSlot = target.slot === '';
 
     this.dataset.overflowExpanded = (!isDefaultSlot).toString();
 
@@ -204,13 +252,18 @@ class HeaderMenu extends Component {
     this.headerComponent.style.setProperty('--submenu-height', `${finalHeight}px`);
     this.#setFullOpenHeaderHeight(finalHeight);
     this.style.setProperty('--submenu-opacity', '1');
-  };
+  }
 
   /**
-   * Deactivate the active item after a delay
+   * Deactivate the active item after a delay (Apple style)
    * @param {PointerEvent | FocusEvent} event
    */
   deactivate(event) {
+    if (this.#activateTimer) {
+      clearTimeout(this.#activateTimer);
+      this.#activateTimer = null;
+    }
+
     if (!(event.target instanceof Element)) return;
 
     const menu = findSubmenu(this.#state.activeItem);

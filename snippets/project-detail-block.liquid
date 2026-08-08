@@ -1,0 +1,315 @@
+{%- case block.type -%}
+  {%- when 'overview' -%}
+    <div class="project-detail-block block-overview" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-overview__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if block.settings.text != blank -%}
+        <div class="block-overview__text">
+          {{ block.settings.text }}
+        </div>
+      {%- endif -%}
+    </div>
+
+  {%- when 'equipment' -%}
+    <div class="project-detail-block block-equipment" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-equipment__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-equipment__grid">
+        {%- for i in (1..4) -%}
+          {%- capture product_key -%}item{{ i }}_product{%- endcapture -%}
+          {%- capture status_key -%}item{{ i }}_status{%- endcapture -%}
+          
+          {%- assign equip_product = block.settings[product_key] -%}
+          {%- if equip_product != blank -%}
+            <a href="{{ equip_product.url }}" class="equipment-card" style="text-decoration: none; color: inherit;">
+              <div class="equipment-card__image">
+                {%- if equip_product.featured_image != blank -%}
+                  {{ equip_product.featured_image | image_url: width: 100 | image_tag: loading: 'lazy' }}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+              <div class="equipment-card__info">
+                <p class="equipment-card__name">{{ equip_product.title }}</p>
+                {%- if equip_product.variants.first.sku != blank -%}
+                  <p class="equipment-card__serial">SKU: {{ equip_product.variants.first.sku }}</p>
+                {%- endif -%}
+              </div>
+              {%- if block.settings[status_key] != blank -%}
+                <span class="equipment-card__status equipment-card__status--{{ block.settings[status_key] }}">
+                  {{ block.settings[status_key] }}
+                </span>
+              {%- endif -%}
+            </a>
+          {%- else -%}
+            <div class="equipment-card">
+              <div class="equipment-card__image">
+                 <img src="{{ 'mockup-equip' | append: i | append: '.png' | asset_url }}" alt="Equipment" loading="lazy" width="100" height="100">
+              </div>
+              <div class="equipment-card__info">
+                <p class="equipment-card__name">Select a Product</p>
+                <p class="equipment-card__serial">Please assign in Theme Editor</p>
+              </div>
+              {%- if block.settings[status_key] != blank -%}
+                <span class="equipment-card__status equipment-card__status--{{ block.settings[status_key] }}">
+                  {{ block.settings[status_key] }}
+                </span>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'gallery' -%}
+    <div class="project-detail-block block-gallery" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-gallery__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-gallery__grid">
+        {%- for i in (1..5) -%}
+          {%- capture image_key -%}image_{{ i }}{%- endcapture -%}
+          {%- assign gallery_image = block.settings[image_key] -%}
+          {%- assign mockup_index = i -%}
+          {%- if i == 4 -%}{%- assign mockup_index = 1 -%}{%- endif -%}
+          {%- if i == 5 -%}{%- assign mockup_index = 2 -%}{%- endif -%}
+          
+          {%- if gallery_image != blank -%}
+            <div class="block-gallery__item">
+              {{ gallery_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '300, 600, 1200' }}
+            </div>
+          {%- else -%}
+            <div class="block-gallery__item">
+              <img src="{{ 'mockup-gal' | append: mockup_index | append: '.png' | asset_url }}" alt="Gallery" loading="lazy" width="600" height="450">
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'video' -%}
+    {%- assign video_block_id = block.id | replace: '-', '' -%}
+    <div class="project-detail-block block-video" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-video__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- comment -%} ── Shopify-hosted video ── {%- endcomment -%}
+      {%- if block.settings.video != blank -%}
+        <div class="block-video__wrapper block-video__wrapper--native">
+          {%- assign poster_src = '' -%}
+          {%- if block.settings.video_poster != blank -%}
+            {%- assign poster_src = block.settings.video_poster | image_url: width: 1200 -%}
+          {%- elsif block.settings.video.preview_image != blank -%}
+            {%- assign poster_src = block.settings.video.preview_image | image_url: width: 1200 -%}
+          {%- endif -%}
+          {{ block.settings.video
+            | video_tag:
+              image_size: '1200x',
+              loop: block.settings.video_loop,
+              controls: true,
+              muted: block.settings.video_muted,
+              autoplay: false,
+              poster: poster_src
+          }}
+        </div>
+
+      {%- comment -%} ── YouTube / Vimeo URL ── {%- endcomment -%}
+      {%- elsif block.settings.video_url != blank -%}
+        {%- assign has_cover = false -%}
+        {%- if block.settings.video_poster != blank or block.settings.video_url.type == 'youtube' -%}
+          {%- assign has_cover = true -%}
+        {%- endif -%}
+
+        <div
+          class="block-video__wrapper block-video__wrapper--embed{% if has_cover %} block-video__wrapper--has-cover{% endif %}"
+          id="video-wrapper-{{ video_block_id }}"
+          data-video-type="{{ block.settings.video_url.type }}"
+          data-video-id="{{ block.settings.video_url.id }}"
+        >
+          {%- if has_cover -%}
+            {%- comment -%} Cover / thumbnail {%- endcomment -%}
+            <div class="block-video__cover" id="video-cover-{{ video_block_id }}">
+              {%- if block.settings.video_poster != blank -%}
+                {{ block.settings.video_poster | image_url: width: 1200 | image_tag:
+                  loading: 'lazy',
+                  widths: '600, 900, 1200',
+                  class: 'block-video__cover-img',
+                  alt: block.settings.heading
+                }}
+              {%- elsif block.settings.video_url.type == 'youtube' -%}
+                <img
+                  class="block-video__cover-img"
+                  src="https://i.ytimg.com/vi/{{ block.settings.video_url.id }}/maxresdefault.jpg"
+                  onerror="this.src='https://i.ytimg.com/vi/{{ block.settings.video_url.id }}/hqdefault.jpg'"
+                  alt="{{ block.settings.heading | escape }}"
+                  loading="lazy"
+                  width="1280"
+                  height="720"
+                >
+              {%- endif -%}
+              <div class="block-video__overlay"></div>
+              <button
+                class="block-video__play-btn"
+                id="video-play-{{ video_block_id }}"
+                aria-label="Play video"
+                type="button"
+              >
+                <span class="block-video__play-icon">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="12" fill="rgba(18,59,43,0.85)"/>
+                    <polygon points="10,8 17,12 10,16" fill="#FFFFFF"/>
+                  </svg>
+                </span>
+                <span class="block-video__play-label">{{ block.settings.play_label | default: 'Watch Video' }}</span>
+              </button>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Iframe placeholder — loaded on click if cover exists {%- endcomment -%}
+          <div
+            class="block-video__iframe-wrap"
+            id="video-iframe-{{ video_block_id }}"
+            {% if has_cover %}style="display:none;"{% endif %}
+          >
+            {%- if block.settings.video_url.type == 'youtube' -%}
+              {%- assign yt_params = '?autoplay=1&rel=0&modestbranding=1&playsinline=1' -%}
+              {%- if block.settings.video_loop -%}
+                {%- assign yt_params = yt_params | append: '&loop=1&playlist=' | append: block.settings.video_url.id -%}
+              {%- endif -%}
+              {%- if has_cover == false -%}
+                {%- assign yt_params = '?rel=0&modestbranding=1&playsinline=1' -%}
+              {%- endif -%}
+              <iframe
+                src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}{{ yt_params }}"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen
+                title="{{ block.settings.heading | escape }}"
+                loading="lazy"
+              ></iframe>
+            {%- elsif block.settings.video_url.type == 'vimeo' -%}
+              {%- assign vm_params = '?autoplay=1&title=0&byline=0&portrait=0&dnt=1' -%}
+              {%- if block.settings.video_loop -%}
+                {%- assign vm_params = vm_params | append: '&loop=1' -%}
+              {%- endif -%}
+              {%- if has_cover == false -%}
+                {%- assign vm_params = '?title=0&byline=0&portrait=0&dnt=1' -%}
+              {%- endif -%}
+              <iframe
+                src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}{{ vm_params }}"
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+                title="{{ block.settings.heading | escape }}"
+                loading="lazy"
+              ></iframe>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- comment -%} Play-on-click script (runs once per block) {%- endcomment -%}
+        {%- if has_cover -%}
+          <script>
+            (function() {
+              var btn   = document.getElementById('video-play-{{ video_block_id }}');
+              var cover = document.getElementById('video-cover-{{ video_block_id }}');
+              var frame = document.getElementById('video-iframe-{{ video_block_id }}');
+              if (!btn || !cover || !frame) return;
+              btn.addEventListener('click', function() {
+                cover.style.display = 'none';
+                frame.style.display = 'block';
+                // focus iframe for keyboard users
+                var iframe = frame.querySelector('iframe');
+                if (iframe) iframe.focus();
+              });
+            })();
+          </script>
+        {%- endif -%}
+
+      {%- comment -%} ── Placeholder ── {%- endcomment -%}
+      {%- else -%}
+        <div class="block-video__wrapper block-video__wrapper--placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.caption != blank -%}
+        <p class="block-video__caption">{{ block.settings.caption }}</p>
+      {%- endif -%}
+    </div>
+
+  {%- when 'tech_summary' -%}
+    <div class="project-detail-block block-tech-summary" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h3 class="block-tech-summary__heading">{{ block.settings.heading }}</h3>
+      {%- endif -%}
+      <div class="block-tech-summary__list">
+        {%- for i in (1..4) -%}
+          {%- capture label_key -%}row{{ i }}_label{%- endcapture -%}
+          {%- capture value_key -%}row{{ i }}_value{%- endcapture -%}
+          {%- capture highlight_key -%}row{{ i }}_highlight{%- endcapture -%}
+          
+          {%- assign row_label = block.settings[label_key] -%}
+          {%- assign row_value = block.settings[value_key] -%}
+          
+          {%- if row_label != blank and row_value != blank -%}
+            <div class="block-tech-summary__row">
+              <span class="block-tech-summary__label">{{ row_label }}</span>
+              <span class="block-tech-summary__value {% if block.settings[highlight_key] %}block-tech-summary__value--highlight{% endif %}">{{ row_value }}</span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+  {%- when 'testimonial' -%}
+    <div class="project-detail-block block-testimonial" {{ block.shopify_attributes }}>
+      <div class="block-testimonial__quote-icon">“</div>
+      
+      <div class="block-testimonial__header">
+        <div class="block-testimonial__image">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 80 | image_tag: loading: 'lazy' }}
+          {%- else -%}
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#1F6B4D"/><circle cx="20" cy="16" r="7" fill="#fff" fill-opacity=".9"/><path d="M6 36c1-8 8-13 14-13s13 5 14 13" fill="#fff" fill-opacity=".9"/></svg>
+          {%- endif -%}
+        </div>
+        <div class="block-testimonial__author-info">
+          <p class="block-testimonial__name">{{ block.settings.author }}</p>
+          <p class="block-testimonial__role">{{ block.settings.role }}</p>
+        </div>
+      </div>
+      
+      {%- if block.settings.quote != blank -%}
+        <p class="block-testimonial__text">{{ block.settings.quote }}</p>
+      {%- endif -%}
+    </div>
+
+  {%- when 'location' -%}
+    <div class="project-detail-block block-location" {{ block.shopify_attributes }}>
+      {%- if block.settings.heading != blank -%}
+        <h2 class="block-location__heading">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+      <div class="block-location__map">
+        {%- if block.settings.map_iframe != blank -%}
+          {{ block.settings.map_iframe }}
+        {%- elsif block.settings.map_image != blank -%}
+          {{ block.settings.map_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 800' }}
+        {%- else -%}
+          <img src="{{ 'mockup-map.png' | asset_url }}" alt="Map" loading="lazy" width="800" height="400">
+        {%- endif -%}
+        
+        {%- if block.settings.map_iframe == blank -%}
+          <div class="block-location__pin">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            {%- if block.settings.location_text != blank -%}
+              <span class="block-location__pin-text">{{ block.settings.location_text }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+{%- endcase -%}

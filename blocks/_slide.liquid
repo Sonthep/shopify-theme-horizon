@@ -15,50 +15,55 @@
     if block_settings.inherit_color_scheme == true or block_settings.inherit_color_scheme == false and section.settings.color_scheme.settings.background.rgb == block_settings.color_scheme.settings.background.rgb
       assign rounded_image_corners = true
     endif
+
+    assign has_mobile_image = block_settings.image_1_mobile != blank
+    assign has_mobile_ratio = false
+    if has_mobile_image and block_settings.image_1_mobile.aspect_ratio > 0
+      assign has_mobile_ratio = true
+    endif
   %}
-  {% if section.settings.slide_height == 'adapt_image' and block_index == 0 and preview_image != blank and preview_image.aspect_ratio > 0 %}
+  {% if section.settings.slide_height == 'adapt_image' and preview_image != blank and preview_image.aspect_ratio > 0 %}
     {%
       # Great example of why it can be helpful for a section to be able to read the settings of its direct child blocks.
       # In this case, we want the section to be able to read the image aspect ratio of the first slide and apply it to the slideshow slides and slides.
     %}
     {% style %}
-      /* Apply min-height to the slides container (not each slide) to avoid distortion */
-      .shopify-section-{{ section.id }} slideshow-slides {
-        min-height: {{ 1 | divided_by: preview_image.aspect_ratio | times: 100 }}vw;
-      }
-      {% if block_settings.image_1_mobile and block_settings.image_1_mobile.aspect_ratio > 0 %}
-        @media (max-width: 749px) {
-          .shopify-section-{{ section.id }} slideshow-slides {
-            min-height: {{ 1 | divided_by: block_settings.image_1_mobile.aspect_ratio | times: 100 }}vw;
-          }
+      {% if block_index == 0 %}
+        /* Apply min-height to the slides container (not each slide) to avoid distortion */
+        .shopify-section-{{ section.id }} slideshow-slides {
+          min-height: {{ 1 | divided_by: preview_image.aspect_ratio | times: 100 }}vw;
         }
       {% endif %}
-    {% endstyle %}
-  {% endif %}
-
-  {% if section.settings.slide_height == 'adapt_image' and section.settings.content_position == 'on-media' and preview_image != blank and preview_image.aspect_ratio > 0 %}
-    {% style %}
-      /*
-        base.css sets content-visibility: hidden on inactive <slideshow-slide> elements,
-        which skips layout of their children entirely. Without a size set directly on the
-        <slideshow-slide> element itself (not a descendant), a slide that has never been
-        active has no remembered intrinsic size, so it collapses to 0 height. The first
-        time it's revealed (autoplay/scroll), its real height appears and shifts the whole
-        slideshow row. Reserving aspect-ratio on the slide element itself (which is sized
-        normally even while its contents are skipped) keeps every slide's height stable
-        from the start, not just the first one.
-        Scoped to content_position 'on-media': in 'below-media' mode slideshow-slide is a
-        CSS grid with its own explicit row sizing (--grid-template-rows), and forcing an
-        aspect-ratio there would fight that layout instead of just reserving space.
-      */
-      .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
-        aspect-ratio: {{ preview_image.aspect_ratio }};
-      }
-      {% if block_settings.image_1_mobile and block_settings.image_1_mobile.aspect_ratio > 0 %}
+      {% if section.settings.content_position == 'on-media' %}
+        /*
+          base.css sets content-visibility: hidden on inactive <slideshow-slide> elements,
+          which skips layout of their children entirely. Without a size set directly on the
+          <slideshow-slide> element itself (not a descendant), a slide that has never been
+          active has no remembered intrinsic size, so it collapses to 0 height. The first
+          time it's revealed (autoplay/scroll), its real height appears and shifts the whole
+          slideshow row. Reserving aspect-ratio on the slide element itself (which is sized
+          normally even while its contents are skipped) keeps every slide's height stable
+          from the start, not just the first one.
+          Scoped to content_position 'on-media': in 'below-media' mode slideshow-slide is a
+          CSS grid with its own explicit row sizing (--grid-template-rows), and forcing an
+          aspect-ratio there would fight that layout instead of just reserving space.
+        */
+        .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+          aspect-ratio: {{ preview_image.aspect_ratio }};
+        }
+      {% endif %}
+      {% if has_mobile_ratio %}
         @media (max-width: 749px) {
-          .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
-            aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }};
-          }
+          {% if block_index == 0 %}
+            .shopify-section-{{ section.id }} slideshow-slides {
+              min-height: {{ 1 | divided_by: block_settings.image_1_mobile.aspect_ratio | times: 100 }}vw;
+            }
+          {% endif %}
+          {% if section.settings.content_position == 'on-media' %}
+            .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+              aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }};
+            }
+          {% endif %}
         }
       {% endif %}
     {% endstyle %}
@@ -151,7 +156,7 @@
       {{ placeholder_name | placeholder_svg_tag: 'slide__image' }}
     {%- endif -%}
   </div>
-  {%- if block_settings.image_1_mobile -%}
+  {%- if has_mobile_image -%}
     <style>
       @media (max-width: 749px) {
         .shopify-section-{{ section.id }} .slide--block-{{ block.id }} {

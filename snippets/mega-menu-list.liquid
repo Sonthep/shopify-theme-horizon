@@ -55,6 +55,9 @@
 
           if link.type == 'collection_link'
             assign current_collection = link.object
+          elsif link.url contains '/collections/'
+            assign collection_handle = link.url | split: '/collections/' | last | split: '?' | first
+            assign current_collection = collections[collection_handle]
           endif
 
           if current_collection == blank and link.links != blank
@@ -62,6 +65,12 @@
               if group.type == 'collection_link'
                 assign current_collection = group.object
                 break
+              elsif group.url contains '/collections/'
+                assign collection_handle = group.url | split: '/collections/' | last | split: '?' | first
+                assign current_collection = collections[collection_handle]
+                if current_collection != blank
+                  break
+                endif
               endif
             endfor
           endif
@@ -73,6 +82,12 @@
                   if child.type == 'collection_link'
                     assign current_collection = child.object
                     break
+                  elsif child.url contains '/collections/'
+                    assign collection_handle = child.url | split: '/collections/' | last | split: '?' | first
+                    assign current_collection = collections[collection_handle]
+                    if current_collection != blank
+                      break
+                    endif
                   endif
                 endfor
               endif
@@ -101,7 +116,8 @@
               <div class="mega-menu-3panel__subgrid">
                 {% if link.links != blank %}
                   {% for group in link.links %}
-                    <div class="mega-menu-3panel__group">
+                    {% assign col_index = forloop.index0 %}
+                    <div class="mega-menu-3panel__group" style="--col: {{ col_index }}">
                       <a href="{{ group.url }}" class="mega-menu-3panel__group-title">
                         {{ group.title }}
                       </a>
@@ -109,7 +125,7 @@
                       {% if group.links != blank %}
                         <ul class="mega-menu-3panel__group-list list-unstyled">
                           {% for child in group.links %}
-                            <li class="mega-menu-3panel__group-item">
+                            <li class="mega-menu-3panel__group-item" style="--col: {{ col_index }}; --i: {{ forloop.index0 }}">
                               <a href="{{ child.url }}" class="mega-menu-3panel__group-link">
                                 {{ child.title }}
                               </a>
@@ -120,7 +136,7 @@
                     </div>
                   {% endfor %}
                 {% else %}
-                  <div class="mega-menu-3panel__group mega-menu-3panel__group--empty">
+                  <div class="mega-menu-3panel__group mega-menu-3panel__group--empty" style="--col: 0">
                     <a href="{{ link.url }}" class="mega-menu-3panel__group-title">
                       Shop {{ link.title }}
                     </a>
@@ -148,21 +164,45 @@
               </div>
 
               {% if current_collection != blank and current_collection.products_count > 0 %}
+                {% liquid
+                  # Count products with images to set a safe offset
+                  assign products_with_images_count = 0
+                  for item in current_collection.products
+                    if item.featured_image != blank
+                      assign products_with_images_count = products_with_images_count | plus: 1
+                    endif
+                  endfor
+
+                  if products_with_images_count > 0
+                    # Use seconds and the current index as a seed to randomize
+                    assign seconds = 'now' | date: '%S' | plus: forloop.index0
+                    assign random_offset = seconds | modulo: products_with_images_count
+                  else
+                    assign random_offset = 0
+                  endif
+
+                  assign preview_count = 0
+                %}
                 <ul class="mega-menu-3panel__product-list list-unstyled">
-                  {% for item in current_collection.products limit: preview_limit %}
-                    <li class="mega-menu-3panel__product-item">
+                  {% for item in current_collection.products offset: random_offset %}
+                    {% if preview_count >= preview_limit %}
+                      {% break %}
+                    {% endif %}
+                    {% if item.featured_image == blank %}
+                      {% continue %}
+                    {% endif %}
+                    {% assign preview_count = preview_count | plus: 1 %}
+                    <li class="mega-menu-3panel__product-item" style="--col: 3; --i: {{ forloop.index0 }}">
                       <a href="{{ item.url }}" class="mega-menu-3panel__product-card">
                         <div class="mega-menu-3panel__product-image-wrap">
-                          {% if item.featured_image %}
-                            {{
-                              item.featured_image
-                              | image_url: width: 420
-                              | image_tag:
-                                alt: item.title,
-                                loading: 'lazy',
-                                class: 'mega-menu-3panel__product-image'
-                            }}
-                          {% endif %}
+                          {{
+                            item.featured_image
+                            | image_url: width: 420
+                            | image_tag:
+                              alt: item.title,
+                              loading: 'lazy',
+                              class: 'mega-menu-3panel__product-image'
+                          }}
                         </div>
 
                         <div class="mega-menu-3panel__product-info">
@@ -184,6 +224,49 @@
                       </a>
                     </li>
                   {% endfor %}
+
+                  {% if preview_count < preview_limit and random_offset > 0 %}
+                    {% for item in current_collection.products %}
+                      {% if forloop.index0 >= random_offset or preview_count >= preview_limit %}
+                        {% break %}
+                      {% endif %}
+                      {% if item.featured_image == blank %}
+                        {% continue %}
+                      {% endif %}
+                      {% assign preview_count = preview_count | plus: 1 %}
+                      <li class="mega-menu-3panel__product-item" style="--col: 3; --i: {{ forloop.index0 }}">
+                        <a href="{{ item.url }}" class="mega-menu-3panel__product-card">
+                          <div class="mega-menu-3panel__product-image-wrap">
+                            {{
+                              item.featured_image
+                              | image_url: width: 420
+                              | image_tag:
+                                alt: item.title,
+                                loading: 'lazy',
+                                class: 'mega-menu-3panel__product-image'
+                            }}
+                          </div>
+
+                          <div class="mega-menu-3panel__product-info">
+                            <p class="mega-menu-3panel__product-name">{{ item.title }}</p>
+
+                            {% if item.selected_or_first_available_variant.sku != blank %}
+                              <p class="product-sku">SKU: {{ item.selected_or_first_available_variant.sku }}</p>
+                            {% endif %}
+
+                            <p class="mega-menu-3panel__product-price">
+                              {% if item.compare_at_price > item.price %}
+                                <span class="mega-menu-3panel__product-price-sale">{{ item.price | money }}</span>
+                                <span class="mega-menu-3panel__product-price-compare">{{ item.compare_at_price | money }}</span>
+                              {% else %}
+                                {{ item.price | money }}
+                              {% endif %}
+                            </p>
+                          </div>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  {% endif %}
                 </ul>
               {% else %}
                 <div class="mega-menu-3panel__preview-empty">
@@ -249,7 +332,7 @@
     font-size: 15px;
     font-weight: 600;
     color: #171717;
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: none;
   }
 
   .mega-menu-3panel__main-button:hover,
@@ -313,23 +396,25 @@
 
   .mega-menu-3panel__subgrid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 24px;
     align-items: start;
   }
 
   .mega-menu-3panel__group {
     min-width: 0;
+    word-break: break-word;
   }
 
   .mega-menu-3panel__group-title {
-    display: inline-block;
+    display: block;
     margin-bottom: 10px;
     font-size: 15px;
     font-weight: 700;
     color: #111;
     text-decoration: none;
     line-height: 1.35;
+    white-space: normal;
   }
 
   .mega-menu-3panel__group-title:hover {
@@ -350,13 +435,13 @@
     text-decoration: none;
     font-size: 14px;
     line-height: 1.45;
-    transition: color 0.2s ease, transform 0.2s ease;
-    display: inline-block;
+    transition: none;
+    display: block;
+    white-space: normal;
   }
 
   .mega-menu-3panel__group-link:hover {
     color: #111;
-    transform: translateX(2px);
   }
 
   .mega-menu-3panel__footer {
@@ -511,10 +596,6 @@
     .mega-menu-3panel__panel-grid {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
-
-    .mega-menu-3panel__subgrid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   @media screen and (max-width: 989px) {
@@ -547,10 +628,6 @@
     .mega-menu-3panel__preview {
       border-left: 0;
       border-top: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .mega-menu-3panel__subgrid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 

@@ -37,7 +37,7 @@
       {% endif %}
 
       {% capture children %}
-        {% for product in products %}
+        {% for product in products limit: products_per_page %}
           <li
             id="{{ section.id }}-{{ product.id }}"
             class="product-grid__item product-grid__item--{{ forloop.index0 }}"

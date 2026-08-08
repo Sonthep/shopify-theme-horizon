@@ -536,7 +536,7 @@
 
   .header-section {
     position: relative;
-    z-index: var(--layer-heightened);
+    z-index: var(--layer-header-menu);
   }
 
   /* need default values for non-flash transitions on first overflow menu open */
@@ -555,7 +555,7 @@
 
     /* Use -1 instead of 0 so intersection observer can track sticky state */
     top: -1px;
-    z-index: var(--layer-sticky);
+    z-index: var(--layer-header-menu);
   }
 
   .header[data-sticky-state] {

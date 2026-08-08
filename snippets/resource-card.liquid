@@ -145,6 +145,11 @@
 
     {% if resource_type == 'product' %}
       {% render 'price', product_resource: resource, show_unit_price: true %}
+      {% comment %}Show SKU for product search / resource cards when available{% endcomment %}
+      {% assign sku = resource.selected_or_first_available_variant.sku | default: '' %}
+      {% if sku != '' %}
+        <p class="resource-card__sku resource-card__subtext paragraph">{{ sku }}</p>
+      {% endif %}
     {% elsif resource_type == 'collection' and single_thumbnail_collection == false %}
       <p class="resource-card__subtext paragraph">
         {{- 'content.search_results_resource_products_count' | t: count: resource.all_products_count -}}
@@ -243,6 +248,7 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
     line-height: 1.3;
     word-break: break-word;

@@ -10,8 +10,10 @@
 {
   "current": {
     "logo": "shopify://shop_images/CI_logo_75_2026-01.jpg",
-    "logo_height": 75,
+    "logo_inverse": "shopify://shop_images/logo_75-02.png",
+    "logo_height": 90,
     "logo_height_mobile": 45,
+    "favicon": "shopify://shop_images/logo_75-02.png",
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
     "type_heading_font": "inter_n7",
@@ -84,18 +86,18 @@
         "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
         "disabled": true,
         "settings": {
+          "greeting_message": "",
           "button_color": "#2b7455",
           "secondary_color": "#ffffff",
           "ternary_color": "#6a6a6a",
           "button_icon": "chat_bubble",
           "button_text": "no_text",
           "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "lowest",
-          "greeting_message": ""
+          "button_vertical_position": "lowest"
         }
       },
-      "18016633001993233047": {
-        "type": "shopify://apps/convi/blocks/convi/184186c9-de0c-425b-81d2-06ba701ba286",
+      "14421132865913305101": {
+        "type": "shopify://apps/ab-google-analytics/blocks/analytics/2fc433fa-79f5-4d1d-bab2-983d42099561",
         "disabled": false,
         "settings": {}
       }

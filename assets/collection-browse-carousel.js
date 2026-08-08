@@ -46,9 +46,9 @@
     // width without a matching column-count drop makes them look stretched/tall.
     // 2 columns on mobile, 3 in the 750-1199px "in-between" zone, 4 on wide desktop.
     let COLS_PER_PAGE = 4;
-    if (window.matchMedia('(max-width: 749px)').matches) {
+    if (window.innerWidth <= 749) {
       COLS_PER_PAGE = 2;
-    } else if (window.matchMedia('(max-width: 1199px)').matches) {
+    } else if (window.innerWidth <= 1199) {
       COLS_PER_PAGE = 3;
     }
 
@@ -58,9 +58,11 @@
     // srcset candidate sized for the wrong (larger) slot — on a 2-column mobile page
     // that's roughly 4x more image data than the card actually needs. Sync `sizes` to
     // the real per-breakpoint column width so responsive image selection is accurate.
+    // Only touch images that haven't finished loading yet — mutating `sizes` on an
+    // already-loaded <img> can make the browser refetch at the newly computed size.
     const correctSizes = Math.round(100 / COLS_PER_PAGE) + 'vw';
     scroller.querySelectorAll('.resource-list__slide img[srcset]').forEach((img) => {
-      img.sizes = correctSizes;
+      if (!img.complete) img.sizes = correctSizes;
     });
 
     const ROWS = 2;

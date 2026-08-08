@@ -54,7 +54,7 @@ body {
   --surface-transition-duration: 0.3s;
   --surface-transition-timing: var(--ease-out-quad);
   --submenu-animation-speed: 360ms;
-  --submenu-animation-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --submenu-animation-easing: cubic-bezier(.28,.11,.32,1);
 }
 
 html {
@@ -1510,6 +1510,23 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
 /* Needed to override the default Shopify styles */
 button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   background-color: var(--button-background-color);
+}
+
+/* Primary buttons are red to match the theme */
+.button:not(.button-secondary),
+button.shopify-payment-button__button--unbranded,
+.add-to-cart-button {
+  --button-color: #ffffff;
+  --button-background-color: #d62828;
+  --button-border-color: #d62828;
+}
+
+.button:not(.button-secondary):hover,
+button.shopify-payment-button__button--unbranded:hover:not([disabled]),
+.add-to-cart-button:hover {
+  --button-color: #ffffff;
+  --button-background-color: #a81a1a;
+  --button-border-color: #a81a1a;
 }
 
 .button-unstyled {
@@ -5143,6 +5160,23 @@ product-recommendations:has([data-has-recommendations='false']) {
   to {
     opacity: var(--atc-opacity, 1);
     translate: 0px var(--atc-destination, 0px);
+  }
+}
+
+/* === Fix product image max size === */
+.product-media-container img {
+  max-width: 600px !important;
+  max-height: 70vh !important;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .product-media-container img {
+    max-width: 90vw !important;
+    max-height: 40vh !important;
   }
 }
 

@@ -103,19 +103,39 @@
 
   {% capture video_tag %}
     {% if video.host == 'youtube' %}
-      {{
-        video
-        | external_video_url: autoplay: true, loop: video_loop, playlist: video.external_id, mute: '1', controls: controls, enablejsapi: enable_js_api
-        | external_video_tag: data-video-type: 'youtube'
-      }}
+      {% if video_autoplay %}
+        {{
+          video
+          | external_video_url: autoplay: true, loop: video_loop, playlist: video.external_id, mute: '1', controls: controls, enablejsapi: enable_js_api
+          | external_video_tag: data-video-type: 'youtube'
+        }}
+      {% else %}
+        {{
+          video
+          | external_video_url: autoplay: false, loop: video_loop, playlist: video.external_id, controls: controls, enablejsapi: enable_js_api
+          | external_video_tag: data-video-type: 'youtube'
+        }}
+      {% endif %}
     {% elsif video.host == 'vimeo' %}
-      {{
-        video
-        | external_video_url: autoplay: true, loop: video_loop, muted: '1', controls: controls, api: enable_js_api
-        | external_video_tag: data-video-type: 'vimeo'
-      }}
+      {% if video_autoplay %}
+        {{
+          video
+          | external_video_url: autoplay: true, loop: video_loop, muted: '1', controls: controls, api: enable_js_api
+          | external_video_tag: data-video-type: 'vimeo'
+        }}
+      {% else %}
+        {{
+          video
+          | external_video_url: autoplay: false, loop: video_loop, controls: controls, api: enable_js_api
+          | external_video_tag: data-video-type: 'vimeo'
+        }}
+      {% endif %}
     {% else %}
-      {{ video | video_tag: image_size: '2500x', autoplay: true, loop: video_loop, muted: true, controls: controls }}
+      {% if video_autoplay %}
+        {{ video | video_tag: image_size: '2500x', autoplay: true, loop: video_loop, muted: true, controls: controls }}
+      {% else %}
+        {{ video | video_tag: image_size: '2500x', autoplay: false, loop: video_loop, controls: controls }}
+      {% endif %}
     {% endif %}
   {% endcapture %}
 {% endif %}

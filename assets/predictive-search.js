@@ -316,6 +316,8 @@ class PredictiveSearchComponent extends Component {
     const url = new URL(Theme.routes.predictive_search_url, location.origin);
     url.searchParams.set('q', searchTerm);
     url.searchParams.set('resources[limit_scope]', 'each');
+    // Ensure the predictive search returns product fields we need (title, variants and sku, tags)
+    url.searchParams.set('resources[options][fields]', 'title,variants.title,variants.sku,tag');
 
     const { predictiveSearchResults } = this.refs;
 
@@ -334,7 +336,23 @@ class PredictiveSearchComponent extends Component {
       })
       .catch((error) => {
         if (abortController.signal.aborted) return;
-        throw error;
+
+        // The predictive search AJAX endpoint can reject some buyer locales (e.g. secondary
+        // storefront languages) with a 4xx response, even though the full-text /search page
+        // works fine for them. Fall back to a normal search only for that case — for transient
+        // network errors or server (5xx) failures, don't force-navigate the shopper away from
+        // whatever page they're currently on.
+        const statusMatch = error instanceof Error && error.message.match(/status (\d+)/);
+        const status = statusMatch ? Number(statusMatch[1]) : NaN;
+
+        if (status >= 400 && status < 500) {
+          const searchUrl = new URL(Theme.routes.search_url, location.origin);
+          searchUrl.searchParams.set('q', searchTerm);
+          window.location.href = searchUrl.toString();
+          return;
+        }
+
+        console.error(error);
       });
   }
 

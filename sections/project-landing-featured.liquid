@@ -1,0 +1,487 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .landing-featured {
+    background-color: #F3F8F5; /* Soft surface */
+  }
+
+  .landing-featured__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .landing-featured__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .landing-featured__header {
+    max-width: 600px;
+  }
+
+  .landing-featured__preheading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1F6B4D;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .landing-featured__heading {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0;
+    font-family: var(--font-heading-family);
+  }
+
+  .landing-featured__view-all {
+    display: inline-flex;
+    align-items: center;
+    color: #1F6B4D;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .landing-featured__view-all:hover {
+    opacity: 0.8;
+  }
+
+  .landing-featured__view-all svg {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .landing-featured__grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .landing-featured__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .landing-featured__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+
+  .landing-featured__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .landing-featured__filter {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: #1C1F1D;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .landing-featured__filter:hover {
+    background-color: #E6EBE8;
+  }
+  .landing-featured__filter.active {
+    background-color: #1F6B4D;
+    color: #FFFFFF;
+  }
+
+  .landing-project-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #D9E3DD;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .landing-project-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #1F6B4D;
+  }
+
+  .landing-project-card__image-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    background-color: #F3F8F5;
+  }
+
+  .landing-project-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .landing-project-card__content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .landing-project-card__tag {
+    color: #1F6B4D;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .landing-project-card__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    font-family: var(--font-heading-family);
+  }
+
+  .landing-project-card__meta {
+    font-size: 13px;
+    color: #5E6A63;
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .landing-project-card__meta strong {
+    font-weight: 600;
+    color: #1C1F1D;
+  }
+
+  .landing-project-card__divider {
+    height: 1px;
+    background-color: #E6EBE8;
+    margin: 20px 0;
+    width: 100%;
+  }
+
+  .landing-project-card__footer {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+  }
+
+  .landing-project-card__view-btn {
+    color: #1F6B4D;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .landing-project-card__view-btn svg {
+    margin-left: 6px;
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .landing-project-card:hover .landing-project-card__view-btn {
+    opacity: 0.8;
+  }
+
+  .landing-project-card:hover .landing-project-card__view-btn svg {
+    transform: translateX(4px);
+  }
+{%- endstyle -%}
+
+<div class="landing-featured section-{{ section.id }}-padding">
+  <div class="landing-featured__inner">
+    <div class="landing-featured__top">
+      <div class="landing-featured__header">
+        {%- if section.settings.preheading != blank -%}
+          <div class="landing-featured__preheading">{{ section.settings.preheading }}</div>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="landing-featured__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+      
+      {%- if section.settings.view_all_label != blank -%}
+        <a href="{{ section.settings.view_all_link }}" class="landing-featured__view-all">
+          {{ section.settings.view_all_label }}
+          <svg viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.537.808a.5.5 0 01.817-.162l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.793 5.5H1a.5.5 0 010-1h10.793L8.646 1.354a.5.5 0 01-.109-.546z" fill="currentColor"/>
+          </svg>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="landing-featured__filters">
+      <button class="landing-featured__filter active" data-filter="all">ALL</button>
+      <button class="landing-featured__filter" data-filter="RESTAURANT">RESTAURANT</button>
+      <button class="landing-featured__filter" data-filter="HOTEL">HOTEL</button>
+      <button class="landing-featured__filter" data-filter="CAFÉ & BAKERY">CAFÉ & BAKERY</button>
+      <button class="landing-featured__filter" data-filter="CENTRAL KITCHEN">CENTRAL KITCHEN</button>
+      <button class="landing-featured__filter" data-filter="HOSPITAL">HOSPITAL</button>
+      <button class="landing-featured__filter" data-filter="SCHOOL & UNIVERSITY">SCHOOL & UNIVERSITY</button>
+      <button class="landing-featured__filter" data-filter="FACTORY">FACTORY</button>
+    </div>
+
+    <div class="landing-featured__grid" id="landing-featured-grid-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        <a href="{{ block.settings.link }}" class="landing-project-card" data-tag="{{ block.settings.tag | upcase }}" {{ block.shopify_attributes }}>
+          <div class="landing-project-card__image-wrap">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag: class: 'landing-project-card__image', loading: 'lazy' }}
+            {%- else -%}
+              {%- assign placeholder_img = '' -%}
+              {%- assign mod_index = forloop.index | modulo: 4 -%}
+              {%- if mod_index == 1 -%}
+                {%- assign placeholder_img = 'project-card-1.jpg' | asset_url -%}
+              {%- elsif mod_index == 2 -%}
+                {%- assign placeholder_img = 'project-card-2.jpg' | asset_url -%}
+              {%- elsif mod_index == 3 -%}
+                {%- assign placeholder_img = 'project-card-3.jpg' | asset_url -%}
+              {%- else -%}
+                {%- assign placeholder_img = 'project-card-4.png' | asset_url -%}
+              {%- endif -%}
+              <img src="{{ placeholder_img }}" class="landing-project-card__image" alt="{{ block.settings.title }}" loading="lazy" width="800" height="450">
+            {%- endif -%}
+          </div>
+          
+          <div class="landing-project-card__content">
+            {%- if block.settings.tag != blank -%}
+              <span class="landing-project-card__tag">{{ block.settings.tag }}</span>
+            {%- endif -%}
+            <h3 class="landing-project-card__title">{{ block.settings.title }}</h3>
+            
+            {%- if block.settings.scope != blank -%}
+              <div class="landing-project-card__meta">
+                <strong>Scope:</strong> {{ block.settings.scope }}
+              </div>
+            {%- endif -%}
+            
+            {%- if block.settings.area != blank -%}
+              <div class="landing-project-card__meta">
+                <strong>Area:</strong> {{ block.settings.area }}
+              </div>
+            {%- endif -%}
+            
+            <div class="landing-project-card__divider"></div>
+
+            <div class="landing-project-card__footer">
+              <span class="landing-project-card__view-btn">
+                VIEW PROJECT
+                <svg viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M8.537.808a.5.5 0 01.817-.162l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.793 5.5H1a.5.5 0 010-1h10.793L8.646 1.354a.5.5 0 01-.109-.546z" fill="currentColor"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionEl = document.querySelector('#landing-featured-grid-{{ section.id }}');
+    if (!sectionEl) return;
+
+    const filterContainer = sectionEl.closest('.landing-featured__inner');
+    if (!filterContainer) return;
+
+    const filterBtns = filterContainer.querySelectorAll('.landing-featured__filter');
+    const cards = sectionEl.querySelectorAll('.landing-project-card');
+
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const filter = btn.getAttribute('data-filter');
+
+        // Toggle active state
+        filterBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        // Show/hide cards
+        cards.forEach(function(card) {
+          const tag = (card.getAttribute('data-tag') || '').trim().toUpperCase();
+          const show = filter === 'all' || tag === filter.toUpperCase();
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Featured Projects",
+  "settings": [
+    {
+      "type": "text",
+      "id": "preheading",
+      "label": "Pre-heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "EXPLORE OUR PROJECTS"
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View All Label",
+      "default": "View all projects"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View All Link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "project",
+      "name": "Project Card",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Category Tag",
+          "default": "HOTEL"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Project Title",
+          "default": "Oceanview Resort Central Kitchen"
+        },
+        {
+          "type": "text",
+          "id": "scope",
+          "label": "Scope",
+          "default": "Kitchen Design & Build"
+        },
+        {
+          "type": "text",
+          "id": "area",
+          "label": "Area",
+          "default": "280 sq.m."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Project Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Projects",
+      "blocks": [
+        {
+          "type": "project",
+          "settings": {
+            "tag": "RESTAURANT",
+            "title": "The Grand Bistro",
+            "scope": "Kitchen Design & Build",
+            "area": "280 sq.m."
+          }
+        },
+        {
+          "type": "project",
+          "settings": {
+            "tag": "HOTEL",
+            "title": "Oceanview Resort & Spa",
+            "scope": "Kitchen Design & Build",
+            "area": "650 sq.m."
+          }
+        },
+        {
+          "type": "project",
+          "settings": {
+            "tag": "CAFÉ & BAKERY",
+            "title": "Artisan Coffee House",
+            "scope": "Kitchen Design & Build",
+            "area": "120 sq.m."
+          }
+        },
+        {
+          "type": "project",
+          "settings": {
+            "tag": "HOSPITAL",
+            "title": "City Central Hospital",
+            "scope": "Kitchen Design & Build",
+            "area": "350 sq.m."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

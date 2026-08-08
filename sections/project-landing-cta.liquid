@@ -1,0 +1,243 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .landing-cta {
+    background-color: #FFFFFF;
+  }
+
+  .landing-cta__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .landing-cta__box {
+    background-color: #123B2B;
+    border-radius: 12px;
+    padding: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative geometric pattern on the right side */
+  .landing-cta__box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background-image: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.1) 49%, rgba(255,255,255,0.1) 51%, transparent 51%), 
+                      linear-gradient(-45deg, transparent 49%, rgba(255,255,255,0.1) 49%, rgba(255,255,255,0.1) 51%, transparent 51%);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .landing-cta__content {
+    flex: 1 1 500px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .landing-cta__heading {
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+
+  .landing-cta__text {
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+  .landing-cta__buttons {
+    display: flex;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  .landing-cta__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFFFFF;
+    color: #1F6B4D;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
+    text-decoration: none;
+    min-height: 44px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .landing-cta__btn-primary:hover {
+    background-color: #F3F8F5;
+  }
+
+  .landing-cta__btn-primary svg {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .landing-cta__btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+    min-height: 44px;
+    transition: all 0.2s ease;
+  }
+
+  .landing-cta__btn-secondary:hover {
+    border-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  @media screen and (max-width: 749px) {
+    .landing-cta__box {
+      padding: 32px 24px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .landing-cta__buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .landing-cta__btn-primary,
+    .landing-cta__btn-secondary {
+      width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<div class="landing-cta section-{{ section.id }}-padding">
+  <div class="landing-cta__inner">
+    <div class="landing-cta__box">
+      <div class="landing-cta__content">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="landing-cta__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <p class="landing-cta__text">{{ section.settings.text }}</p>
+        {%- endif -%}
+      </div>
+      
+      <div class="landing-cta__buttons">
+        {%- if section.settings.btn_1_label != blank -%}
+          <a href="{{ section.settings.btn_1_link | default: '/pages/contact-us' }}" class="landing-cta__btn-primary">
+            {{ section.settings.btn_1_label }}
+            <svg viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M8.537.808a.5.5 0 01.817-.162l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.793 5.5H1a.5.5 0 010-1h10.793L8.646 1.354a.5.5 0 01-.109-.546z" fill="currentColor"/>
+            </svg>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.btn_2_label != blank -%}
+          <a href="{{ section.settings.btn_2_link | default: 'tel:024237575' }}" class="landing-cta__btn-secondary">
+            {{ section.settings.btn_2_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Project CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ready to build a kitchen that performs every day?"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Let's talk about your project. Our team is here to help."
+    },
+    {
+      "type": "text",
+      "id": "btn_1_label",
+      "label": "Primary Button Label",
+      "default": "Request a Consultation"
+    },
+    {
+      "type": "url",
+      "id": "btn_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "btn_2_label",
+      "label": "Secondary Button Label",
+      "default": "Call 02-423-7575"
+    },
+    {
+      "type": "url",
+      "id": "btn_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Project CTA"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,331 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .landing-testimonial {
+    background-color: #FFFFFF;
+    border-top: 1px solid #D9E3DD;
+    border-bottom: 1px solid #D9E3DD;
+  }
+
+  .landing-testimonial__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .landing-testimonial__inner {
+      flex-wrap: nowrap;
+      gap: 64px;
+    }
+  }
+
+  .landing-testimonial__left {
+    flex: 1 1 400px;
+    padding-right: 24px;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .landing-testimonial__left {
+      border-right: 1px solid #D9E3DD;
+    }
+  }
+
+  .landing-testimonial__preheading {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5E6A63;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+  }
+
+  .landing-testimonial__quote-wrap {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .landing-testimonial__quote-icon {
+    font-family: serif;
+    font-size: 64px;
+    line-height: 1;
+    color: #1F6B4D;
+    margin-top: -16px;
+  }
+
+  .landing-testimonial__quote-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .landing-testimonial__quote-text {
+    font-size: 16px;
+    line-height: 24px;
+    color: #1C1F1D;
+    font-style: italic;
+    margin-top: 0;
+    margin-bottom: 24px;
+  }
+
+  .landing-testimonial__author-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0 0 4px 0;
+  }
+
+  .landing-testimonial__author-title {
+    font-size: 12px;
+    color: #5E6A63;
+    margin: 0;
+  }
+
+  .landing-testimonial__right {
+    flex: 1.5 1 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .landing-testimonial__brands-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .landing-testimonial__brand-item img,
+  .landing-testimonial__brand-item svg {
+    max-height: 40px;
+    max-width: 120px;
+    width: auto;
+    height: auto;
+    filter: grayscale(100%) opacity(70%);
+    transition: filter 0.2s ease;
+  }
+
+  .landing-testimonial__brand-item:hover img,
+  .landing-testimonial__brand-item:hover svg {
+    filter: grayscale(0%) opacity(100%);
+  }
+
+  .landing-testimonial__brands-footer {
+    font-size: 12px;
+    color: #5E6A63;
+    margin: 0;
+    text-align: center;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .landing-testimonial__brands-footer {
+      text-align: left;
+    }
+  }
+{%- endstyle -%}
+
+<div class="landing-testimonial section-{{ section.id }}-padding">
+  <div class="landing-testimonial__inner">
+    <div class="landing-testimonial__left">
+      {%- if section.settings.preheading_left != blank -%}
+        <div class="landing-testimonial__preheading">{{ section.settings.preheading_left }}</div>
+      {%- endif -%}
+      <div class="landing-testimonial__quote-wrap">
+        <div class="landing-testimonial__quote-icon">&ldquo;</div>
+        <div class="landing-testimonial__quote-content">
+          {%- if section.settings.quote != blank -%}
+            <p class="landing-testimonial__quote-text">{{ section.settings.quote }}</p>
+          {%- endif -%}
+          <div>
+            {%- if section.settings.author_name != blank -%}
+              <p class="landing-testimonial__author-name">{{ section.settings.author_name }}</p>
+            {%- endif -%}
+            {%- if section.settings.author_title != blank -%}
+              <p class="landing-testimonial__author-title">{{ section.settings.author_title }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="landing-testimonial__right">
+      {%- if section.settings.preheading_right != blank -%}
+        <div class="landing-testimonial__preheading">{{ section.settings.preheading_right }}</div>
+      {%- endif -%}
+      
+      <div class="landing-testimonial__brands-grid">
+        {%- for block in section.blocks -%}
+          <div class="landing-testimonial__brand-item" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy' }}
+            {%- elsif block.settings.svg != blank -%}
+              {{ block.settings.svg }}
+            {%- else -%}
+              {%- if forloop.index == 1 -%}
+                <!-- Hilton Logo -->
+                <svg viewBox="0 0 100 40" fill="currentColor" style="height: 30px; width: 80px;">
+                  <path d="M10 5h6v12h12V5h6v30h-6V23H16v12h-6z" fill="#1C1F1D" />
+                  <text x="50" y="24" font-family="Times New Roman, serif" font-weight="bold" font-size="12" fill="#1C1F1D">Hilton</text>
+                </svg>
+              {%- elsif forloop.index == 2 -%}
+                <!-- Marriott Logo -->
+                <svg viewBox="0 0 120 40" fill="currentColor" style="height: 30px; width: 90px;">
+                  <path d="M5 5h8l6 14l6-14h8v30h-6V15l-6 13h-4l-6-13v20H5z" fill="#1C1F1D" />
+                  <text x="40" y="24" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="#1C1F1D">Marriott</text>
+                </svg>
+              {%- elsif forloop.index == 3 -%}
+                <!-- IHG Logo -->
+                <svg viewBox="0 0 100 40" fill="currentColor" style="height: 30px; width: 80px;">
+                  <text x="10" y="28" font-family="Impact, sans-serif" font-style="italic" font-size="28" fill="#1C1F1D">IHG</text>
+                  <text x="55" y="24" font-family="Arial, sans-serif" font-weight="bold" font-size="8" fill="#1C1F1D">HOTELS &amp; RESORTS</text>
+                </svg>
+              {%- elsif forloop.index == 4 -%}
+                <!-- Mercure Logo -->
+                <svg viewBox="0 0 100 40" fill="currentColor" style="height: 30px; width: 80px;">
+                  <text x="10" y="25" font-family="Courier New, monospace" font-weight="bold" font-size="16" letter-spacing="4" fill="#1C1F1D">MERCURE</text>
+                  <text x="35" y="34" font-family="Arial" font-size="6" letter-spacing="2" fill="#1C1F1D">HOTELS</text>
+                </svg>
+              {%- elsif forloop.index == 5 -%}
+                <!-- Compass Group Logo -->
+                <svg viewBox="0 0 130 40" fill="currentColor" style="height: 30px; width: 100px;">
+                  <circle cx="15" cy="20" r="10" stroke="#1C1F1D" stroke-width="2" fill="none"/>
+                  <polygon points="15,13 18,22 12,22" fill="#1C1F1D"/>
+                  <text x="32" y="22" font-family="sans-serif" font-weight="bold" font-size="12" fill="#1C1F1D">COMPASS</text>
+                  <text x="32" y="32" font-family="sans-serif" font-size="8" letter-spacing="1" fill="#1C1F1D">G R O U P</text>
+                </svg>
+              {%- else -%}
+                <div style="width: 80px; height: 30px;">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.brands_footer != blank -%}
+        <p class="landing-testimonial__brands-footer">{{ section.settings.brands_footer }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonial & Brands",
+  "settings": [
+    {
+      "type": "text",
+      "id": "preheading_left",
+      "label": "Left Pre-heading",
+      "default": "CLIENTS SAY"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote Text",
+      "default": "Sevenfive delivered a kitchen that works flawlessly for our team and our guests. Professional, responsive, and brilliant to work with from start to finish."
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author Name",
+      "default": "James Carter"
+    },
+    {
+      "type": "text",
+      "id": "author_title",
+      "label": "Author Title",
+      "default": "Operations Director, Atlas Brasserie"
+    },
+    {
+      "type": "text",
+      "id": "preheading_right",
+      "label": "Right Pre-heading",
+      "default": "TRUSTED BY LEADING BRANDS"
+    },
+    {
+      "type": "text",
+      "id": "brands_footer",
+      "label": "Brands Footer Text",
+      "default": "and many more across Thailand."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand Logo",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Brand Image"
+        },
+        {
+          "type": "html",
+          "id": "svg",
+          "label": "Or SVG Code"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial & Brands",
+      "blocks": [
+        {
+          "type": "brand"
+        },
+        {
+          "type": "brand"
+        },
+        {
+          "type": "brand"
+        },
+        {
+          "type": "brand"
+        },
+        {
+          "type": "brand"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

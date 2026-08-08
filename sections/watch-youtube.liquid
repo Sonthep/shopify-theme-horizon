@@ -39,26 +39,34 @@
 </div>
 
 {% javascript %}
-  document.querySelectorAll('.youtube-facade').forEach((facade) => {
-    facade.addEventListener(
-      'click',
-      () => {
-        const videoId = facade.dataset.youtubeId;
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://www.youtube.com/embed/${videoId}?vq=hd1080&rel=0&modestbranding=1&autoplay=1`;
-        iframe.setAttribute('title', 'YouTube video player');
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute(
-          'allow',
-          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-        );
-        facade.replaceWith(iframe);
-        iframe.className = 'yt-section__item';
-      },
-      { once: true }
+  // Delegate from the document instead of binding to each `.youtube-facade` button directly:
+  // `{% javascript %}` blocks execute once on first load and don't re-run when Shopify
+  // re-renders this section's markup (e.g. theme editor updates), which would otherwise
+  // leave newly rendered facade buttons without a click handler. The listener removes
+  // itself once no facades are left on the page, so it doesn't keep matching every click
+  // site-wide indefinitely after all videos have been played.
+  function handleYoutubeFacadeClick(event) {
+    const facade = event.target instanceof Element ? event.target.closest('.youtube-facade') : null;
+    if (!facade) return;
+
+    const videoId = facade.dataset.youtubeId;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?vq=hd1080&rel=0&modestbranding=1&autoplay=1`;
+    iframe.setAttribute('title', 'YouTube video player');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute(
+      'allow',
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
     );
-  });
+    facade.replaceWith(iframe);
+    iframe.className = 'yt-section__item';
+
+    if (!document.querySelector('.youtube-facade')) {
+      document.removeEventListener('click', handleYoutubeFacadeClick);
+    }
+  }
+  document.addEventListener('click', handleYoutubeFacadeClick);
 {% endjavascript %}
 
 {% render 'section', section: section, children: children %}

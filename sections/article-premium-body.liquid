@@ -1,0 +1,856 @@
+
+{%- liquid
+  assign reading_speed = 200
+  assign word_count = article.content | strip_html | split: ' ' | size
+  assign read_time = word_count | divided_by: reading_speed | plus: 1
+  assign share_url = request.origin | append: article.url
+  assign share_title = article.title | url_encode
+-%}
+
+<div class="article-body color-{{ section.settings.color_scheme }} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}">
+
+  {%- comment -%} Reading progress {%- endcomment -%}
+  <div class="article-progress" aria-hidden="true">
+    <div class="article-progress__fill" id="article-progress-fill"></div>
+  </div>
+
+  <div class="section">
+
+    {%- comment -%} Breadcrumb {%- endcomment -%}
+    <nav class="article-main__breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span aria-hidden="true">›</span>
+      {%- if article.blog != blank -%}
+        <a href="{{ article.blog.url }}">{{ article.blog.title }}</a>
+        <span aria-hidden="true">›</span>
+      {%- endif -%}
+      <span aria-current="page">{{ article.title | truncate: 40 }}</span>
+    </nav>
+
+    <div class="article-header">
+      {%- comment -%} Tags {%- endcomment -%}
+      {%- if article.tags.size > 0 and section.settings.show_tags -%}
+        <div class="article-main__tags">
+          {%- for tag in article.tags limit: 3 -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-pill">{{ tag }}</a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Title {%- endcomment -%}
+      <h1 class="article-main__title">{{ article.title }}</h1>
+
+      {%- comment -%} Meta row {%- endcomment -%}
+      <div class="article-main__meta">
+        {%- if article.author != blank -%}
+          <div class="article-main__meta-item article-main__meta-item--author">
+            <span class="article-avatar">{{ article.author | slice: 0, 1 | upcase }}</span>
+            <span>{{ article.author }}</span>
+          </div>
+        {%- endif -%}
+        <div class="article-main__meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time>
+        </div>
+        <div class="article-main__meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>{{ read_time }} min read</span>
+        </div>
+
+        {%- if section.settings.show_share_sidebar -%}
+          <div class="article-share-inline">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Facebook">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://social-plugins.line.me/lineit/share?url={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on LINE">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
+            </a>
+            <button class="article-share-inline__copy" id="copy-link-btn" aria-label="Copy link" data-url="{{ share_url | escape }}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Featured image {%- endcomment -%}
+  {%- if article.image -%}
+    <div class="article-hero-media">
+      {{
+        article.image
+        | image_url: width: 1600
+        | image_tag: loading: 'eager', fetchpriority: 'high', class: 'article-hero-media__img', widths: '640,960,1280,1600', sizes: '100vw'
+      }}
+    </div>
+  {%- endif -%}
+
+  <div class="section">
+    <div class="article-layout">
+
+      {%- comment -%} ── MAIN COLUMN ── {%- endcomment -%}
+      <article class="article-main" id="article-content">
+
+        {%- comment -%} Floating share dock (desktop) {%- endcomment -%}
+        {%- if section.settings.show_share_sidebar -%}
+          <div class="article-share-dock">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://social-plugins.line.me/lineit/share?url={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on LINE">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ share_url | url_encode }}&title={{ share_title }}" target="_blank" rel="noopener" aria-label="Share on LinkedIn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Excerpt / lead {%- endcomment -%}
+        {%- if article.excerpt != blank and section.settings.show_excerpt -%}
+          <p class="article-lead">{{ article.excerpt | strip_html }}</p>
+        {%- endif -%}
+
+        {%- comment -%} Table of contents {%- endcomment -%}
+        {%- if section.settings.show_toc -%}
+          <details class="article-toc" id="article-toc" open>
+            <summary>
+              Table of Contents
+              <svg class="article-toc__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <ol class="article-toc__list" id="article-toc-list"></ol>
+          </details>
+        {%- endif -%}
+
+        {%- comment -%} Body content {%- endcomment -%}
+        <div class="article-rte rte" id="article-rte">
+          {{ article.content }}
+        </div>
+
+        {%- comment -%} Tags footer {%- endcomment -%}
+        {%- if article.tags.size > 0 and section.settings.show_sidebar_tags -%}
+          <div class="article-tag-footer">
+            {%- for tag in article.tags -%}
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-footer__link">{{ tag }}</a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Author card {%- endcomment -%}
+        {%- if article.author != blank -%}
+          <div class="article-author-card">
+            <span class="article-avatar article-avatar--lg">{{ article.author | slice: 0, 1 | upcase }}</span>
+            <div>
+              <p class="article-author-card__name">{{ article.author }}</p>
+              <p class="article-author-card__label">Author</p>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Prev / next {%- endcomment -%}
+        {%- if blog.previous_article or blog.next_article -%}
+          <div class="article-prev-next">
+            {%- if blog.previous_article -%}
+              <a href="{{ blog.previous_article.url }}" class="article-pn-card">
+                <small>← Previous</small>
+                <p>{{ blog.previous_article.title }}</p>
+              </a>
+            {%- else -%}<span></span>{%- endif -%}
+            {%- if blog.next_article -%}
+              <a href="{{ blog.next_article.url }}" class="article-pn-card article-pn-card--next">
+                <small>Next →</small>
+                <p>{{ blog.next_article.title }}</p>
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </article>
+
+      {%- comment -%} ── SIDEBAR ── {%- endcomment -%}
+      <aside class="article-sidebar" aria-label="Sidebar">
+
+        {%- comment -%} Promo CTA (from section settings) {%- endcomment -%}
+        {%- if section.settings.show_cta -%}
+          <div class="article-side-card article-promo-card">
+            {%- if section.settings.cta_image != blank -%}
+              <div class="article-promo-card__image">
+                {{ section.settings.cta_image | image_url: width: 500 | image_tag: loading: 'lazy' }}
+              </div>
+            {%- endif -%}
+            <div class="article-promo-card__body">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D31225" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+              <p class="article-side-card__title">{{ section.settings.cta_title }}</p>
+              <ul class="article-promo-card__list">
+                {%- if section.settings.cta_bullet_1 != blank -%}<li>{{ section.settings.cta_bullet_1 }}</li>{%- endif -%}
+                {%- if section.settings.cta_bullet_2 != blank -%}<li>{{ section.settings.cta_bullet_2 }}</li>{%- endif -%}
+                {%- if section.settings.cta_bullet_3 != blank -%}<li>{{ section.settings.cta_bullet_3 }}</li>{%- endif -%}
+              </ul>
+              {%- if section.settings.cta_button_link != blank -%}
+                <a href="{{ section.settings.cta_button_link }}" class="btn btn--outline-red">{{ section.settings.cta_button_text }}</a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+
+            {%- when 'quote_form' -%}
+              <div class="article-side-card article-quote-card" {{ block.shopify_attributes }}>
+                <p class="article-quote-card__title">Request a Quote</p>
+                <p class="article-quote-card__sub">Get a special offer tailored for you</p>
+                <ul class="article-quote-card__list">
+                  <li>Free on-site assessment</li>
+                  <li>Free 3D design</li>
+                  <li>Free kitchen planning consultation</li>
+                </ul>
+                {%- form 'contact', id: 'article-quote-form' -%}
+                  {%- if form.posted_successfully? -%}
+                    <p class="article-quote-card__success">Thank you! Our team will contact you shortly.</p>
+                  {%- else -%}
+                    <button type="submit" class="btn btn--gold article-quote-card__submit">
+                      Get a Quote Now
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  {%- endif -%}
+                {%- endform -%}
+              </div>
+
+            {%- when 'recommended_products' -%}
+              {%- assign collection = collections[block.settings.collection] -%}
+              {%- if collection != blank -%}
+                <div class="article-side-card" {{ block.shopify_attributes }}>
+                  <div class="article-side-card__head">
+                    <p class="article-side-card__title">Recommended Products</p>
+                    <a href="{{ collection.url }}" class="article-side-card__view-all">View All</a>
+                  </div>
+                  <div class="article-related-list">
+                    {%- for product in collection.products limit: 3 -%}
+                      <a href="{{ product.url }}" class="article-related-item">
+                        <span class="article-related-item__thumb">
+                          {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy' }}
+                        </span>
+                        <span class="article-related-item__info">
+                          <span class="article-related-item__title">{{ product.title }}</span>
+                          <span class="article-related-item__sub">Starting at {{ product.price | money_without_trailing_zeros }}</span>
+                        </span>
+                      </a>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              {%- endif -%}
+
+            {%- when 'download_brochure' -%}
+              <div class="article-side-card article-brochure-card" {{ block.shopify_attributes }}>
+                <p class="article-side-card__title article-side-card__title--light">Download Brochure</p>
+                <p class="article-brochure-card__sub">Get the latest product catalogs from us</p>
+                {%- if block.settings.image != blank -%}
+                  <div class="article-brochure-card__image">
+                    {{ block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy' }}
+                  </div>
+                {%- endif -%}
+                <a href="{{ block.settings.brochure_file | default: '#' }}" class="btn btn--gold article-brochure-card__btn">
+                  Download Now
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </a>
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+        {%- comment -%} Related posts {%- endcomment -%}
+        {%- if section.settings.show_related and blog.articles_count > 1 -%}
+          <div class="article-side-card">
+            <div class="article-side-card__head">
+              <p class="article-side-card__title">Related Articles</p>
+              <a href="{{ blog.url }}" class="article-side-card__view-all">View All</a>
+            </div>
+            <div class="article-related-list">
+              {%- assign count = 0 -%}
+              {%- for related in blog.articles -%}
+                {%- unless related.id == article.id -%}
+                  {%- if count < 4 -%}
+                    <a href="{{ related.url }}" class="article-related-item">
+                      <span class="article-related-item__thumb">
+                        {%- if related.image -%}
+                          {{ related.image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                        {%- else -%}
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        {%- endif -%}
+                      </span>
+                      <span class="article-related-item__info">
+                        <span class="article-related-item__title">{{ related.title }}</span>
+                        <span class="article-related-item__link">Read More
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </span>
+                      </span>
+                    </a>
+                    {%- assign count = count | plus: 1 -%}
+                    {%- if count == 4 -%}{%- break -%}{%- endif -%}
+                  {%- endif -%}
+                {%- endunless -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+      </aside>
+    </div>
+  </div>
+
+  {%- comment -%} Bottom CTA {%- endcomment -%}
+  {%- if section.settings.show_bottom_cta -%}
+    <div class="section">
+      <div class="article-bottom-cta">
+        <div class="article-bottom-cta__text">
+          <p class="article-bottom-cta__title">{{ section.settings.bottom_cta_title }}</p>
+          <p class="article-bottom-cta__sub">{{ section.settings.bottom_cta_text }}</p>
+          <div class="article-bottom-cta__actions">
+            {%- if section.settings.bottom_cta_btn_1_link != blank -%}
+              <a href="{{ section.settings.bottom_cta_btn_1_link }}" class="btn btn--red">{{ section.settings.bottom_cta_btn_1_text }}</a>
+            {%- endif -%}
+            {%- if section.settings.bottom_cta_btn_2_link != blank -%}
+              <a href="{{ section.settings.bottom_cta_btn_2_link }}" class="btn btn--outline-white">{{ section.settings.bottom_cta_btn_2_text }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+        {%- if section.settings.bottom_cta_image != blank -%}
+          <div class="article-bottom-cta__image">
+            {{ section.settings.bottom_cta_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+</div>
+
+<script>
+  (function() {
+    var tocEnabled = {{ section.settings.show_toc | json }};
+
+    function buildTOC() {
+      if (!tocEnabled) return;
+      var rte = document.getElementById('article-rte');
+      var list = document.getElementById('article-toc-list');
+      var toc = document.getElementById('article-toc');
+      if (!rte || !list || !toc) return;
+      var headings = rte.querySelectorAll('h2');
+      if (headings.length < 2) { toc.style.display = 'none'; return; }
+
+      var items = '';
+      headings.forEach(function(h, i) {
+        if (!h.id) h.id = 'heading-' + i;
+        var num = (i + 1).toString().padStart(2, '0');
+        if (!h.querySelector('.article-h2__num')) {
+          h.innerHTML = '<span class="article-h2__num">' + num + '</span> ' + h.innerHTML;
+        }
+        items += '<li><a href="#' + h.id + '"><span>' + num + '</span> ' + h.textContent.replace(/^\d+\s*/, '') + '</a></li>';
+      });
+      list.innerHTML = items;
+
+      var tocLinks = list.querySelectorAll('a');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(function(link) {
+              link.classList.toggle('is-active', link.getAttribute('href') === '#' + entry.target.id);
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -60% 0px' });
+      headings.forEach(function(h) { observer.observe(h); });
+    }
+
+    function bindCopyButtons() {
+      document.querySelectorAll('#copy-link-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          navigator.clipboard.writeText(btn.dataset.url).then(function() {
+            btn.classList.add('is-copied');
+            setTimeout(function() { btn.classList.remove('is-copied'); }, 2000);
+          });
+        });
+      });
+    }
+
+    function bindProgress() {
+      var fill = document.getElementById('article-progress-fill');
+      var content = document.getElementById('article-content');
+      if (!fill || !content) return;
+      function update() {
+        var rect = content.getBoundingClientRect();
+        var total = content.offsetHeight - window.innerHeight;
+        var scrolled = -rect.top;
+        var pct = total > 0 ? Math.min(100, Math.max(0, (scrolled / total) * 100)) : 0;
+        fill.style.width = pct + '%';
+      }
+      document.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    }
+
+    function init() {
+      buildTOC();
+      bindCopyButtons();
+      bindProgress();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState !== 'loading') init();
+  })();
+</script>
+
+{% stylesheet %}
+  .article-body {
+    --ab-ink: #1C1F1D;
+    --ab-ink-soft: #5E6A63;
+    --ab-line: #E3E8E4;
+    --ab-green-900: #123B2B;
+    --ab-green-700: #1F6B4D;
+    --ab-green-tint: #F0F6F2;
+    --ab-gold: #D1B074;
+    --ab-gold-tint: #FBF3E0;
+    --ab-red: #D31225;
+    --ab-radius-md: 14px;
+    --ab-shadow-sm: 0 1px 2px rgba(18, 59, 43, .06);
+    --ab-shadow-md: 0 8px 24px rgba(18, 59, 43, .08);
+  }
+
+  /* ── Progress bar ── */
+  .article-progress { position: sticky; top: 0; height: 3px; background: var(--ab-line); z-index: 30; }
+  .article-progress__fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--ab-gold), var(--ab-red)); transition: width .1s linear; }
+
+  /* ── Header ── */
+  .article-main__breadcrumb {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--ab-ink-soft);
+    margin-bottom: 24px; padding-top: 40px;
+  }
+  .article-main__breadcrumb a { color: var(--ab-green-700); text-decoration: none; }
+  .article-main__breadcrumb a:hover { text-decoration: underline; }
+
+  .article-header { max-width: 820px; }
+  .article-main__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .article-tag-pill {
+    display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .03em; color: var(--ab-green-700); background: var(--ab-green-tint); padding: 5px 12px;
+    border-radius: 100px; text-decoration: none;
+  }
+  .article-tag-pill:hover { background: #E1EEE6; }
+
+  .article-main__title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.2; color: var(--ab-ink); margin: 0 0 20px; letter-spacing: -.01em; }
+
+  .article-main__meta {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding-bottom: 28px; border-bottom: 1px solid var(--ab-line);
+  }
+  .article-main__meta-item { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ab-ink-soft); }
+  .article-main__meta-item--author { font-weight: 600; color: var(--ab-ink); }
+
+  .article-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--ab-green-700); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .article-avatar--lg { width: 52px; height: 52px; font-size: 18px; }
+
+  .article-share-inline { margin-left: auto; display: flex; gap: 8px; }
+  .article-share-inline a,
+  .article-share-inline__copy {
+    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--ab-line); display: flex; align-items: center;
+    justify-content: center; color: var(--ab-ink-soft); background: #fff; cursor: pointer; transition: all .15s;
+  }
+  .article-share-inline a:hover, .article-share-inline__copy:hover { border-color: var(--ab-green-700); color: var(--ab-green-700); background: var(--ab-green-tint); }
+  .article-share-inline__copy.is-copied { color: var(--ab-green-700); border-color: var(--ab-green-700); }
+
+  /* ── Hero image ── */
+  .article-hero-media { max-width: var(--page-width, 1240px); margin: 32px auto 0; padding-inline: var(--page-margin, 24px); }
+  .article-hero-media__img { width: 100%; height: auto; aspect-ratio: 16 / 8; object-fit: cover; border-radius: 20px; box-shadow: var(--ab-shadow-md); display: block; }
+
+  /* ── Layout ── */
+  .article-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; padding-block: 48px 32px; align-items: start; }
+  .article-main { min-width: 0; max-width: 760px; position: relative; }
+
+  /* ── Share dock ── */
+  .article-share-dock {
+    position: sticky; top: 100px; display: flex; flex-direction: column; gap: 10px; float: left; margin-left: -72px; margin-top: 6px;
+  }
+  .article-share-dock a {
+    width: 42px; height: 42px; border-radius: 50%; background: #fff; border: 1px solid var(--ab-line); display: flex;
+    align-items: center; justify-content: center; color: var(--ab-ink-soft); box-shadow: var(--ab-shadow-sm); transition: all .15s;
+  }
+  .article-share-dock a:hover { background: var(--ab-green-900); color: #fff; border-color: var(--ab-green-900); transform: translateY(-2px); }
+  @media screen and (max-width: 1240px) { .article-share-dock { display: none; } }
+
+  /* ── Lead ── */
+  .article-lead {
+    font-size: 18px; line-height: 1.75; color: var(--ab-ink); position: relative; padding-left: 22px; margin: 8px 0 32px; font-weight: 500;
+  }
+  .article-lead::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: linear-gradient(180deg, var(--ab-gold), var(--ab-red)); border-radius: 3px; }
+
+  /* ── TOC (collapsible) ── */
+  .article-toc { background: var(--ab-green-tint); border: 1px solid #D7E6DC; border-radius: var(--ab-radius-md); margin-bottom: 36px; overflow: hidden; }
+  .article-toc summary {
+    list-style: none; cursor: pointer; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+    font-weight: 700; font-size: 14.5px; color: var(--ab-green-900);
+  }
+  .article-toc summary::-webkit-details-marker { display: none; }
+  .article-toc__chevron { transition: transform .2s; color: var(--ab-green-700); flex-shrink: 0; }
+  .article-toc[open] .article-toc__chevron { transform: rotate(180deg); }
+  .article-toc__list { list-style: none; padding: 0 20px 20px; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+  .article-toc__list a { font-size: 13.5px; color: var(--ab-ink-soft); text-decoration: none; display: flex; gap: 10px; }
+  .article-toc__list a span { color: var(--ab-green-700); font-weight: 700; font-size: 12px; }
+  .article-toc__list a:hover, .article-toc__list a.is-active { color: var(--ab-green-900); }
+
+  /* ── Prose ── */
+  .article-rte { font-size: 16.5px; line-height: 1.85; color: #242B26; }
+  .article-rte h2 {
+    font-size: 25px; font-weight: 700; color: var(--ab-ink); margin: 48px 0 18px; display: flex; align-items: center;
+    gap: 12px; letter-spacing: -.01em;
+  }
+  .article-h2__num {
+    width: 30px; height: 30px; flex-shrink: 0; border-radius: 8px; background: var(--ab-green-900); color: var(--ab-gold);
+    font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .article-rte h3 { font-size: 19px; font-weight: 700; margin: 32px 0 12px; }
+  .article-rte p { margin: 0 0 18px; }
+  .article-rte a { color: var(--ab-green-700); text-decoration: underline; text-underline-offset: 3px; }
+  .article-rte a:hover { color: var(--ab-green-900); }
+  .article-rte ul, .article-rte ol { margin: 0 0 20px 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .article-rte ul li { padding-left: 26px; position: relative; }
+  .article-rte ul li::before { content: ''; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 2px; background: var(--ab-gold); transform: rotate(45deg); }
+  .article-rte ol { list-style: decimal; margin-left: 22px; }
+  .article-rte blockquote {
+    margin: 32px 0; padding: 24px 28px; background: var(--ab-green-900); color: #fff; border-radius: var(--ab-radius-md);
+    font-size: 17px; font-weight: 600; line-height: 1.6; position: relative;
+  }
+  .article-rte blockquote::before { content: '"'; position: absolute; top: -6px; left: 20px; font-size: 56px; color: var(--ab-gold); font-family: Georgia, serif; opacity: .5; }
+  .article-rte img { max-width: 100%; height: auto; border-radius: 12px; margin: 32px 0; display: block; }
+  .article-rte table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+  .article-rte th, .article-rte td { padding: 10px 14px; border: 1px solid var(--ab-line); text-align: left; }
+  .article-rte th { background: var(--ab-green-tint); font-weight: 600; }
+  .article-rte hr { border: none; border-top: 1px solid var(--ab-line); margin: 40px 0; }
+
+  /* ── Tag footer ── */
+  .article-tag-footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--ab-line); }
+  .article-tag-footer__link {
+    display: inline-block; padding: 5px 14px; border: 1px solid var(--ab-line); border-radius: 100px; font-size: 13px;
+    color: var(--ab-ink-soft); text-decoration: none; transition: all .2s;
+  }
+  .article-tag-footer__link:hover { border-color: var(--ab-green-700); color: var(--ab-green-700); background: var(--ab-green-tint); }
+
+  /* ── Author card ── */
+  .article-author-card { margin-top: 40px; padding: 24px; background: #fff; border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); display: flex; gap: 16px; align-items: center; }
+  .article-author-card__name { font-size: 15px; font-weight: 700; margin: 0; color: var(--ab-ink); }
+  .article-author-card__label { font-size: 12.5px; color: var(--ab-ink-soft); margin: 2px 0 0; }
+
+  /* ── Prev/next ── */
+  .article-prev-next { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .article-pn-card { border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); padding: 18px 20px; background: #fff; text-decoration: none; transition: border-color .2s; }
+  .article-pn-card:hover { border-color: var(--ab-green-700); }
+  .article-pn-card small { color: var(--ab-ink-soft); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .article-pn-card p { margin: 8px 0 0; font-weight: 700; font-size: 14px; line-height: 1.4; color: var(--ab-ink); }
+  .article-pn-card--next { text-align: right; grid-column: 2; }
+  @media screen and (max-width: 640px) { .article-prev-next { grid-template-columns: 1fr; } .article-pn-card--next { grid-column: 1; text-align: left; } }
+
+  /* ── Sidebar ── */
+  .article-sidebar { display: flex; flex-direction: column; gap: 22px; position: sticky; top: 88px; }
+  .article-side-card { background: #fff; border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); padding: 22px; }
+  .article-side-card__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+  .article-side-card__title { font-size: 15px; font-weight: 700; color: var(--ab-ink); margin: 0; }
+  .article-side-card__title--light { color: #fff; }
+  .article-side-card__view-all { font-size: 12px; color: var(--ab-ink-soft); text-decoration: none; }
+  .article-side-card__view-all:hover { color: var(--ab-green-700); }
+
+  .article-promo-card { text-align: center; }
+  .article-promo-card__image { margin: -22px -22px 16px; overflow: hidden; }
+  .article-promo-card__image img { width: 100%; display: block; }
+  .article-promo-card__body { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .article-promo-card__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+  .article-promo-card__list li { font-size: 13px; color: var(--ab-ink); padding-left: 20px; position: relative; }
+  .article-promo-card__list li::before { content: '✓'; position: absolute; left: 0; color: var(--ab-red); font-weight: 700; }
+
+  .article-quote-card { background: var(--ab-green-900); color: #fff; }
+  .article-quote-card__title { font-size: 18px; font-weight: 700; color: var(--ab-gold); margin: 0 0 6px; }
+  .article-quote-card__sub { font-size: 13px; color: rgba(255,255,255,.7); margin: 0 0 16px; }
+  .article-quote-card__list { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-direction: column; gap: 8px; }
+  .article-quote-card__list li { font-size: 13px; display: flex; gap: 8px; align-items: flex-start; }
+  .article-quote-card__list li::before { content: '✓'; color: var(--ab-gold); font-weight: 700; }
+  .article-quote-card__submit { width: 100%; justify-content: center; }
+  .article-quote-card__success { font-size: 13px; color: var(--ab-gold); }
+
+  .article-brochure-card { background: linear-gradient(160deg, #1C1F1C, var(--ab-green-900)); color: #fff; text-align: center; }
+  .article-brochure-card__sub { font-size: 12.5px; color: rgba(255,255,255,.6); margin: 0 0 16px; }
+  .article-brochure-card__image { margin-bottom: 16px; }
+  .article-brochure-card__image img { max-width: 60%; margin: 0 auto; border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+  .article-brochure-card__btn { width: 100%; justify-content: center; }
+
+  .article-related-list { display: flex; flex-direction: column; }
+  .article-related-item { display: flex; gap: 12px; align-items: flex-start; text-decoration: none; padding: 12px 0; border-bottom: 1px solid #F1F3F0; }
+  .article-related-item:last-child { border-bottom: none; }
+  .article-related-item__thumb {
+    flex-shrink: 0; width: 60px; height: 60px; border-radius: 10px; overflow: hidden; background: var(--ab-green-tint);
+    display: flex; align-items: center; justify-content: center; color: var(--ab-line);
+  }
+  .article-related-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .article-related-item__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .article-related-item__title {
+    font-size: 13px; font-weight: 600; color: var(--ab-ink); line-height: 1.4; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .article-related-item:hover .article-related-item__title { color: var(--ab-green-700); }
+  .article-related-item__sub { font-size: 12px; color: var(--ab-ink-soft); font-weight: 600; }
+  .article-related-item__link { color: var(--ab-red); font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+  @media screen and (max-width: 1024px) {
+    .article-layout { grid-template-columns: 1fr; }
+    .article-sidebar { position: static; }
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700;
+    padding: 12px 22px; border-radius: 100px; white-space: nowrap; text-decoration: none; border: none; cursor: pointer;
+    transition: transform .15s, opacity .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn--red { background: var(--ab-red); color: #fff; }
+  .btn--gold { background: var(--ab-gold); color: var(--ab-green-900); }
+  .btn--outline-red { background: transparent; border: 1.5px solid var(--ab-red); color: var(--ab-red); }
+  .btn--outline-white { background: transparent; border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+
+  /* ── Bottom CTA ── */
+  .article-bottom-cta {
+    background: radial-gradient(120% 140% at 20% 0%, var(--ab-green-700) 0%, var(--ab-green-900) 55%, #0A2018 100%);
+    color: #fff; border-radius: 24px; padding: 48px; display: flex; align-items: center; justify-content: space-between;
+    gap: 40px; flex-wrap: wrap; margin-top: 8px; position: relative; overflow: hidden;
+  }
+  .article-bottom-cta__title { font-size: 26px; font-weight: 700; margin: 0 0 10px; max-width: 480px; line-height: 1.3; }
+  .article-bottom-cta__sub { color: rgba(255,255,255,.72); font-size: 14.5px; max-width: 440px; margin: 0 0 22px; }
+  .article-bottom-cta__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .article-bottom-cta__image { width: 200px; flex-shrink: 0; }
+  .article-bottom-cta__image img { width: 100%; height: auto; display: block; border-radius: 8px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Article Body",
+  "tag": "section",
+  "class": "section-wrapper article-body-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt / lead paragraph",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_toc",
+      "label": "Show table of contents",
+      "default": true,
+      "info": "Auto-generates from H2 headings in the article. Requires at least 2 headings."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_sidebar",
+      "label": "Show share buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sidebar_tags",
+      "label": "Show tag list at end of article",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Promo CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show promo CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "CTA Title",
+      "default": "Complete Solutions for Restaurant Businesses"
+    },
+    {
+      "type": "text",
+      "id": "cta_bullet_1",
+      "label": "Bullet 1",
+      "default": "Professional Kitchen Design"
+    },
+    {
+      "type": "text",
+      "id": "cta_bullet_2",
+      "label": "Bullet 2",
+      "default": "International Standard Quality Equipment"
+    },
+    {
+      "type": "text",
+      "id": "cta_bullet_3",
+      "label": "Bullet 3",
+      "default": "Installation and After-sales Service"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Button text",
+      "default": "View Our Services"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "cta_image",
+      "label": "CTA Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related",
+      "label": "Show related posts",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Bottom CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_cta",
+      "label": "Show Bottom CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_title",
+      "label": "Bottom CTA Title",
+      "default": "Let us help you choose the best for your business"
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_text",
+      "label": "Bottom CTA Subtitle",
+      "default": "Kitchen design, equipment installation, full service — all in one place"
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_btn_1_text",
+      "label": "Button 1 Text",
+      "default": "Request a Quote"
+    },
+    {
+      "type": "url",
+      "id": "bottom_cta_btn_1_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "bottom_cta_btn_2_text",
+      "label": "Button 2 Text",
+      "default": "Consult a Specialist Free"
+    },
+    {
+      "type": "url",
+      "id": "bottom_cta_btn_2_link",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_cta_image",
+      "label": "Bottom CTA Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quote_form",
+      "name": "Quote Form",
+      "limit": 1
+    },
+    {
+      "type": "recommended_products",
+      "name": "Recommended Products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    },
+    {
+      "type": "download_brochure",
+      "name": "Download Brochure",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Brochure Image"
+        },
+        {
+          "type": "url",
+          "id": "brochure_file",
+          "label": "Brochure File / Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Article Body"
+    }
+  ]
+}
+{% endschema %}

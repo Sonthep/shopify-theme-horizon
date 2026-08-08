@@ -17,7 +17,7 @@
         "feature_DXVEEY": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/1.png",
+            "image": "shopify://shop_images/Design_Web_75_2026_Icon_2-01_ed03d195-0aab-4673-b597-bdf204318215.png",
             "title": "Best Price Guarantee",
             "description": "Best value assured with exclusive special offers"
           }
@@ -25,15 +25,15 @@
         "feature_HaNPaM": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/2.png",
+            "image": "shopify://shop_images/Design_Web_75_2026_Icon_2-02_a118cda1-22c1-4cf7-baff-822f6c61bdca.png",
             "title": "Large Stock",
-            "description": "Over 35,000 items ready to meet all your needs"
+            "description": "Over 50,000 items ready to meet all your needs"
           }
         },
         "feature_C3rzPx": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/3.png",
+            "image": "shopify://shop_images/Design_Web_75_2026_Icon_2-03_23bec7be-570a-4336-bf69-ac326a167713.png",
             "title": "Free Shipping",
             "description": "On orders over ฿5,000 to Bangkok, Phuket & Samui"
           }
@@ -41,7 +41,7 @@
         "feature_gfq9ta": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/4.png",
+            "image": "shopify://shop_images/Design_Web_75_2026_Icon_2-04_493126a7-1201-4746-a8ff-72cf66d6bb5c.png",
             "title": "After-Sales Service",
             "description": "Expert support & consultation 24 hours, 365 days"
           }
@@ -49,7 +49,7 @@
         "feature_AeeY66": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/5.png",
+            "image": "shopify://shop_images/Design_Web_75_2026_Icon_2-05_6e46fc4a-4961-4958-932a-3a00e9be77e1.png",
             "title": "Repair & Maintenance",
             "description": "Inspection and repairs by certified technicians"
           }
@@ -122,7 +122,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-end": 20
           },
           "blocks": {
             "heading_help_faq": {
@@ -217,7 +217,7 @@
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-end": 50
           },
           "blocks": {
             "heading_service": {
@@ -311,8 +311,8 @@
             "placeholder": "",
             "padding-block-start": 0,
             "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "padding-inline-start": 5,
+            "padding-inline-end": 50
           },
           "blocks": {
             "heading_about_us": {
@@ -438,7 +438,7 @@
             "text_email": {
               "type": "text",
               "settings": {
-                "text": "<p>✉ <a href=\"mailto:sales@sevenfive.co.th\">sales@sevenfive.co.th</a></p>",
+                "text": "<p><a href=\"mailto:sales@sevenfive.co.th\">sales@sevenfive.co.th</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -463,7 +463,7 @@
             "text_phone": {
               "type": "text",
               "settings": {
-                "text": "<p>📞 <a href=\"tel:024237575\">02-423-7575</a></p>",
+                "text": "<p><a href=\"tel:024237575\">02-423-7575</a></p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -478,21 +478,72 @@
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
+                "padding-block-start": 5,
+                "padding-block-end": 5,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "social_links": {
+            }
+          },
+          "block_order": [
+            "text_contact_heading",
+            "text_email",
+            "text_phone"
+          ]
+        },
+        "group_JYQJCd": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 40,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "social_links_Wqdqwn": {
               "type": "social-links",
               "settings": {
                 "facebook_url": "https://www.facebook.com/75sevenfive",
+                "facebook_icon": "shopify://shop_images/Design_Web_75_2026_Icon-06.png",
                 "instagram_url": "https://www.instagram.com/sevenfive.distributor/",
+                "instagram_icon": "shopify://shop_images/Design_Web_75_2026_Icon-07.png",
                 "youtube_url": "https://www.youtube.com/@Sevenfivedistributor",
+                "youtube_icon": "shopify://shop_images/Design_Web_75_2026_Icon-09.png",
                 "tiktok_url": "https://www.tiktok.com/@sevenfiveofficial",
+                "tiktok_icon": "shopify://shop_images/Design_Web_75_2026_Icon-10.png",
                 "line_url": "https://page.line.me/nop6433t?oat_content=url&openQrModal=true",
+                "line_icon": "shopify://shop_images/Design_Web_75_2026_Icon-08.png",
                 "twitter_url": "",
                 "threads_url": "",
                 "linkedin_url": "",
@@ -504,13 +555,21 @@
                 "custom_url": ""
               },
               "blocks": {}
+            },
+            "dbd_badge_dBKFfk": {
+              "type": "dbd-badge",
+              "name": "DBD Badge",
+              "settings": {
+                "dbd_image": "shopify://shop_images/1k.jpg",
+                "dbd_link": "https://datawarehouse.dbd.go.th/company/profile/50105525020237",
+                "dbd_width": 90
+              },
+              "blocks": {}
             }
           },
           "block_order": [
-            "text_contact_heading",
-            "text_email",
-            "text_phone",
-            "social_links"
+            "social_links_Wqdqwn",
+            "dbd_badge_dBKFfk"
           ]
         }
       },
@@ -518,7 +577,8 @@
         "group_help_faq",
         "group_service",
         "group_about_us",
-        "group_contact_us"
+        "group_contact_us",
+        "group_JYQJCd"
       ],
       "name": "t:names.footer",
       "settings": {
@@ -526,7 +586,11 @@
         "gap": 15,
         "color_scheme": "scheme-1",
         "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-end": 40,
+        "margin-block-start": 0,
+        "margin-block-end": 0,
+        "margin-inline-start": 0,
+        "margin-inline-end": 0
       }
     },
     "footer_utilities_jLGE8U": {

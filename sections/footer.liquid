@@ -130,6 +130,13 @@
   .footer-content ul li + li {
     margin-block-start: 6px;
   }
+
+  @media screen and (max-width: 749px) {
+    .footer-content .group-block {
+      --padding-inline-start: 0px !important;
+      --padding-inline-end: 0px !important;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

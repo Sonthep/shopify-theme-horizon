@@ -49,6 +49,33 @@
   {% endif %}
   {{- block.shopify_attributes -}}
 >
+  {%- if localization.available_languages.size > 1 -%}
+    {%- assign form_id = 'MobileLanguageForm-' | append: section.id -%}
+    {%- form 'localization', id: form_id, class: 'desktop:hidden mobile-language-form', return_to: request.path -%}
+      <div class="mobile-language-dropdown-wrapper">
+        <select
+          name="language_code"
+          class="mobile-language-select"
+          onchange="document.getElementById('{{ form_id }}').submit();"
+        >
+          {%- for language in localization.available_languages -%}
+            <option
+              value="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}
+                selected
+              {% endif %}
+            >
+              {{ language.iso_code | upcase }}
+            </option>
+          {%- endfor -%}
+        </select>
+        <span class="svg-wrapper icon-caret icon-caret--mobile">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    {%- endform -%}
+  {%- endif -%}
+
   {% if shop.customer_accounts_enabled %}
     {% liquid
       assign account_actions_style = ''
@@ -683,6 +710,82 @@
 
     .header__column--right .header-actions--text {
       margin-inline-start: 0;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    header-actions {
+      grid-column: 4 / 6;
+      justify-self: flex-end;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-language-form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-language-dropdown-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 4px 28px 4px 10px;
+      transition: all var(--animation-speed) ease;
+    }
+
+    .mobile-language-dropdown-wrapper:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .mobile-language-select {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 0;
+      margin: 0;
+      outline: none;
+      width: auto;
+    }
+
+    .mobile-language-select option {
+      background: #0b6b5b; /* Match theme teal background */
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .mobile-language-dropdown-wrapper .icon-caret--mobile {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 10px;
+      height: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-language-dropdown-wrapper .icon-caret--mobile svg {
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
     }
   }
 {% endstylesheet %}

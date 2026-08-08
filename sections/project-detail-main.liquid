@@ -1,0 +1,1126 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .project-detail-main {
+    background-color: #FFFFFF;
+  }
+
+  .project-detail-main__inner {
+    max-width: var(--page-width, 1440px);
+    margin: 0 auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .project-detail-main__inner {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+
+  .project-detail-column {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  /* Block: Overview */
+  .block-overview__heading {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+  .block-overview__text {
+    font-size: 16px;
+    line-height: 24px;
+    color: #5E6A63;
+  }
+  .block-overview__text p {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  /* Block: Equipment */
+  .block-equipment__heading {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+  .block-equipment__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media screen and (min-width: 750px) {
+    .block-equipment__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .equipment-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #D9E3DD;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+  }
+  .equipment-card__image {
+    width: 48px;
+    height: 48px;
+    background-color: #F3F8F5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .equipment-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .equipment-card__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .equipment-card__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1C1F1D;
+    margin: 0;
+  }
+  .equipment-card__serial {
+    font-size: 12px;
+    color: #5E6A63;
+    margin: 0;
+  }
+  .equipment-card__status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .equipment-card__status--active {
+    background-color: #E8F5E9;
+    color: #1F6B4D;
+  }
+  .equipment-card__status--standby {
+    background-color: #F5F5F5;
+    color: #5E6A63;
+  }
+
+  /* Block: Gallery */
+  .block-gallery__heading {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+  .block-gallery__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .block-gallery__item {
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 75%; /* Default aspect ratio */
+  }
+  .block-gallery__item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  @media screen and (min-width: 750px) {
+    .block-gallery__grid {
+      grid-template-columns: 3fr 1fr;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .block-gallery__item {
+      padding-bottom: 0; /* reset padding hack */
+      border-radius: 12px;
+    }
+    .block-gallery__item:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1 / span 4;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+    .block-gallery__item:nth-child(n+2) {
+      grid-column: 2;
+      aspect-ratio: 4/3;
+      height: 100%;
+    }
+  }
+
+  /* Block: Video */
+  .block-video__heading {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+  .block-video__wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+  .block-video__wrapper iframe,
+  .block-video__wrapper video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Cover / thumbnail */
+  .block-video__cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: pointer;
+  }
+  .block-video__cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .block-video__cover:hover .block-video__cover-img {
+    transform: scale(1.03);
+  }
+  .block-video__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(18,59,43,0.55) 0%, rgba(18,59,43,0.15) 60%, transparent 100%);
+    transition: background 0.3s ease;
+  }
+  .block-video__cover:hover .block-video__overlay {
+    background: linear-gradient(to top, rgba(18,59,43,0.7) 0%, rgba(18,59,43,0.25) 60%, transparent 100%);
+  }
+
+  /* Play button */
+  .block-video__play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 3;
+    transition: transform 0.25s ease;
+  }
+  .block-video__play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  .block-video__play-icon svg {
+    width: 72px;
+    height: 72px;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.45));
+    transition: filter 0.25s ease;
+  }
+  .block-video__play-btn:hover .block-video__play-icon svg {
+    filter: drop-shadow(0 6px 24px rgba(0,0,0,0.65));
+  }
+  .block-video__play-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  }
+
+  /* Iframe wrapper (same 16:9 fill) */
+  .block-video__iframe-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .block-video__iframe-wrap iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* Caption */
+  .block-video__caption {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: #5E6A63;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Block: Technical Summary */
+  .block-tech-summary {
+    background-color: #2D373B; /* Dark grayish-blue from design */
+    border-radius: 12px;
+    padding: 24px;
+    color: #FFFFFF;
+  }
+  .block-tech-summary__heading {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #27AE60;
+    margin: 0 0 24px 0;
+  }
+  .block-tech-summary__list {
+    display: flex;
+    flex-direction: column;
+  }
+  .block-tech-summary__row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+  }
+  .block-tech-summary__row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .block-tech-summary__label {
+    color: #A0ABA5;
+    line-height: 1.5;
+  }
+  .block-tech-summary__value {
+    font-weight: 600;
+    color: #FFFFFF;
+    text-align: left;
+    line-height: 1.5;
+  }
+  .block-tech-summary__value--highlight {
+    color: #27AE60;
+  }
+
+  /* Block: Testimonial */
+  .block-testimonial {
+    background-color: #F3F8F5;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+  .block-testimonial__quote-icon {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 48px;
+    line-height: 1;
+    color: #D1E5DB;
+    font-family: serif;
+  }
+  .block-testimonial__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .block-testimonial__image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .block-testimonial__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .block-testimonial__author-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .block-testimonial__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0;
+  }
+  .block-testimonial__role {
+    font-size: 10px;
+    color: #5E6A63;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+  .block-testimonial__text {
+    font-size: 14px;
+    line-height: 22px;
+    color: #1C1F1D;
+    font-style: italic;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Block: Location */
+  .block-location__heading {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+    color: #123B2B;
+    margin: 0 0 16px 0;
+    font-family: var(--font-heading-family);
+  }
+  .block-location__map {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #D9E3DD;
+    position: relative;
+    padding-bottom: 50%; /* 2:1 aspect ratio */
+  }
+  .block-location__map img,
+  .block-location__map iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+  }
+  .block-location__pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .block-location__pin svg {
+    width: 32px;
+    height: 32px;
+    fill: #1F6B4D;
+  }
+  .block-location__pin-text {
+    background-color: #FFFFFF;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #123B2B;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Lightbox */
+  .project-detail-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .project-detail-lightbox--active {
+    display: flex;
+    opacity: 1;
+  }
+  .project-detail-lightbox__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(18, 59, 43, 0.95);
+    cursor: pointer;
+  }
+  .project-detail-lightbox__content {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  .project-detail-lightbox__content img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+  .project-detail-lightbox__close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 2;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+  .project-detail-lightbox__close:hover {
+    transform: scale(1.1);
+  }
+  .project-detail-lightbox__close svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+  .project-detail-lightbox__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, transform 0.2s;
+    border-radius: 50%;
+  }
+  .project-detail-lightbox__nav:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+  }
+  .project-detail-lightbox__nav svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+  .project-detail-lightbox__nav--prev {
+    left: 24px;
+  }
+  .project-detail-lightbox__nav--next {
+    right: 24px;
+  }
+{%- endstyle -%}
+
+<div class="project-detail-main section-{{ section.id }}-padding">
+  <div class="project-detail-main__inner">
+    
+    <div class="project-detail-column project-detail-column--left">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.column == 'left' -%}
+          {%- render 'project-detail-block', block: block -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="project-detail-column project-detail-column--right">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.column == 'right' -%}
+          {%- render 'project-detail-block', block: block -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</div>
+
+<div id="project-detail-lightbox" class="project-detail-lightbox">
+  <div class="project-detail-lightbox__overlay"></div>
+  <button class="project-detail-lightbox__close" aria-label="Close">
+    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </button>
+  <button class="project-detail-lightbox__nav project-detail-lightbox__nav--prev" aria-label="Previous">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  </button>
+  <button class="project-detail-lightbox__nav project-detail-lightbox__nav--next" aria-label="Next">
+    <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+  </button>
+  <div class="project-detail-lightbox__content">
+    <img id="project-detail-lightbox-img" src="" alt="Gallery Image Fullscreen">
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const galleryItems = document.querySelectorAll('.block-gallery__item');
+    const lightbox = document.getElementById('project-detail-lightbox');
+    
+    if (!lightbox || galleryItems.length === 0) return;
+
+    const lightboxImg = document.getElementById('project-detail-lightbox-img');
+    const closeBtn = lightbox.querySelector('.project-detail-lightbox__close');
+    const prevBtn = lightbox.querySelector('.project-detail-lightbox__nav--prev');
+    const nextBtn = lightbox.querySelector('.project-detail-lightbox__nav--next');
+    const overlay = lightbox.querySelector('.project-detail-lightbox__overlay');
+    
+    let currentIndex = 0;
+    const images = [];
+
+    // Extract all image sources
+    galleryItems.forEach((item, index) => {
+      const img = item.querySelector('img');
+      if (img) {
+        let src = img.getAttribute('src');
+        src = src.replace(/_\d+x\d*(\.\w+(?:\?v=\d+)?)$/i, '$1'); 
+        images.push(src);
+        
+        item.style.cursor = 'zoom-in';
+        item.addEventListener('click', function() {
+          openLightbox(index);
+        });
+      }
+    });
+
+    function openLightbox(index) {
+      currentIndex = index;
+      updateImage();
+      lightbox.style.display = 'flex';
+      setTimeout(() => {
+        lightbox.classList.add('project-detail-lightbox--active');
+      }, 10);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('project-detail-lightbox--active');
+      document.body.style.overflow = '';
+      setTimeout(() => { 
+        lightbox.style.display = 'none';
+        lightboxImg.src = ''; 
+      }, 300);
+    }
+    
+    function updateImage() {
+      lightboxImg.src = images[currentIndex];
+    }
+    
+    function showNext() {
+      currentIndex = (currentIndex + 1) % images.length;
+      updateImage();
+    }
+    
+    function showPrev() {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      updateImage();
+    }
+
+    closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', closeLightbox);
+    nextBtn.addEventListener('click', showNext);
+    prevBtn.addEventListener('click', showPrev);
+    
+    document.addEventListener('keydown', function(e) {
+      if (!lightbox.classList.contains('project-detail-lightbox--active')) return;
+      
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowRight') {
+        showNext();
+      } else if (e.key === 'ArrowLeft') {
+        showPrev();
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Project Detail Main",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "overview",
+      "name": "Overview Text",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Project Overview"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Project details go here.</p>"
+        }
+      ]
+    },
+    {
+      "type": "equipment",
+      "name": "Equipment List",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Equipment Spec"
+        },
+        {
+          "type": "header",
+          "content": "Item 1"
+        },
+        {
+          "type": "product",
+          "id": "item1_product",
+          "label": "Product"
+        },
+        {
+          "type": "select",
+          "id": "item1_status",
+          "label": "Status",
+          "options": [
+            {"value": "active", "label": "Active"},
+            {"value": "standby", "label": "Standby"}
+          ],
+          "default": "active"
+        },
+        {
+          "type": "header",
+          "content": "Item 2"
+        },
+        {
+          "type": "product",
+          "id": "item2_product",
+          "label": "Product"
+        },
+        {
+          "type": "select",
+          "id": "item2_status",
+          "label": "Status",
+          "options": [
+            {"value": "active", "label": "Active"},
+            {"value": "standby", "label": "Standby"}
+          ],
+          "default": "active"
+        },
+        {
+          "type": "header",
+          "content": "Item 3"
+        },
+        {
+          "type": "product",
+          "id": "item3_product",
+          "label": "Product"
+        },
+        {
+          "type": "select",
+          "id": "item3_status",
+          "label": "Status",
+          "options": [
+            {"value": "active", "label": "Active"},
+            {"value": "standby", "label": "Standby"}
+          ],
+          "default": "active"
+        },
+        {
+          "type": "header",
+          "content": "Item 4"
+        },
+        {
+          "type": "product",
+          "id": "item4_product",
+          "label": "Product"
+        },
+        {
+          "type": "select",
+          "id": "item4_status",
+          "label": "Status",
+          "options": [
+            {"value": "active", "label": "Active"},
+            {"value": "standby", "label": "Standby"}
+          ],
+          "default": "standby"
+        }
+      ]
+    },
+    {
+      "type": "gallery",
+      "name": "Image Gallery",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Installation Gallery"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "Image 4"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_5",
+          "label": "Image 5"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Project Highlight"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "accept": ["youtube", "vimeo"],
+          "label": "Video URL (YouTube / Vimeo)",
+          "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify-hosted video (overrides URL)"
+        },
+        {
+          "type": "image_picker",
+          "id": "video_poster",
+          "label": "Custom Thumbnail / Poster Image",
+          "info": "For YouTube: leave blank to auto-fetch YouTube thumbnail. For Vimeo: upload a custom image. For Shopify video: overrides the auto-generated poster."
+        },
+        {
+          "type": "checkbox",
+          "id": "video_loop",
+          "label": "Loop video",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "video_muted",
+          "label": "Mute Shopify-hosted video",
+          "default": false,
+          "info": "Only applies to Shopify-hosted videos."
+        },
+        {
+          "type": "text",
+          "id": "play_label",
+          "label": "Play button label",
+          "default": "Watch Video",
+          "info": "Text shown below the play icon on the thumbnail."
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "info": "Optional text shown below the video player."
+        }
+      ]
+    },
+    {
+      "type": "tech_summary",
+      "name": "Technical Summary",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "right"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Technical Summary"
+        },
+        {
+          "type": "text",
+          "id": "row1_label",
+          "label": "Row 1 Label",
+          "default": "Project Scope"
+        },
+        {
+          "type": "text",
+          "id": "row1_value",
+          "label": "Row 1 Value",
+          "default": "Design • Supply • Installation"
+        },
+        {
+          "type": "text",
+          "id": "row2_label",
+          "label": "Row 2 Label",
+          "default": "Installation Lead Time"
+        },
+        {
+          "type": "text",
+          "id": "row2_value",
+          "label": "Row 2 Value",
+          "default": "Within 14 Working Days"
+        },
+        {
+          "type": "text",
+          "id": "row3_label",
+          "label": "Row 3 Label",
+          "default": "Kitchen Readiness"
+        },
+        {
+          "type": "text",
+          "id": "row3_value",
+          "label": "Row 3 Value",
+          "default": "Ready for Commercial Operation"
+        },
+        {
+          "type": "text",
+          "id": "row4_label",
+          "label": "Row 4 Label",
+          "default": "After-Sales Support"
+        },
+        {
+          "type": "text",
+          "id": "row4_value",
+          "label": "Row 4 Value",
+          "default": "Warranty • Spare Parts • Service Team"
+        },
+        {
+          "type": "checkbox",
+          "id": "row4_highlight",
+          "label": "Highlight Row 4 Value (Green)",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "right"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Author Image"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author Name",
+          "default": "Marco Villi"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Author Role",
+          "default": "Executive Chef, Metropolitan"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "\"SevenFive's ability to maximize our vertical space without compromising on airflow was a game-changer.\""
+        }
+      ]
+    },
+    {
+      "type": "location",
+      "name": "Location Map",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "options": [
+            {"value": "left", "label": "Left"},
+            {"value": "right", "label": "Right"}
+          ],
+          "default": "right"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Site Location"
+        },
+        {
+          "type": "textarea",
+          "id": "map_iframe",
+          "label": "Google Maps Iframe Code",
+          "info": "Paste the embed code from Google Maps to show a real interactive map.",
+          "default": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d158857.7281066703!2d-0.24168153706180374!3d51.52877184087611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2s!4v1718606400000!5m2!1sen!2s\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+        },
+        {
+          "type": "image_picker",
+          "id": "map_image",
+          "label": "Fallback Map Image",
+          "info": "Used if no iframe code is provided."
+        },
+        {
+          "type": "text",
+          "id": "location_text",
+          "label": "Location Text",
+          "default": "London, UK",
+          "info": "Only shows when using the fallback image."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Project Detail Main",
+      "blocks": [
+        {"type": "overview"},
+        {"type": "tech_summary"},
+        {"type": "equipment"},
+        {"type": "testimonial"},
+        {"type": "gallery"},
+        {"type": "location"}
+      ]
+    }
+  ]
+}
+{% endschema %}

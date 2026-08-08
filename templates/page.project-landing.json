@@ -1,0 +1,183 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "project-landing-hero",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "number": "43+",
+            "label": "Years of Experience"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "number": "50,000+",
+            "label": "Products Available"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "number": "Trusted by",
+            "label": "Leading Hospitality Brands"
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3"
+      ],
+      "settings": {
+        "preheading": "COMMERCIAL KITCHEN SPECIALISTS",
+        "heading": "Kitchens engineered for the way you actually cook.",
+        "text": "We design, build, install and service modular smart-line kitchens for hotels, restaurants and 24-hour operations across Thailand.",
+        "btn_1_label": "Request a Consultation",
+        "btn_1_link": "",
+        "btn_2_label": "View Projects",
+        "btn_2_link": "",
+        "padding_top": 95,
+        "padding_bottom": 95
+      }
+    },
+    "stats": {
+      "type": "project-landing-stats-bar",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "heading": "ONE STOP SERVICE",
+            "subtext": "บริการครบวงจรในที่เดียว"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "heading": "PROFESSIONAL TEAM",
+            "subtext": "ทีมงานมืออาชีพมากประสบการณ์"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "heading": "PREMIUM QUALITY",
+            "subtext": "คัดสรรอุปกรณ์คุณภาพระดับโลก"
+          }
+        },
+        "stat_4": {
+          "type": "stat",
+          "settings": {
+            "icon": "",
+            "heading": "AFTER SALES SERVICE",
+            "subtext": "บริการหลังการขายที่คุณไว้วางใจ"
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3",
+        "stat_4"
+      ],
+      "settings": {
+        "padding_top": 32,
+        "padding_bottom": 32
+      }
+    },
+    "featured": {
+      "type": "project-landing-featured",
+      "blocks": {
+        "proj_1": {
+          "type": "project",
+          "settings": {
+            "tag": "RESTAURANT",
+            "title": "The Grand Bistro",
+            "scope": "Kitchen Design & Build",
+            "area": "280 sq.m.",
+            "link": "shopify://pages/project-detail"
+          }
+        },
+        "proj_2": {
+          "type": "project",
+          "settings": {
+            "tag": "HOTEL",
+            "title": "Oceanview Resort & Spa",
+            "scope": "Kitchen Design & Build",
+            "area": "650 sq.m.",
+            "link": ""
+          }
+        },
+        "proj_3": {
+          "type": "project",
+          "settings": {
+            "tag": "CAFÉ & BAKERY",
+            "title": "Artisan Coffee House",
+            "scope": "Kitchen Design & Build",
+            "area": "120 sq.m.",
+            "link": ""
+          }
+        },
+        "proj_4": {
+          "type": "project",
+          "settings": {
+            "tag": "HOSPITAL",
+            "title": "City Central Hospital",
+            "scope": "Kitchen Design & Build",
+            "area": "350 sq.m.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "proj_1",
+        "proj_2",
+        "proj_3",
+        "proj_4"
+      ],
+      "settings": {
+        "preheading": "",
+        "heading": "EXPLORE OUR PROJECTS",
+        "view_all_label": "View all projects",
+        "view_all_link": "",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "cta": {
+      "type": "project-landing-cta",
+      "settings": {
+        "heading": "Ready to build a kitchen that performs every day?",
+        "text": "Let's talk about your project. Our team is here to help.",
+        "btn_1_label": "Request a Consultation",
+        "btn_1_link": "",
+        "btn_2_label": "Call 02-423-7575",
+        "btn_2_link": "",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "stats",
+    "featured",
+    "cta"
+  ]
+}
