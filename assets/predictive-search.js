@@ -307,11 +307,26 @@ class PredictiveSearchComponent extends Component {
   }
 
   /**
+   * Set once the predictive search AJAX endpoint is confirmed to reject this buyer's
+   * locale (4xx), so later keystrokes skip straight to the /search fallback instead of
+   * wasting a round trip on a request that's already known to fail.
+   * @type {boolean}
+   */
+  #predictiveSearchUnavailable = false;
+
+  /**
    * Fetch search results using the section renderer and update the results container.
    * @param {string} searchTerm - The term to search for
    */
   async #getSearchResults(searchTerm) {
     if (!this.dataset.sectionId) return;
+
+    const abortController = this.#createAbortController();
+
+    if (this.#predictiveSearchUnavailable) {
+      await this.#getSearchResultsFallback(searchTerm, abortController);
+      return;
+    }
 
     const url = new URL(Theme.routes.predictive_search_url, location.origin);
     url.searchParams.set('q', searchTerm);
@@ -320,8 +335,6 @@ class PredictiveSearchComponent extends Component {
     url.searchParams.set('resources[options][fields]', 'title,variants.title,variants.sku,tag');
 
     const { predictiveSearchResults } = this.refs;
-
-    const abortController = this.#createAbortController();
 
     sectionRenderer
       .getSectionHTML(this.dataset.sectionId, false, url)
@@ -339,13 +352,48 @@ class PredictiveSearchComponent extends Component {
 
         // The predictive search AJAX endpoint can reject some buyer locales (e.g. secondary
         // storefront languages) with a 4xx response, even though the full-text /search page
-        // works fine for them. This used to fall back to a forced navigation to /search for
-        // that case, but that fires on every keystroke for those locales — the shopper gets
-        // yanked to a full search-results page for whatever partial text they've typed so far,
-        // before they've even finished typing (and before pressing Enter). Just log it instead;
-        // the search form's normal Enter/submit flow doesn't depend on this endpoint at all.
+        // works fine for them. Fetch this same section through the regular /search endpoint
+        // instead, which doesn't have this restriction — sections/predictive-search.liquid
+        // renders real matches from `search.results` in that case.
+        const statusMatch = error instanceof Error && error.message.match(/status (\d+)/);
+        const status = statusMatch ? Number(statusMatch[1]) : NaN;
+
+        if (status >= 400 && status < 500) {
+          this.#predictiveSearchUnavailable = true;
+          this.#getSearchResultsFallback(searchTerm, abortController);
+          return;
+        }
+
         console.error(error);
       });
+  }
+
+  /**
+   * Fallback for locales where the predictive search AJAX endpoint rejects the request:
+   * fetch the same predictive-search section through the regular /search endpoint, which
+   * doesn't have this locale restriction (mirrors #getRecentlyViewedProductsMarkup below).
+   * @param {string} searchTerm - The term to search for
+   * @param {AbortController} abortController
+   */
+  async #getSearchResultsFallback(searchTerm, abortController) {
+    if (!this.dataset.sectionId) return;
+
+    const { predictiveSearchResults } = this.refs;
+    const url = new URL(Theme.routes.search_url, location.origin);
+    url.searchParams.set('q', searchTerm);
+    url.searchParams.set('resources[type]', 'product');
+
+    try {
+      const resultsMarkup = await sectionRenderer.getSectionHTML(this.dataset.sectionId, false, url);
+      if (!resultsMarkup) return;
+      if (abortController.signal.aborted) return;
+
+      morph(predictiveSearchResults, resultsMarkup);
+      this.#resetScrollPositions();
+    } catch (error) {
+      if (abortController.signal.aborted) return;
+      console.error(error);
+    }
   }
 
   /**

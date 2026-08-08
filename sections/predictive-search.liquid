@@ -37,6 +37,12 @@
         {%- endif -%}
       </div>
 
+      {%- liquid
+        assign is_recently_viewed_request = false
+        if search.performed and search.terms contains 'id:'
+          assign is_recently_viewed_request = true
+        endif
+      -%}
       {% if predictive_search.performed %}
         {%- if search_results_count > 0 -%}
           {% assign shared_results_index = 0 %}
@@ -115,6 +121,25 @@
             {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
           </p>
         {% endif %}
+      {% elsif search.performed and is_recently_viewed_request == false %}
+        {% comment %}
+          Fallback for locales where Shopify's predictive search AJAX endpoint rejects the
+          buyer's locale (secondary/non-default storefront languages get a 4xx from
+          predictive_search even though /search works fine). assets/predictive-search.js
+          detects that failure and re-fetches this section through the regular /search
+          endpoint instead — render real matches from `search.results` the same way
+          predictive_search.resources.products normally would.
+        {% endcomment %}
+        {%- if search_results_count > 0 -%}
+          {% liquid
+            assign title = 'content.search_results_resource_products' | t
+            render 'predictive-search-products-list', title: title, products: search.results, limit: 8
+          %}
+        {%- else -%}
+          <p class="predictive-search-results__no-results">
+            {{ 'content.search_results_no_results' | t: terms: search.terms }}
+          </p>
+        {%- endif -%}
       {% else %}
         {% assign shared_results_index = 0 %}
         {%- liquid
