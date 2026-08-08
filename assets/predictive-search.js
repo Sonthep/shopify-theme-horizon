@@ -339,19 +339,11 @@ class PredictiveSearchComponent extends Component {
 
         // The predictive search AJAX endpoint can reject some buyer locales (e.g. secondary
         // storefront languages) with a 4xx response, even though the full-text /search page
-        // works fine for them. Fall back to a normal search only for that case — for transient
-        // network errors or server (5xx) failures, don't force-navigate the shopper away from
-        // whatever page they're currently on.
-        const statusMatch = error instanceof Error && error.message.match(/status (\d+)/);
-        const status = statusMatch ? Number(statusMatch[1]) : NaN;
-
-        if (status >= 400 && status < 500) {
-          const searchUrl = new URL(Theme.routes.search_url, location.origin);
-          searchUrl.searchParams.set('q', searchTerm);
-          window.location.href = searchUrl.toString();
-          return;
-        }
-
+        // works fine for them. This used to fall back to a forced navigation to /search for
+        // that case, but that fires on every keystroke for those locales — the shopper gets
+        // yanked to a full search-results page for whatever partial text they've typed so far,
+        // before they've even finished typing (and before pressing Enter). Just log it instead;
+        // the search form's normal Enter/submit flow doesn't depend on this endpoint at all.
         console.error(error);
       });
   }
