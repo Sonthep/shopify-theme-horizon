@@ -190,7 +190,7 @@
 
 {%- endpaginate -%}
 
-<style>
+{% stylesheet %}
 /* ── Variables ─────────────────────────────────── */
 .blog-listing {
   --blog-accent: #b8960c;
@@ -558,7 +558,7 @@
   .blog-hero__title { font-size: 1.2rem; }
   .blog-hero__excerpt { display: none; }
 }
-</style>
+{% endstylesheet %}
 
 {% schema %}
 {

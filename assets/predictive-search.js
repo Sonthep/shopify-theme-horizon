@@ -336,7 +336,13 @@ class PredictiveSearchComponent extends Component {
       })
       .catch((error) => {
         if (abortController.signal.aborted) return;
-        throw error;
+
+        // The predictive search AJAX endpoint can reject some buyer locales (e.g. secondary
+        // storefront languages) even though the full-text /search page works fine for them.
+        // Fall back to a normal search rather than leaving the dropdown silently empty.
+        const searchUrl = new URL(Theme.routes.search_url, location.origin);
+        searchUrl.searchParams.set('q', searchTerm);
+        window.location.href = searchUrl.toString();
       });
   }
 

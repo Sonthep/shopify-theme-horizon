@@ -227,11 +227,11 @@
 <div class="project-hero section-{{ section.id }}-padding">
   {%- if section.settings.image != blank -%}
     <div class="project-hero__bg">
-      {{ section.settings.image | image_url: width: 1500 | image_tag: loading: 'lazy' }}
+      {{ section.settings.image | image_url: width: 1500 | image_tag: loading: 'eager', fetchpriority: 'high' }}
     </div>
   {%- else -%}
     <div class="project-hero__bg">
-      <img src="{{ 'project-landing-hero.jpg' | asset_url }}" alt="Commercial Kitchen Specialists" loading="eager" width="1500" height="800">
+      <img src="{{ 'project-landing-hero.jpg' | asset_url }}" alt="Commercial Kitchen Specialists" loading="eager" fetchpriority="high" width="1500" height="800">
     </div>
   {%- endif -%}
 

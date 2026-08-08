@@ -84,17 +84,25 @@ class SectionRenderer {
       if (cachedHTML) return cachedHTML;
     }
 
-    pendingPromise = fetch(sectionUrl).then((response) => {
-      return response.text();
+    pendingPromise = fetch(sectionUrl).then(async (response) => {
+      const text = await response.text();
+
+      if (!response.ok) {
+        throw new Error(`Section rendering request for "${sectionId}" failed with status ${response.status}: ${text}`);
+      }
+
+      return text;
     });
 
     this.#pendingPromises.set(sectionUrl, pendingPromise);
 
-    const sectionHTML = await pendingPromise;
-    this.#pendingPromises.delete(sectionUrl);
-
-    this.#cache.set(sectionUrl, sectionHTML);
-    return sectionHTML;
+    try {
+      const sectionHTML = await pendingPromise;
+      this.#cache.set(sectionUrl, sectionHTML);
+      return sectionHTML;
+    } finally {
+      this.#pendingPromises.delete(sectionUrl);
+    }
   }
 
   /**

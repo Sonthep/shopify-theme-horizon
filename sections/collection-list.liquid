@@ -101,6 +101,31 @@
   .collection-list__view-all-link:hover {
     opacity: 1;
   }
+
+  /*
+   * Matches the 4-column layout that assets/collection-browse-carousel.js computes
+   * in JS after load (scroller.clientWidth / 4). Without this fallback the browser
+   * paints with the default `grid-auto-columns: auto` before the script runs, then
+   * jumps to the JS value — a layout shift. This CSS approximation (25% ~= 1/4)
+   * keeps the first paint visually stable; the JS still refines it to an exact
+   * pixel value afterwards to avoid sub-pixel rounding gaps.
+   */
+  [id$='_collections_browse'] slideshow-slides {
+    grid-auto-columns: 25%;
+  }
+
+  /* Match the column counts assets/collection-browse-carousel.js applies at each breakpoint */
+  @media screen and (max-width: 749px) {
+    [id$='_collections_browse'] slideshow-slides {
+      grid-auto-columns: 50%;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 1199px) {
+    [id$='_collections_browse'] slideshow-slides {
+      grid-auto-columns: 33.333%;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

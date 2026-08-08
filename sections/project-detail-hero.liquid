@@ -138,7 +138,7 @@
     {%- elsif request.page_type == 'article' and article.image != blank -%}
       {{ article.image | image_url: width: 2880 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000, 2880' }}
     {%- else -%}
-      <img src="{{ 'mockup-hero.png' | asset_url }}" alt="Metropolitan Hotel Central Kitchen" loading="lazy" width="2880" height="1620">
+      <img src="{{ 'mockup-hero.png' | asset_url }}" alt="Metropolitan Hotel Central Kitchen" loading="eager" fetchpriority="high" width="2880" height="1620">
     {%- endif -%}
   </div>
   <div class="project-detail-hero__overlay"></div>

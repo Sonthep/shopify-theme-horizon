@@ -79,7 +79,7 @@
   </div>
 </div>
 
-<style>
+{% stylesheet %}
 .brand-directory {
   max-width: 1200px;
   margin: 0 auto;
@@ -161,7 +161,7 @@
 @media (max-width: 480px) {
   .brand-group__logos { grid-template-columns: repeat(2, 1fr); }
 }
-</style>
+{% endstylesheet %}
 
 <script>
 document.querySelectorAll('.filter-btn').forEach(btn => {

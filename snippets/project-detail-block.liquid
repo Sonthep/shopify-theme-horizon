@@ -274,7 +274,7 @@
           {%- if block.settings.image != blank -%}
             {{ block.settings.image | image_url: width: 80 | image_tag: loading: 'lazy' }}
           {%- else -%}
-             <img src="{{ 'mockup-author.png' | asset_url }}" alt="Author" loading="lazy" width="80" height="80">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#1F6B4D"/><circle cx="20" cy="16" r="7" fill="#fff" fill-opacity=".9"/><path d="M6 36c1-8 8-13 14-13s13 5 14 13" fill="#fff" fill-opacity=".9"/></svg>
           {%- endif -%}
         </div>
         <div class="block-testimonial__author-info">

@@ -42,7 +42,15 @@
     const builtInControls = section.querySelector('slideshow-controls');
     if (builtInControls) builtInControls.style.display = 'none';
 
-    const COLS_PER_PAGE = 4;
+    // Card images use a fixed pixel height (merchant setting), so a narrower column
+    // width without a matching column-count drop makes them look stretched/tall.
+    // 2 columns on mobile, 3 in the 750-1199px "in-between" zone, 4 on wide desktop.
+    let COLS_PER_PAGE = 4;
+    if (window.matchMedia('(max-width: 749px)').matches) {
+      COLS_PER_PAGE = 2;
+    } else if (window.matchMedia('(max-width: 1199px)').matches) {
+      COLS_PER_PAGE = 3;
+    }
     const ROWS = 2;
     const ITEMS_PER_PAGE = COLS_PER_PAGE * ROWS;
     const allSlides = scroller.querySelectorAll('.resource-list__slide');
@@ -52,8 +60,8 @@
     if (totalPages <= 1) return;
 
     /**
-     * Set grid-auto-columns to exact pixels so 4 columns fill the viewport
-     * precisely — no sub-pixel gap that would cause a peeking 5th column.
+     * Set grid-auto-columns to exact pixels so COLS_PER_PAGE columns fill the
+     * viewport precisely — no sub-pixel gap that would cause a peeking column.
      */
     function updateColumnSize() {
       const w = scroller.clientWidth;
