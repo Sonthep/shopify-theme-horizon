@@ -16,7 +16,11 @@
       assign rounded_image_corners = true
     endif
 
-    assign has_mobile_image = block_settings.image_1_mobile != blank
+    assign has_mobile_image = false
+    if block_settings.image_1_mobile != blank
+      assign has_mobile_image = true
+    endif
+
     assign has_mobile_ratio = false
     if has_mobile_image and block_settings.image_1_mobile.aspect_ratio > 0
       assign has_mobile_ratio = true
