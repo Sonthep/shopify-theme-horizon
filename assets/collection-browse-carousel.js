@@ -197,8 +197,14 @@
     });
 
     // --- Autoplay (our own) ---
+    // Auto-rotating on mobile burns battery for a UX shoppers scroll past anyway, so skip
+    // starting it below the mobile breakpoint. Reacts to the viewport crossing that
+    // breakpoint (rotation, foldables, resizing a desktop window) via matchMedia.
+    const mobileQuery = window.matchMedia('(max-width: 749px)');
+
     function startAutoplay() {
       stopAutoplay();
+      if (mobileQuery.matches) return;
       autoplayTimer = setInterval(() => {
         goToPage((currentPage + 1) % totalPages);
       }, AUTOPLAY_SPEED);
@@ -207,6 +213,14 @@
     function stopAutoplay() {
       if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
     }
+
+    mobileQuery.addEventListener('change', () => {
+      if (mobileQuery.matches) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    });
 
     section.addEventListener('mouseenter', stopAutoplay);
     section.addEventListener('mouseleave', startAutoplay);
