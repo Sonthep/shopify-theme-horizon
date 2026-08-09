@@ -38,24 +38,25 @@
           min-height: {{ 1 | divided_by: preview_image.aspect_ratio | times: 100 }}vw;
         }
       {% endif %}
-      {% if section.settings.content_position == 'on-media' %}
-        /*
-          base.css sets content-visibility: hidden on inactive <slideshow-slide> elements,
-          which skips layout of their children entirely. Without a size set directly on the
-          <slideshow-slide> element itself (not a descendant), a slide that has never been
-          active has no remembered intrinsic size, so it collapses to 0 height. The first
-          time it's revealed (autoplay/scroll), its real height appears and shifts the whole
-          slideshow row. Reserving aspect-ratio on the slide element itself (which is sized
-          normally even while its contents are skipped) keeps every slide's height stable
-          from the start, not just the first one.
-          Scoped to content_position 'on-media': in 'below-media' mode slideshow-slide is a
-          CSS grid with its own explicit row sizing (--grid-template-rows), and forcing an
-          aspect-ratio there would fight that layout instead of just reserving space.
-        */
-        .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
-          aspect-ratio: {{ preview_image.aspect_ratio }};
-        }
-      {% endif %}
+      /*
+        base.css sets content-visibility: hidden on inactive <slideshow-slide> elements,
+        which skips layout of their children entirely. Without a size set directly on the
+        <slideshow-slide> element itself (not a descendant), a slide that has never been
+        active has no remembered intrinsic size, so it collapses to 0 height. The first
+        time it's revealed (autoplay/scroll), its real height appears and shifts the whole
+        slideshow row. Reserving aspect-ratio on the slide element itself (which is sized
+        normally even while its contents are skipped) keeps every slide's height stable
+        from the start, not just the first one.
+        Applies in both content_position modes: in 'below-media' mode slideshow-slide is a
+        CSS grid with explicit row sizing (--grid-template-rows), and per the CSS sizing
+        spec aspect-ratio only supplies a size for an axis that's otherwise indeterminate —
+        since grid-template-rows already determines this element's height there, this rule
+        is a no-op in that mode rather than fighting it, while still reserving space in
+        'on-media' mode where nothing else sizes the element.
+      */
+      .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+        aspect-ratio: {{ preview_image.aspect_ratio }};
+      }
       {% if has_mobile_ratio %}
         @media (max-width: 749px) {
           {% if block_index == 0 %}
@@ -63,11 +64,9 @@
               min-height: {{ 1 | divided_by: block_settings.image_1_mobile.aspect_ratio | times: 100 }}vw;
             }
           {% endif %}
-          {% if section.settings.content_position == 'on-media' %}
-            .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
-              aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }};
-            }
-          {% endif %}
+          .shopify-section-{{ section.id }} slideshow-slide.slide--block-{{ block.id }} {
+            aspect-ratio: {{ block_settings.image_1_mobile.aspect_ratio }};
+          }
         }
       {% endif %}
     {% endstyle %}
