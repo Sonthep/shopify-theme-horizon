@@ -4,6 +4,10 @@
   {% content_for 'blocks' %}
 {% endcapture %}
 
+{% comment %} Warm the connection for the facade thumbnails below (~300ms LCP savings per PageSpeed) {% endcomment %}
+<link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+<link rel="dns-prefetch" href="https://i.ytimg.com">
+
 {% if section.settings.title != blank %}
   <{{ section.settings.heading_tag }} class="section-title section--{{ section.settings.section_width }}">
     {{ section.settings.title | escape }}
