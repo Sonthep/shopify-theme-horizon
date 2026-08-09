@@ -20,6 +20,12 @@
     const scroller = section.querySelector('slideshow-slides');
     if (!scroller) return;
 
+    // Read this before any of the writes below (attribute removal, style.display,
+    // img.sizes) touch the DOM — reading clientWidth after those writes forces a
+    // synchronous layout recalculation instead of using the browser's already-cached
+    // measurement from the last render.
+    const initialScrollerWidth = scroller.clientWidth;
+
     // --- Neutralise Shopify's own slideshow for this section ---
     //
     // Shopify's autoplay fires this.next() every N ms, which calls
@@ -76,13 +82,14 @@
     /**
      * Set grid-auto-columns to exact pixels so COLS_PER_PAGE columns fill the
      * viewport precisely — no sub-pixel gap that would cause a peeking column.
+     * @param {number} [width] - Pre-read width to use instead of measuring now.
      */
-    function updateColumnSize() {
-      const w = scroller.clientWidth;
+    function updateColumnSize(width) {
+      const w = width ?? scroller.clientWidth;
       if (w > 0) scroller.style.gridAutoColumns = (w / COLS_PER_PAGE) + 'px';
     }
-    updateColumnSize();
-    const ro = new ResizeObserver(updateColumnSize);
+    updateColumnSize(initialScrollerWidth);
+    const ro = new ResizeObserver(() => updateColumnSize());
     ro.observe(scroller);
 
     // --- Build dots container ---
