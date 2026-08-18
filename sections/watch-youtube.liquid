@@ -4,29 +4,74 @@
   {% content_for 'blocks' %}
 {% endcapture %}
 
+{% comment %} Warm the connection for the facade thumbnails below (~300ms LCP savings per PageSpeed) {% endcomment %}
+<link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+<link rel="dns-prefetch" href="https://i.ytimg.com">
+
 {% if section.settings.title != blank %}
   <{{ section.settings.heading_tag }} class="section-title section--{{ section.settings.section_width }}">
     {{ section.settings.title | escape }}
   </{{ section.settings.heading_tag }}>
 {% endif %}
 
+{% assign youtube_video_ids = 'YWgtyDeVINs,lTJrBeEkG94,Gv2x78nNaDM' | split: ',' %}
 <div class="yt-section">
   <h4 class="yt-section__title">Watch us on YouTube</h4>
   <div class="yt-section__grid">
-    <div class="yt-section__item">
-      <iframe src="https://www.youtube.com/embed/YWgtyDeVINs?vq=hd1080&rel=0&modestbranding=1" frameborder="0" allowfullscreen loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-    </div>
-    <div class="yt-section__item">
-      <iframe src="https://www.youtube.com/embed/lTJrBeEkG94?vq=hd1080&rel=0&modestbranding=1" frameborder="0" allowfullscreen loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-    </div>
-    <div class="yt-section__item">
-      <iframe src="https://www.youtube.com/embed/Gv2x78nNaDM?vq=hd1080&rel=0&modestbranding=1" frameborder="0" allowfullscreen loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-    </div>
+    {% for video_id in youtube_video_ids %}
+      <button
+        type="button"
+        class="yt-section__item youtube-facade"
+        data-youtube-id="{{ video_id }}"
+        aria-label="{{ 'accessibility.play_video' | t | default: 'Play video' }}"
+      >
+        <img
+          src="https://i.ytimg.com/vi/{{ video_id }}/hqdefault.jpg"
+          alt=""
+          loading="lazy"
+          width="480"
+          height="360"
+          class="youtube-facade__thumb"
+        >
+        <svg class="youtube-facade__play" viewBox="0 0 68 48" aria-hidden="true" width="68" height="48">
+          <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.64 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00"></path>
+          <path d="M45 24 27 14v20" fill="#fff"></path>
+        </svg>
+      </button>
+    {% endfor %}
   </div>
 </div>
+
+{% javascript %}
+  // Delegate from the document instead of binding to each `.youtube-facade` button directly:
+  // `{% javascript %}` blocks execute once on first load and don't re-run when Shopify
+  // re-renders this section's markup (e.g. theme editor updates), which would otherwise
+  // leave newly rendered facade buttons without a click handler. The listener removes
+  // itself once no facades are left on the page, so it doesn't keep matching every click
+  // site-wide indefinitely after all videos have been played.
+  function handleYoutubeFacadeClick(event) {
+    const facade = event.target instanceof Element ? event.target.closest('.youtube-facade') : null;
+    if (!facade) return;
+
+    const videoId = facade.dataset.youtubeId;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?vq=hd1080&rel=0&modestbranding=1&autoplay=1`;
+    iframe.setAttribute('title', 'YouTube video player');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute(
+      'allow',
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+    );
+    facade.replaceWith(iframe);
+    iframe.className = 'yt-section__item';
+
+    if (!document.querySelector('.youtube-facade')) {
+      document.removeEventListener('click', handleYoutubeFacadeClick);
+    }
+  }
+  document.addEventListener('click', handleYoutubeFacadeClick);
+{% endjavascript %}
 
 {% render 'section', section: section, children: children %}
 
@@ -71,13 +116,45 @@
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
   }
 
-  .yt-section__item iframe {
+  iframe.yt-section__item {
+    display: block;
+    width: 100%;
+    border: none;
+  }
+
+  button.youtube-facade.yt-section__item {
+    display: block;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: #000;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .youtube-facade__thumb {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
     display: block;
-    border: none;
+  }
+
+  .youtube-facade__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 68px;
+    height: 48px;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    transition: transform 0.15s ease;
+  }
+
+  .youtube-facade:hover .youtube-facade__play,
+  .youtube-facade:focus-visible .youtube-facade__play {
+    transform: scale(1.1);
   }
 
   @media (max-width: 900px) {

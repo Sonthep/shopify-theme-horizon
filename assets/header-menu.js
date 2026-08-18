@@ -34,6 +34,13 @@ class HeaderMenu extends Component {
    */
   #activateTimer = null;
 
+  /**
+   * Timer for the deferred `showAll()` call below, cleared on disconnect so a stale
+   * callback can't run against refs from an instance that's already been removed.
+   * @type {ReturnType<typeof setTimeout> | null}
+   */
+  #showAllTimer = null;
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -42,7 +49,10 @@ class HeaderMenu extends Component {
     this.overflowMenu?.addEventListener('pointerleave', this.#overflowSubmenuListener);
 
     // Force the overflow list to show all top-level items so the header menu does not collapse into a More button.
-    setTimeout(() => this.refs.overflowMenu?.showAll?.(), 0);
+    this.#showAllTimer = setTimeout(() => {
+      this.#showAllTimer = null;
+      this.refs.overflowMenu?.showAll?.();
+    }, 0);
   }
 
   disconnectedCallback() {
@@ -50,6 +60,10 @@ class HeaderMenu extends Component {
     window.removeEventListener('resize', this.#resizeListener);
     this.overflowMenu?.removeEventListener('pointerleave', this.#overflowSubmenuListener);
     this.#cleanupMutationObserver();
+    if (this.#showAllTimer) {
+      clearTimeout(this.#showAllTimer);
+      this.#showAllTimer = null;
+    }
     if (this.#deactivateTimer) {
       clearTimeout(this.#deactivateTimer);
       this.#deactivateTimer = null;
@@ -143,14 +157,16 @@ class HeaderMenu extends Component {
     const target = event.target;
     if (!(target instanceof Element) || !this.headerComponent) return;
 
-    if (this.#state.activeItem === null) {
+    // Keyboard focus should activate immediately — delaying it drops the submenu
+    // when a keyboard user tabs past an item faster than the delay window.
+    if (this.#state.activeItem === null && event.type !== 'focus') {
       // Menu is closed. Delay opening 300ms to verify intent
       this.#activateTimer = setTimeout(() => {
         this.#activateTimer = null;
         this.#doActivate(target);
       }, 300);
     } else {
-      // Menu is already open. Switch categories immediately (0ms delay)
+      // Menu is already open, or activation was triggered by keyboard focus: switch/open immediately
       this.#doActivate(target);
     }
   };

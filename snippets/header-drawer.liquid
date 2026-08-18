@@ -601,7 +601,8 @@
                                   %}
                                   {%- if filtered_size > 0 -%}
                                     {%- assign rendered_count = 0 -%}
-                                    {%- for i in (0..filtered_size) -%}
+                                    {%- assign last_index = filtered_size | minus: 1 -%}
+                                    {%- for i in (0..last_index) -%}
                                       {%- if rendered_count >= max_items -%}
                                         {%- break -%}
                                       {%- endif -%}
@@ -903,7 +904,8 @@
                 %}
                 {%- if filtered_size > 0 -%}
                   {%- assign rendered_count = 0 -%}
-                  {%- for i in (0..filtered_size) -%}
+                  {%- assign last_index = filtered_size | minus: 1 -%}
+                  {%- for i in (0..last_index) -%}
                     {%- if rendered_count >= max_items -%}
                       {%- break -%}
                     {%- endif -%}
@@ -1523,8 +1525,15 @@
     padding: var(--padding-xl) var(--padding-xl) var(--padding-xl) var(--padding-xs);
   }
 
-  .menu-drawer__localization {
-    display: none !important;
+  /* The mobile language/country form in header-actions.liquid (desktop:hidden, i.e. shown
+     below 750px) replaces this control on narrow viewports — hide it there to avoid a
+     duplicate switcher. On wider viewports the drawer can still appear (e.g. touch devices
+     like tablets in landscape, which force drawer mode regardless of width), so keep this
+     control visible there since no other language switcher is shown in that case. */
+  @media screen and (max-width: 749px) {
+    .menu-drawer__localization {
+      display: none !important;
+    }
   }
 
   .menu-drawer__localization:not(drawer-localization-component) .language-selector {

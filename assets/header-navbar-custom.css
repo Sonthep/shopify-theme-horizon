@@ -372,12 +372,6 @@
   color: var(--color-foreground);
 }
 
-/* Icon sizes closer to reference */
-  #header-component.header .header__column--right {
-    gap: 12px;
-  }
-}
-
 /* Logo vertical spacing: set 35px on top and bottom for visual balance */
 #header-component.header .logo-block {
   margin-block: 35px;

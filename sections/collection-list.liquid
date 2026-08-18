@@ -126,6 +126,22 @@
       grid-auto-columns: 33.333%;
     }
   }
+
+  /*
+   * base.css hides every slide except the first (`slideshow-slide:not([aria-hidden='false'])
+   * { content-visibility: hidden }`) — correct for a one-slide-at-a-time carousel, but this is
+   * a multi-column GRID carousel where several cards are already visible side by side within
+   * the current "page". assets/collection-browse-carousel.js disables Shopify's native
+   * autoplay/select() logic (see that file's header comment), which is what would normally
+   * keep aria-hidden in sync as the active slide changes — so it never runs here, and every
+   * card past the first stays aria-hidden and collapses to 0 height until scrolled into
+   * adjacency. Cards then pop in at full height as the page scrolls, causing layout shift.
+   * These cards are meant to be rendered up front, so opt this carousel out of the
+   * collapse-until-revealed behavior entirely.
+   */
+  [id$='_collections_browse'] slideshow-slide {
+    content-visibility: visible;
+  }
 {% endstylesheet %}
 
 {% schema %}

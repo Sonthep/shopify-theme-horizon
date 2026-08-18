@@ -2054,7 +2054,7 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
   overflow: hidden;
 }
 
-.deferred-media {
+deferred-media {
   /* The overflow hidden in the deferred-media won't let the button show the focus ring */
   &:has(:focus-visible) {
     outline: var(--focus-outline-width) solid currentcolor;
@@ -2080,13 +2080,13 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
   transition: opacity 0.3s ease;
 }
 
-.deferred-media img {
+deferred-media img {
   height: 100%;
   object-fit: cover;
   transition: opacity 0.3s ease;
 }
 
-.deferred-media iframe {
+deferred-media iframe {
   display: block;
   width: 100%;
   height: 100%;
@@ -2094,7 +2094,7 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
   aspect-ratio: var(--size-style-aspect-ratio, auto);
 }
 
-.deferred-media[data-media-loaded] img {
+deferred-media[data-media-loaded] img {
   opacity: 0;
 }
 
@@ -2127,7 +2127,7 @@ slideshow-slide .shopify-model-viewer-ui__controls-area.shopify-model-viewer-ui_
   }
 }
 
-.deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__poster-button ~ video) {
+deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__poster-button ~ video) {
   /* only apply this on the video block not product media */
   object-fit: cover;
   height: 100%;

@@ -1,176 +1,209 @@
-
 {%- liquid
   assign reading_speed = 200
   assign word_count = article.content | strip_html | split: ' ' | size
   assign read_time = word_count | divided_by: reading_speed | plus: 1
   assign share_url = request.origin | append: article.url
   assign share_title = article.title | url_encode
+  assign h2_count = article.content | split: '<h2' | size | minus: 1
 -%}
 
 <div class="article-body color-{{ section.settings.color_scheme }} spacing-style"
   style="{% render 'spacing-style', settings: section.settings %}">
 
-  {%- comment -%} Reading progress {%- endcomment -%}
-  <div class="article-progress" aria-hidden="true">
-    <div class="article-progress__fill" id="article-progress-fill"></div>
-  </div>
-
-  <div class="section">
-
-    {%- comment -%} Breadcrumb {%- endcomment -%}
+  <div class="article-container">
+    {%- comment -%} Top Breadcrumb {%- endcomment -%}
     <nav class="article-main__breadcrumb" aria-label="Breadcrumb">
-      <a href="{{ routes.root_url }}">Home</a>
-      <span aria-hidden="true">›</span>
+      <a href="{{ routes.root_url }}" class="article-breadcrumb__link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </a>
+      <span class="article-breadcrumb__sep" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </span>
       {%- if article.blog != blank -%}
-        <a href="{{ article.blog.url }}">{{ article.blog.title }}</a>
-        <span aria-hidden="true">›</span>
+        <a href="{{ article.blog.url }}" class="article-breadcrumb__link">{{ article.blog.title }}</a>
+        <span class="article-breadcrumb__sep" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </span>
       {%- endif -%}
-      <span aria-current="page">{{ article.title | truncate: 40 }}</span>
+      <span class="article-breadcrumb__current" aria-current="page">{{ article.title | truncate: 45 }}</span>
     </nav>
 
     <div class="article-header">
-      {%- comment -%} Tags {%- endcomment -%}
+      {%- comment -%} Category & Tags {%- endcomment -%}
       {%- if article.tags.size > 0 and section.settings.show_tags -%}
         <div class="article-main__tags">
           {%- for tag in article.tags limit: 3 -%}
-            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-pill">{{ tag }}</a>
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-pill">
+              <span class="article-tag-pill__dot"></span>
+              {{ tag }}
+            </a>
           {%- endfor -%}
         </div>
       {%- endif -%}
 
-      {%- comment -%} Title {%- endcomment -%}
+      {%- comment -%} Main Title {%- endcomment -%}
       <h1 class="article-main__title">{{ article.title }}</h1>
 
-      {%- comment -%} Meta row {%- endcomment -%}
+      {%- comment -%} Meta Row {%- endcomment -%}
       <div class="article-main__meta">
-        {%- if article.author != blank -%}
-          <div class="article-main__meta-item article-main__meta-item--author">
-            <span class="article-avatar">{{ article.author | slice: 0, 1 | upcase }}</span>
-            <span>{{ article.author }}</span>
-          </div>
-        {%- endif -%}
-        <div class="article-main__meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time>
-        </div>
-        <div class="article-main__meta-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>{{ read_time }} min read</span>
+        <div class="article-main__meta-left">
+          {%- if article.author != blank -%}
+            <div class="article-main__meta-item article-main__meta-item--author">
+              <span class="article-avatar">{{ article.author | slice: 0, 1 | upcase }}</span>
+              <div class="article-author-info">
+                <span class="article-author-name">{{ article.author }}</span>
+                <span class="article-author-badge">Verified Specialist</span>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_date -%}
+            <div class="article-main__meta-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_read_time -%}
+            <div class="article-main__meta-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>{{ read_time }} min read</span>
+            </div>
+          {%- endif -%}
         </div>
 
         {%- if section.settings.show_share_sidebar -%}
           <div class="article-share-inline">
-            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Facebook">
+            <span class="article-share-inline__label">Share:</span>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Facebook" class="article-share-btn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
-            <a href="https://social-plugins.line.me/lineit/share?url={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on LINE">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
+            <a href="https://social-plugins.line.me/lineit/share?url={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on LINE" class="article-share-btn article-share-btn--line">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
             </a>
-            <button class="article-share-inline__copy" id="copy-link-btn" aria-label="Copy link" data-url="{{ share_url | escape }}">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ share_url | url_encode }}&title={{ share_title }}" target="_blank" rel="noopener" aria-label="Share on LinkedIn" class="article-share-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <button class="article-share-btn js-copy-link" aria-label="Copy link" data-url="{{ share_url | escape }}" title="Copy Link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             </button>
           </div>
         {%- endif -%}
       </div>
     </div>
-  </div>
 
-  {%- comment -%} Featured image {%- endcomment -%}
-  {%- if article.image -%}
-    <div class="article-hero-media">
-      {{
-        article.image
-        | image_url: width: 1600
-        | image_tag: loading: 'eager', fetchpriority: 'high', class: 'article-hero-media__img', widths: '640,960,1280,1600', sizes: '100vw'
-      }}
-    </div>
-  {%- endif -%}
-
-  <div class="section">
     <div class="article-layout">
 
       {%- comment -%} ── MAIN COLUMN ── {%- endcomment -%}
       <article class="article-main" id="article-content">
 
-        {%- comment -%} Floating share dock (desktop) {%- endcomment -%}
-        {%- if section.settings.show_share_sidebar -%}
-          <div class="article-share-dock">
-            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on Facebook">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-            </a>
-            <a href="https://social-plugins.line.me/lineit/share?url={{ share_url | url_encode }}" target="_blank" rel="noopener" aria-label="Share on LINE">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ share_url | url_encode }}&title={{ share_title }}" target="_blank" rel="noopener" aria-label="Share on LinkedIn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
+        {%- comment -%} Featured Hero Image (Inside main column) {%- endcomment -%}
+        {%- if article.image -%}
+          <div class="article-featured-media">
+            {{
+              article.image
+              | image_url: width: 1200
+              | image_tag: loading: 'eager', fetchpriority: 'high', class: 'article-featured-media__img', widths: '480,640,800,1000,1200', sizes: '(min-width: 1024px) 780px, 100vw'
+            }}
           </div>
         {%- endif -%}
 
-        {%- comment -%} Excerpt / lead {%- endcomment -%}
+        {%- comment -%} Excerpt / Lead Paragraph {%- endcomment -%}
         {%- if article.excerpt != blank and section.settings.show_excerpt -%}
-          <p class="article-lead">{{ article.excerpt | strip_html }}</p>
+          <div class="article-lead">
+            <p>{{ article.excerpt | strip_html }}</p>
+          </div>
         {%- endif -%}
 
-        {%- comment -%} Table of contents {%- endcomment -%}
-        {%- if section.settings.show_toc -%}
-          <details class="article-toc" id="article-toc" open>
-            <summary>
-              Table of Contents
-              <svg class="article-toc__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </summary>
-            <ol class="article-toc__list" id="article-toc-list"></ol>
-          </details>
+        {%- comment -%} Table of Contents (Auto Generated & Interactive) {%- endcomment -%}
+        {%- if section.settings.show_toc and h2_count >= 2 -%}
+          <div class="article-toc-wrapper">
+            <details class="article-toc" id="article-toc" open>
+              <summary>
+                <div class="article-toc__title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  <span>Table of Contents</span>
+                  <span class="article-toc__count" id="article-toc-count">{{ h2_count }} Sections</span>
+                </div>
+                <svg class="article-toc__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <ol class="article-toc__list" id="article-toc-list"></ol>
+            </details>
+          </div>
         {%- endif -%}
 
-        {%- comment -%} Body content {%- endcomment -%}
+        {%- comment -%} Body Content (RTE) {%- endcomment -%}
         <div class="article-rte rte" id="article-rte">
           {{ article.content }}
         </div>
 
-        {%- comment -%} Tags footer {%- endcomment -%}
+        {%- comment -%} Tags Footer {%- endcomment -%}
         {%- if article.tags.size > 0 and section.settings.show_sidebar_tags -%}
           <div class="article-tag-footer">
-            {%- for tag in article.tags -%}
-              <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-footer__link">{{ tag }}</a>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-
-        {%- comment -%} Author card {%- endcomment -%}
-        {%- if article.author != blank -%}
-          <div class="article-author-card">
-            <span class="article-avatar article-avatar--lg">{{ article.author | slice: 0, 1 | upcase }}</span>
-            <div>
-              <p class="article-author-card__name">{{ article.author }}</p>
-              <p class="article-author-card__label">Author</p>
+            <span class="article-tag-footer__label">Article Topics:</span>
+            <div class="article-tag-footer__list">
+              {%- for tag in article.tags -%}
+                <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article-tag-footer__link"># {{ tag }}</a>
+              {%- endfor -%}
             </div>
           </div>
         {%- endif -%}
 
-        {%- comment -%} Prev / next {%- endcomment -%}
+        {%- comment -%} Author Bio Box {%- endcomment -%}
+        {%- if article.author != blank -%}
+          <div class="article-author-card">
+            <span class="article-avatar article-avatar--lg">{{ article.author | slice: 0, 1 | upcase }}</span>
+            <div class="article-author-card__content">
+              <div class="article-author-card__head">
+                <p class="article-author-card__name">{{ article.author }}</p>
+                <span class="article-author-card__badge">Author & Consultant</span>
+              </div>
+              <p class="article-author-card__bio">
+                Specialized in commercial kitchen engineering, culinary workflow optimization, and high-efficiency foodservice equipment solutions for hotels, restaurants, and catering businesses across Thailand.
+              </p>
+              <div class="article-author-card__links">
+                <a href="{{ blog.url }}" class="article-author-card__link">
+                  View all articles by {{ article.author }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Previous / Next Navigation {%- endcomment -%}
         {%- if blog.previous_article or blog.next_article -%}
           <div class="article-prev-next">
             {%- if blog.previous_article -%}
-              <a href="{{ blog.previous_article.url }}" class="article-pn-card">
-                <small>← Previous</small>
-                <p>{{ blog.previous_article.title }}</p>
+              <a href="{{ blog.previous_article.url }}" class="article-pn-card article-pn-card--prev">
+                <div class="article-pn-card__header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                  <span>Previous Article</span>
+                </div>
+                <p class="article-pn-card__title">{{ blog.previous_article.title }}</p>
               </a>
-            {%- else -%}<span></span>{%- endif -%}
+            {%- else -%}
+              <div class="article-pn-card article-pn-card--placeholder"></div>
+            {%- endif -%}
+
             {%- if blog.next_article -%}
               <a href="{{ blog.next_article.url }}" class="article-pn-card article-pn-card--next">
-                <small>Next →</small>
-                <p>{{ blog.next_article.title }}</p>
+                <div class="article-pn-card__header">
+                  <span>Next Article</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+                <p class="article-pn-card__title">{{ blog.next_article.title }}</p>
               </a>
             {%- endif -%}
           </div>
         {%- endif -%}
       </article>
 
-      {%- comment -%} ── SIDEBAR ── {%- endcomment -%}
+      {%- comment -%} ── SIDEBAR (B2B Conversion & Navigation) ── {%- endcomment -%}
       <aside class="article-sidebar" aria-label="Sidebar">
 
-        {%- comment -%} Promo CTA (from section settings) {%- endcomment -%}
+        {%- comment -%} Promo / Solution Card {%- endcomment -%}
         {%- if section.settings.show_cta -%}
           <div class="article-side-card article-promo-card">
             {%- if section.settings.cta_image != blank -%}
@@ -179,15 +212,50 @@
               </div>
             {%- endif -%}
             <div class="article-promo-card__body">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D31225" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-              <p class="article-side-card__title">{{ section.settings.cta_title }}</p>
+              <div class="article-promo-card__icon-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              </div>
+              <p class="article-side-card__title">{{ section.settings.cta_title | default: 'Complete Solutions for Commercial Kitchens' }}</p>
               <ul class="article-promo-card__list">
-                {%- if section.settings.cta_bullet_1 != blank -%}<li>{{ section.settings.cta_bullet_1 }}</li>{%- endif -%}
-                {%- if section.settings.cta_bullet_2 != blank -%}<li>{{ section.settings.cta_bullet_2 }}</li>{%- endif -%}
-                {%- if section.settings.cta_bullet_3 != blank -%}<li>{{ section.settings.cta_bullet_3 }}</li>{%- endif -%}
+                {%- if section.settings.cta_bullet_1 != blank -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>{{ section.settings.cta_bullet_1 }}</span>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Custom 3D Kitchen Design & Layout</span>
+                  </li>
+                {%- endif -%}
+                {%- if section.settings.cta_bullet_2 != blank -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>{{ section.settings.cta_bullet_2 }}</span>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Direct Import Commercial Equipment</span>
+                  </li>
+                {%- endif -%}
+                {%- if section.settings.cta_bullet_3 != blank -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>{{ section.settings.cta_bullet_3 }}</span>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Turnkey Installation & 24/7 Service</span>
+                  </li>
+                {%- endif -%}
               </ul>
               {%- if section.settings.cta_button_link != blank -%}
-                <a href="{{ section.settings.cta_button_link }}" class="btn btn--outline-red">{{ section.settings.cta_button_text }}</a>
+                <a href="{{ section.settings.cta_button_link }}" class="btn btn--outline-primary article-promo-card__btn">
+                  {{ section.settings.cta_button_text | default: 'View Our Services' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </a>
               {%- endif -%}
             </div>
           </div>
@@ -198,42 +266,124 @@
 
             {%- when 'quote_form' -%}
               <div class="article-side-card article-quote-card" {{ block.shopify_attributes }}>
-                <p class="article-quote-card__title">Request a Quote</p>
-                <p class="article-quote-card__sub">Get a special offer tailored for you</p>
-                <ul class="article-quote-card__list">
-                  <li>Free on-site assessment</li>
-                  <li>Free 3D design</li>
-                  <li>Free kitchen planning consultation</li>
-                </ul>
-                {%- form 'contact', id: 'article-quote-form' -%}
+                <div class="article-quote-card__badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <span>Free Consultation</span>
+                </div>
+                <p class="article-quote-card__title">Request a Project Quote</p>
+                <p class="article-quote-card__sub">Get specialized commercial kitchen advice & custom quotation.</p>
+                
+                <div class="article-quote-card__perks">
+                  <div class="article-quote-perk">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Free on-site assessment</span>
+                  </div>
+                  <div class="article-quote-perk">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Free 3D kitchen layout</span>
+                  </div>
+                </div>
+
+                {%- form 'contact', id: 'article-quote-form', class: 'article-quote-card__form' -%}
                   {%- if form.posted_successfully? -%}
-                    <p class="article-quote-card__success">Thank you! Our team will contact you shortly.</p>
+                    <div class="article-quote-card__success">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="9 12 11 14 15 10"></polyline></svg>
+                      <p>Thank you! Our engineering team will contact you within 24 hours.</p>
+                    </div>
                   {%- else -%}
-                    <button type="submit" class="btn btn--gold article-quote-card__submit">
-                      Get a Quote Now
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    {%- if form.errors -%}
+                      <p class="article-quote-card__error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+                    {%- endif -%}
+                    <input type="hidden" name="contact[body]" value="Quote request from blog article: {{ article.title | escape }} ({{ share_url }})">
+                    
+                    <div class="article-quote-input-group">
+                      <label class="visually-hidden" for="ArticleQuote-name">{{ 'blocks.contact_form.name' | t }}</label>
+                      <input type="text" id="ArticleQuote-name" class="article-quote-card__input" name="contact[name]" autocomplete="name" placeholder="Your Name / Business Name" required>
+                    </div>
+
+                    <div class="article-quote-input-group">
+                      <label class="visually-hidden" for="ArticleQuote-phone">{{ 'blocks.contact_form.phone' | t }}</label>
+                      <input type="tel" id="ArticleQuote-phone" class="article-quote-card__input" name="contact[phone]" autocomplete="tel" pattern="[0-9\-+]*" placeholder="Phone Number (e.g. 081-234-5678)" required>
+                    </div>
+
+                    <div class="article-quote-input-group">
+                      <label class="visually-hidden" for="ArticleQuote-email">{{ 'blocks.contact_form.email' | t }}</label>
+                      <input type="email" id="ArticleQuote-email" class="article-quote-card__input" name="contact[email]" autocomplete="email" placeholder="Email Address" required>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary article-quote-card__submit">
+                      <span>Get Free Quotation</span>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                   {%- endif -%}
                 {%- endform -%}
+
+                <div class="article-quote-card__direct">
+                  <span>Or contact directly:</span>
+                  <div class="article-quote-card__direct-actions">
+                    <a href="tel:024237575" class="article-direct-btn">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      <span>02-423-7575</span>
+                    </a>
+                    <a href="https://line.me/ti/p/~@sevenfive" target="_blank" rel="noopener" class="article-direct-btn article-direct-btn--line">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 10.5c0-4.6-4.7-8.3-10.5-8.3S1.5 5.9 1.5 10.5c0 4.1 3.7 7.7 8.6 8.2.3 0 .9.2 1 .7.1.4-.1.9-.2 1.4l-.3 1c-.1.3-.2 1.1.9 1.5.8.3 2-.1 3.2-1.2 1.4-1.3 4.2-4.1 5.4-5.6 1.6-1.7 2.4-3.6 2.4-6z"/></svg>
+                      <span>LINE: @sevenfive</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            {%- when 'download_brochure' -%}
+              <div class="article-side-card article-brochure-card" {{ block.shopify_attributes }}>
+                <div class="article-brochure-card__top">
+                  <span class="article-brochure-card__badge">PDF CATALOGUE</span>
+                  <p class="article-side-card__title">2026 Commercial Kitchen Catalog</p>
+                  <p class="article-brochure-card__sub">Comprehensive specifications, energy ratings, and commercial equipment pricing.</p>
+                </div>
+                {%- if block.settings.image != blank -%}
+                  <div class="article-brochure-card__image">
+                    {{ block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy' }}
+                  </div>
+                {%- else -%}
+                  <div class="article-brochure-card__preview">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span class="article-brochure-card__file-meta">50,000+ SKUs • Full Spec Sheets</span>
+                  </div>
+                {%- endif -%}
+                <a href="{{ block.settings.brochure_file | default: '/pages/catalogue' }}" class="btn btn--primary article-brochure-card__btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Catalogue Free</span>
+                </a>
               </div>
 
             {%- when 'recommended_products' -%}
               {%- assign collection = collections[block.settings.collection] -%}
-              {%- if collection != blank -%}
-                <div class="article-side-card" {{ block.shopify_attributes }}>
+              {%- if collection != blank and collection.products.size > 0 -%}
+                <div class="article-side-card article-products-card" {{ block.shopify_attributes }}>
                   <div class="article-side-card__head">
-                    <p class="article-side-card__title">Recommended Products</p>
-                    <a href="{{ collection.url }}" class="article-side-card__view-all">View All</a>
+                    <p class="article-side-card__title">Featured Equipment</p>
+                    <a href="{{ collection.url }}" class="article-side-card__view-all">View All →</a>
                   </div>
                   <div class="article-related-list">
                     {%- for product in collection.products limit: 3 -%}
                       <a href="{{ product.url }}" class="article-related-item">
                         <span class="article-related-item__thumb">
-                          {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy' }}
+                          {%- if product.featured_image -%}
+                            {{ product.featured_image | image_url: width: 140 | image_tag: loading: 'lazy' }}
+                          {%- else -%}
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                          {%- endif -%}
                         </span>
                         <span class="article-related-item__info">
                           <span class="article-related-item__title">{{ product.title }}</span>
-                          <span class="article-related-item__sub">Starting at {{ product.price | money_without_trailing_zeros }}</span>
+                          <span class="article-related-item__sub">
+                            {%- if product.price > 0 -%}
+                              Starting at {{ product.price | money }}
+                            {%- else -%}
+                              Price on Request
+                            {%- endif -%}
+                          </span>
+                          <span class="article-related-item__action">View Specs →</span>
                         </span>
                       </a>
                     {%- endfor -%}
@@ -241,30 +391,15 @@
                 </div>
               {%- endif -%}
 
-            {%- when 'download_brochure' -%}
-              <div class="article-side-card article-brochure-card" {{ block.shopify_attributes }}>
-                <p class="article-side-card__title article-side-card__title--light">Download Brochure</p>
-                <p class="article-brochure-card__sub">Get the latest product catalogs from us</p>
-                {%- if block.settings.image != blank -%}
-                  <div class="article-brochure-card__image">
-                    {{ block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy' }}
-                  </div>
-                {%- endif -%}
-                <a href="{{ block.settings.brochure_file | default: '#' }}" class="btn btn--gold article-brochure-card__btn">
-                  Download Now
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                </a>
-              </div>
-
           {%- endcase -%}
         {%- endfor -%}
 
-        {%- comment -%} Related posts {%- endcomment -%}
+        {%- comment -%} Related Articles {%- endcomment -%}
         {%- if section.settings.show_related and blog.articles_count > 1 -%}
-          <div class="article-side-card">
+          <div class="article-side-card article-related-card">
             <div class="article-side-card__head">
-              <p class="article-side-card__title">Related Articles</p>
-              <a href="{{ blog.url }}" class="article-side-card__view-all">View All</a>
+              <p class="article-side-card__title">Related Guides</p>
+              <a href="{{ blog.url }}" class="article-side-card__view-all">All Articles →</a>
             </div>
             <div class="article-related-list">
               {%- assign count = 0 -%}
@@ -280,8 +415,9 @@
                         {%- endif -%}
                       </span>
                       <span class="article-related-item__info">
+                        <span class="article-related-item__date">{{ related.published_at | date: '%b %d, %Y' }}</span>
                         <span class="article-related-item__title">{{ related.title }}</span>
-                        <span class="article-related-item__link">Read More
+                        <span class="article-related-item__link">Read Article
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </span>
                       </span>
@@ -297,33 +433,38 @@
 
       </aside>
     </div>
-  </div>
 
-  {%- comment -%} Bottom CTA {%- endcomment -%}
-  {%- if section.settings.show_bottom_cta -%}
-    <div class="section">
+    {%- comment -%} Full-Width Bottom B2B Consultation CTA {%- endcomment -%}
+    {%- if section.settings.show_bottom_cta -%}
       <div class="article-bottom-cta">
-        <div class="article-bottom-cta__text">
-          <p class="article-bottom-cta__title">{{ section.settings.bottom_cta_title }}</p>
-          <p class="article-bottom-cta__sub">{{ section.settings.bottom_cta_text }}</p>
+        <div class="article-bottom-cta__content">
+          <div class="article-bottom-cta__badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Sevenfive Commercial Kitchen Engineering</span>
+          </div>
+          <h2 class="article-bottom-cta__title">{{ section.settings.bottom_cta_title | default: 'Planning a Commercial Kitchen or Upgrading Your Equipment?' }}</h2>
+          <p class="article-bottom-cta__sub">{{ section.settings.bottom_cta_text | default: 'Consult with Sevenfive specialists for turnkey commercial kitchen design, MEP engineering, high-efficiency equipment, and 24/7 after-sales service nationwide.' }}</p>
           <div class="article-bottom-cta__actions">
-            {%- if section.settings.bottom_cta_btn_1_link != blank -%}
-              <a href="{{ section.settings.bottom_cta_btn_1_link }}" class="btn btn--red">{{ section.settings.bottom_cta_btn_1_text }}</a>
-            {%- endif -%}
-            {%- if section.settings.bottom_cta_btn_2_link != blank -%}
-              <a href="{{ section.settings.bottom_cta_btn_2_link }}" class="btn btn--outline-white">{{ section.settings.bottom_cta_btn_2_text }}</a>
-            {%- endif -%}
+            <a href="{{ section.settings.bottom_cta_btn_1_link | default: '/pages/contact' }}" class="btn btn--primary btn--lg">
+              <span>{{ section.settings.bottom_cta_btn_1_text | default: 'Request Free Consultation' }}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+            <a href="{{ section.settings.bottom_cta_btn_2_link | default: '/collections/all' }}" class="btn btn--outline-light btn--lg">
+              <span>{{ section.settings.bottom_cta_btn_2_text | default: 'Browse Commercial Equipment' }}</span>
+            </a>
           </div>
         </div>
-        {%- if section.settings.bottom_cta_image != blank -%}
-          <div class="article-bottom-cta__image">
-            {{ section.settings.bottom_cta_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
-          </div>
-        {%- endif -%}
       </div>
-    </div>
-  {%- endif -%}
+    {%- endif -%}
 
+  </div>
+
+</div>
+
+{%- comment -%} Copy Link Toast Notification {%- endcomment -%}
+<div class="article-toast" id="article-toast" role="status" aria-live="polite">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  <span>Article link copied to clipboard!</span>
 </div>
 
 <script>
@@ -335,299 +476,1375 @@
       var rte = document.getElementById('article-rte');
       var list = document.getElementById('article-toc-list');
       var toc = document.getElementById('article-toc');
+      var countEl = document.getElementById('article-toc-count');
       if (!rte || !list || !toc) return;
+
       var headings = rte.querySelectorAll('h2');
-      if (headings.length < 2) { toc.style.display = 'none'; return; }
+      if (headings.length < 2) {
+        var wrapper = toc.closest('.article-toc-wrapper');
+        if (wrapper) wrapper.style.display = 'none';
+        return;
+      }
+
+      if (countEl) {
+        countEl.textContent = headings.length + ' Sections';
+      }
 
       var items = '';
       headings.forEach(function(h, i) {
-        if (!h.id) h.id = 'heading-' + i;
+        if (!h.id) h.id = 'section-' + (i + 1);
         var num = (i + 1).toString().padStart(2, '0');
+        
+        // Enhance H2 with numbered pill badge if not already added
         if (!h.querySelector('.article-h2__num')) {
-          h.innerHTML = '<span class="article-h2__num">' + num + '</span> ' + h.innerHTML;
+          var cleanText = h.textContent.replace(/^\d+\s*/, '').trim();
+          h.innerHTML = '<span class="article-h2__num">' + num + '</span> <span class="article-h2__text">' + cleanText + '</span>';
         }
-        items += '<li><a href="#' + h.id + '"><span>' + num + '</span> ' + h.textContent.replace(/^\d+\s*/, '') + '</a></li>';
+        
+        var linkText = h.querySelector('.article-h2__text') ? h.querySelector('.article-h2__text').textContent : h.textContent.replace(/^\d+\s*/, '');
+        items += '<li><a href="#' + h.id + '" class="article-toc__item"><span class="article-toc__num">' + num + '</span><span class="article-toc__text">' + linkText + '</span></a></li>';
       });
       list.innerHTML = items;
 
-      var tocLinks = list.querySelectorAll('a');
+      // ScrollSpy Observer
+      var tocLinks = list.querySelectorAll('.article-toc__item');
       var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             tocLinks.forEach(function(link) {
-              link.classList.toggle('is-active', link.getAttribute('href') === '#' + entry.target.id);
+              var isCurrent = link.getAttribute('href') === '#' + entry.target.id;
+              link.classList.toggle('is-active', isCurrent);
             });
           }
         });
-      }, { rootMargin: '-20% 0px -60% 0px' });
-      headings.forEach(function(h) { observer.observe(h); });
-    }
+      }, { rootMargin: '-10% 0px -70% 0px' });
 
-    function bindCopyButtons() {
-      document.querySelectorAll('#copy-link-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          navigator.clipboard.writeText(btn.dataset.url).then(function() {
-            btn.classList.add('is-copied');
-            setTimeout(function() { btn.classList.remove('is-copied'); }, 2000);
-          });
+      headings.forEach(function(h) { observer.observe(h); });
+
+      // Smooth scroll for TOC links
+      tocLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = this.getAttribute('href').substring(1);
+          var targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            var yOffset = -90;
+            var y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
         });
       });
     }
 
-    function bindProgress() {
-      var fill = document.getElementById('article-progress-fill');
-      var content = document.getElementById('article-content');
-      if (!fill || !content) return;
-      function update() {
-        var rect = content.getBoundingClientRect();
-        var total = content.offsetHeight - window.innerHeight;
-        var scrolled = -rect.top;
-        var pct = total > 0 ? Math.min(100, Math.max(0, (scrolled / total) * 100)) : 0;
-        fill.style.width = pct + '%';
+    function showToast(message) {
+      var toast = document.getElementById('article-toast');
+      if (!toast) return;
+      if (message) {
+        var span = toast.querySelector('span');
+        if (span) span.textContent = message;
       }
-      document.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      update();
+      toast.classList.add('is-visible');
+      setTimeout(function() {
+        toast.classList.remove('is-visible');
+      }, 2500);
+    }
+
+    function bindCopyButtons() {
+      document.querySelectorAll('.js-copy-link').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var url = btn.dataset.url || window.location.href;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() {
+              btn.classList.add('is-copied');
+              showToast('Article link copied to clipboard!');
+              setTimeout(function() { btn.classList.remove('is-copied'); }, 2000);
+            }).catch(function() {
+              fallbackCopy(url);
+            });
+          } else {
+            fallbackCopy(url);
+          }
+        });
+      });
+    }
+
+    function fallbackCopy(text) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Article link copied to clipboard!');
+      } catch (err) {
+        prompt('Copy this link:', text);
+      }
+      document.body.removeChild(textarea);
     }
 
     function init() {
       buildTOC();
       bindCopyButtons();
-      bindProgress();
     }
 
-    document.addEventListener('DOMContentLoaded', init);
-    if (document.readyState !== 'loading') init();
+    if (document.readyState !== 'loading') {
+      init();
+    } else {
+      document.addEventListener('DOMContentLoaded', init);
+    }
   })();
 </script>
 
 {% stylesheet %}
+  /* ══════════════════════════════════════════════════════════════════
+     SEVENFIVE B2B PREMIUM ARTICLE DESIGN SYSTEM
+     ══════════════════════════════════════════════════════════════════ */
   .article-body {
-    --ab-ink: #1C1F1D;
-    --ab-ink-soft: #5E6A63;
-    --ab-line: #E3E8E4;
-    --ab-green-900: #123B2B;
-    --ab-green-700: #1F6B4D;
-    --ab-green-tint: #F0F6F2;
-    --ab-gold: #D1B074;
-    --ab-gold-tint: #FBF3E0;
-    --ab-red: #D31225;
-    --ab-radius-md: 14px;
-    --ab-shadow-sm: 0 1px 2px rgba(18, 59, 43, .06);
-    --ab-shadow-md: 0 8px 24px rgba(18, 59, 43, .08);
+    --sf-primary: #1F6B4D;
+    --sf-primary-hover: #17553D;
+    --sf-primary-dark: #123B2B;
+    --sf-surface: #FFFFFF;
+    --sf-surface-soft: #F3F8F5;
+    --sf-surface-tint: #EAF2EE;
+    --sf-border: #D9E3DD;
+    --sf-border-light: #EBEFE8;
+    --sf-text: #1C1F1D;
+    --sf-text-muted: #5E6A63;
+    --sf-text-subtle: #87948C;
+    --sf-radius-sm: 8px;
+    --sf-radius-md: 12px;
+    --sf-radius-lg: 16px;
+    --sf-radius-xl: 20px;
+    --sf-shadow-sm: 0 1px 3px rgba(18, 59, 43, 0.05);
+    --sf-shadow-md: 0 8px 24px rgba(18, 59, 43, 0.07);
+    --sf-shadow-lg: 0 16px 36px rgba(18, 59, 43, 0.10);
+    --sf-transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    color: var(--sf-text);
+    background-color: var(--sf-surface);
+    font-family: inherit;
+    line-height: 1.6;
   }
 
-  /* ── Progress bar ── */
-  .article-progress { position: sticky; top: 0; height: 3px; background: var(--ab-line); z-index: 30; }
-  .article-progress__fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--ab-gold), var(--ab-red)); transition: width .1s linear; }
+  /* ── Article Container ──────────────────────────────────────────── */
+  .article-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+    width: 100%;
+  }
 
-  /* ── Header ── */
+  /* ── Breadcrumb ─────────────────────────────────────────────────── */
   .article-main__breadcrumb {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; color: var(--ab-ink-soft);
-    margin-bottom: 24px; padding-top: 40px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--sf-text-muted);
+    padding-top: 28px;
+    margin-bottom: 20px;
   }
-  .article-main__breadcrumb a { color: var(--ab-green-700); text-decoration: none; }
-  .article-main__breadcrumb a:hover { text-decoration: underline; }
+  .article-breadcrumb__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sf-text-muted);
+    text-decoration: none;
+    transition: color var(--sf-transition);
+  }
+  .article-breadcrumb__link:hover {
+    color: var(--sf-primary);
+  }
+  .article-breadcrumb__sep {
+    color: var(--sf-text-subtle);
+    display: inline-flex;
+    align-items: center;
+  }
+  .article-breadcrumb__current {
+    color: var(--sf-text);
+    font-weight: 500;
+  }
 
-  .article-header { max-width: 820px; }
-  .article-main__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  /* ── Article Header ─────────────────────────────────────────────── */
+  .article-header {
+    max-width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .article-main__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
   .article-tag-pill {
-    display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .03em; color: var(--ab-green-700); background: var(--ab-green-tint); padding: 5px 12px;
-    border-radius: 100px; text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sf-primary-dark);
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border);
+    padding: 6px 14px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all var(--sf-transition);
   }
-  .article-tag-pill:hover { background: #E1EEE6; }
+  .article-tag-pill:hover {
+    background: var(--sf-surface-tint);
+    border-color: var(--sf-primary);
+    color: var(--sf-primary);
+    transform: translateY(-1px);
+  }
+  .article-tag-pill__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--sf-primary);
+  }
 
-  .article-main__title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.2; color: var(--ab-ink); margin: 0 0 20px; letter-spacing: -.01em; }
+  .article-main__title {
+    font-size: clamp(26px, 3.2vw, 40px);
+    font-weight: 700;
+    line-height: 1.22;
+    color: var(--sf-text);
+    margin: 0 0 20px;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
 
   .article-main__meta {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding-bottom: 28px; border-bottom: 1px solid var(--ab-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--sf-border);
   }
-  .article-main__meta-item { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ab-ink-soft); }
-  .article-main__meta-item--author { font-weight: 600; color: var(--ab-ink); }
+  .article-main__meta-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .article-main__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--sf-text-muted);
+  }
+  .article-main__meta-item svg {
+    color: var(--sf-primary);
+    flex-shrink: 0;
+  }
+  .article-main__meta-item--author {
+    gap: 12px;
+  }
 
   .article-avatar {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--ab-green-700); color: #fff;
-    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-dark));
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(31, 107, 77, 0.25);
   }
-  .article-avatar--lg { width: 52px; height: 52px; font-size: 18px; }
-
-  .article-share-inline { margin-left: auto; display: flex; gap: 8px; }
-  .article-share-inline a,
-  .article-share-inline__copy {
-    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--ab-line); display: flex; align-items: center;
-    justify-content: center; color: var(--ab-ink-soft); background: #fff; cursor: pointer; transition: all .15s;
+  .article-avatar--lg {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
   }
-  .article-share-inline a:hover, .article-share-inline__copy:hover { border-color: var(--ab-green-700); color: var(--ab-green-700); background: var(--ab-green-tint); }
-  .article-share-inline__copy.is-copied { color: var(--ab-green-700); border-color: var(--ab-green-700); }
 
-  /* ── Hero image ── */
-  .article-hero-media { max-width: var(--page-width, 1240px); margin: 32px auto 0; padding-inline: var(--page-margin, 24px); }
-  .article-hero-media__img { width: 100%; height: auto; aspect-ratio: 16 / 8; object-fit: cover; border-radius: 20px; box-shadow: var(--ab-shadow-md); display: block; }
-
-  /* ── Layout ── */
-  .article-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; padding-block: 48px 32px; align-items: start; }
-  .article-main { min-width: 0; max-width: 760px; position: relative; }
-
-  /* ── Share dock ── */
-  .article-share-dock {
-    position: sticky; top: 100px; display: flex; flex-direction: column; gap: 10px; float: left; margin-left: -72px; margin-top: 6px;
+  .article-author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
-  .article-share-dock a {
-    width: 42px; height: 42px; border-radius: 50%; background: #fff; border: 1px solid var(--ab-line); display: flex;
-    align-items: center; justify-content: center; color: var(--ab-ink-soft); box-shadow: var(--ab-shadow-sm); transition: all .15s;
+  .article-author-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sf-text);
   }
-  .article-share-dock a:hover { background: var(--ab-green-900); color: #fff; border-color: var(--ab-green-900); transform: translateY(-2px); }
-  @media screen and (max-width: 1240px) { .article-share-dock { display: none; } }
+  .article-author-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--sf-primary);
+    letter-spacing: 0.02em;
+  }
 
-  /* ── Lead ── */
+  /* ── Header Share Buttons (Inline) ───────────────────────────────── */
+  .article-share-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .article-share-inline__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--sf-text-muted);
+    margin-right: 4px;
+  }
+  .article-share-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--sf-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sf-text-muted);
+    background: var(--sf-surface);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--sf-transition);
+  }
+  .article-share-btn:hover {
+    border-color: var(--sf-primary);
+    color: var(--sf-primary);
+    background: var(--sf-surface-soft);
+    transform: translateY(-1px);
+  }
+  .article-share-btn--line:hover {
+    color: #06C755;
+    border-color: #06C755;
+    background: #F0FAF3;
+  }
+  .article-share-btn.is-copied {
+    background: var(--sf-primary);
+    color: #FFFFFF;
+    border-color: var(--sf-primary);
+  }
+
+  /* ── Featured Image (Inside Main Column) ────────────────────────── */
+  .article-featured-media {
+    position: relative;
+    margin: 0 0 24px 0;
+    border-radius: var(--sf-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--sf-border);
+    box-shadow: var(--sf-shadow-sm);
+    aspect-ratio: 16 / 9;
+    max-height: 440px;
+    background: var(--sf-surface-soft);
+    width: 100%;
+  }
+  .article-featured-media__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .article-featured-media:hover .article-featured-media__img {
+    transform: scale(1.02);
+  }
+
+  /* ── 2-Column Main Layout ────────────────────────────────────────── */
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 36px;
+    padding-block: 20px 32px;
+    align-items: start;
+    position: relative;
+    width: 100%;
+  }
+  .article-main {
+    min-width: 0;
+    width: 100%;
+    position: relative;
+  }
+
+  /* ── Editorial Lead / Excerpt ────────────────────────────────────── */
   .article-lead {
-    font-size: 18px; line-height: 1.75; color: var(--ab-ink); position: relative; padding-left: 22px; margin: 8px 0 32px; font-weight: 500;
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--sf-text);
+    background: var(--sf-surface-soft);
+    border-left: 4px solid var(--sf-primary);
+    padding: 20px 24px;
+    border-radius: 0 var(--sf-radius-md) var(--sf-radius-md) 0;
+    margin: 8px 0 32px;
+    font-weight: 500;
   }
-  .article-lead::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: linear-gradient(180deg, var(--ab-gold), var(--ab-red)); border-radius: 3px; }
+  .article-lead p {
+    margin: 0;
+  }
 
-  /* ── TOC (collapsible) ── */
-  .article-toc { background: var(--ab-green-tint); border: 1px solid #D7E6DC; border-radius: var(--ab-radius-md); margin-bottom: 36px; overflow: hidden; }
+  /* ── Interactive Table of Contents (TOC) ────────────────────────── */
+  .article-toc-wrapper {
+    margin-bottom: 36px;
+  }
+  .article-toc {
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-md);
+    overflow: hidden;
+    transition: border-color var(--sf-transition);
+  }
+  .article-toc[open] {
+    border-color: #B5D4C3;
+  }
   .article-toc summary {
-    list-style: none; cursor: pointer; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-    font-weight: 700; font-size: 14.5px; color: var(--ab-green-900);
+    list-style: none;
+    cursor: pointer;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
   }
   .article-toc summary::-webkit-details-marker { display: none; }
-  .article-toc__chevron { transition: transform .2s; color: var(--ab-green-700); flex-shrink: 0; }
-  .article-toc[open] .article-toc__chevron { transform: rotate(180deg); }
-  .article-toc__list { list-style: none; padding: 0 20px 20px; margin: 0; display: flex; flex-direction: column; gap: 9px; }
-  .article-toc__list a { font-size: 13.5px; color: var(--ab-ink-soft); text-decoration: none; display: flex; gap: 10px; }
-  .article-toc__list a span { color: var(--ab-green-700); font-weight: 700; font-size: 12px; }
-  .article-toc__list a:hover, .article-toc__list a.is-active { color: var(--ab-green-900); }
+  
+  .article-toc__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--sf-primary-dark);
+  }
+  .article-toc__title svg {
+    color: var(--sf-primary);
+  }
+  .article-toc__count {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--sf-surface-tint);
+    color: var(--sf-primary-dark);
+    padding: 3px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+  .article-toc__chevron {
+    transition: transform var(--sf-transition);
+    color: var(--sf-primary);
+    flex-shrink: 0;
+  }
+  .article-toc[open] .article-toc__chevron {
+    transform: rotate(180deg);
+  }
+  .article-toc__list {
+    list-style: none;
+    padding: 0 20px 20px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid var(--sf-border-light);
+    padding-top: 14px;
+  }
+  .article-toc__item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--sf-text-muted);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: var(--sf-radius-sm);
+    transition: all var(--sf-transition);
+    line-height: 1.4;
+  }
+  .article-toc__num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sf-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .article-toc__text {
+    flex: 1;
+  }
+  .article-toc__item:hover {
+    background: var(--sf-surface-tint);
+    color: var(--sf-primary-dark);
+    transform: translateX(3px);
+  }
+  .article-toc__item.is-active {
+    background: var(--sf-surface-tint);
+    color: var(--sf-primary-dark);
+    font-weight: 600;
+    border-left: 2px solid var(--sf-primary);
+  }
 
-  /* ── Prose ── */
-  .article-rte { font-size: 16.5px; line-height: 1.85; color: #242B26; }
+  /* ── Rich Text Editorial Prose (RTE) ────────────────────────────── */
+  .article-rte {
+    font-size: 16.5px;
+    line-height: 1.85;
+    color: #242B26;
+  }
+  .article-rte p {
+    margin: 0 0 20px;
+  }
+  .article-rte strong {
+    color: var(--sf-text);
+    font-weight: 600;
+  }
+
   .article-rte h2 {
-    font-size: 25px; font-weight: 700; color: var(--ab-ink); margin: 48px 0 18px; display: flex; align-items: center;
-    gap: 12px; letter-spacing: -.01em;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--sf-text);
+    margin: 48px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    scroll-margin-top: 100px;
   }
   .article-h2__num {
-    width: 30px; height: 30px; flex-shrink: 0; border-radius: 8px; background: var(--ab-green-900); color: var(--ab-gold);
-    font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--sf-radius-sm);
+    background: var(--sf-primary-dark);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.02em;
+    box-shadow: 0 2px 6px rgba(18, 59, 43, 0.2);
   }
-  .article-rte h3 { font-size: 19px; font-weight: 700; margin: 32px 0 12px; }
-  .article-rte p { margin: 0 0 18px; }
-  .article-rte a { color: var(--ab-green-700); text-decoration: underline; text-underline-offset: 3px; }
-  .article-rte a:hover { color: var(--ab-green-900); }
-  .article-rte ul, .article-rte ol { margin: 0 0 20px 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .article-rte ul li { padding-left: 26px; position: relative; }
-  .article-rte ul li::before { content: ''; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 2px; background: var(--ab-gold); transform: rotate(45deg); }
-  .article-rte ol { list-style: decimal; margin-left: 22px; }
+  .article-h2__text {
+    flex: 1;
+  }
+
+  .article-rte h3 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--sf-text);
+    margin: 32px 0 14px;
+    line-height: 1.35;
+  }
+  .article-rte h4 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--sf-text);
+    margin: 24px 0 10px;
+  }
+
+  .article-rte a {
+    color: var(--sf-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 500;
+    transition: color var(--sf-transition);
+  }
+  .article-rte a:hover {
+    color: var(--sf-primary-dark);
+  }
+
+  .article-rte ul,
+  .article-rte ol {
+    margin: 0 0 24px 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .article-rte ul li {
+    padding-left: 26px;
+    position: relative;
+  }
+  .article-rte ul li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sf-primary);
+  }
+  .article-rte ol {
+    list-style: decimal;
+    margin-left: 24px;
+  }
+
   .article-rte blockquote {
-    margin: 32px 0; padding: 24px 28px; background: var(--ab-green-900); color: #fff; border-radius: var(--ab-radius-md);
-    font-size: 17px; font-weight: 600; line-height: 1.6; position: relative;
+    margin: 32px 0;
+    padding: 24px 28px;
+    background: var(--sf-surface-soft);
+    border-left: 4px solid var(--sf-primary);
+    border-radius: 0 var(--sf-radius-md) var(--sf-radius-md) 0;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--sf-primary-dark);
+    line-height: 1.65;
+    position: relative;
   }
-  .article-rte blockquote::before { content: '"'; position: absolute; top: -6px; left: 20px; font-size: 56px; color: var(--ab-gold); font-family: Georgia, serif; opacity: .5; }
-  .article-rte img { max-width: 100%; height: auto; border-radius: 12px; margin: 32px 0; display: block; }
-  .article-rte table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
-  .article-rte th, .article-rte td { padding: 10px 14px; border: 1px solid var(--ab-line); text-align: left; }
-  .article-rte th { background: var(--ab-green-tint); font-weight: 600; }
-  .article-rte hr { border: none; border-top: 1px solid var(--ab-line); margin: 40px 0; }
+  .article-rte blockquote::before {
+    content: '“';
+    font-size: 48px;
+    line-height: 1;
+    color: var(--sf-primary);
+    opacity: 0.35;
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-family: Georgia, serif;
+  }
 
-  /* ── Tag footer ── */
-  .article-tag-footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--ab-line); }
+  .article-rte img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--sf-radius-md);
+    border: 1px solid var(--sf-border);
+    margin: 32px 0 16px;
+    display: block;
+    box-shadow: var(--sf-shadow-sm);
+  }
+  .article-rte table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 14px;
+    border-radius: var(--sf-radius-md);
+    overflow: hidden;
+    border: 1px solid var(--sf-border);
+  }
+  .article-rte th,
+  .article-rte td {
+    padding: 12px 16px;
+    border: 1px solid var(--sf-border);
+    text-align: left;
+  }
+  .article-rte th {
+    background: var(--sf-surface-soft);
+    color: var(--sf-primary-dark);
+    font-weight: 700;
+  }
+  .article-rte tr:nth-child(even) {
+    background-color: #FAFCFA;
+  }
+  .article-rte hr {
+    border: none;
+    border-top: 1px solid var(--sf-border);
+    margin: 40px 0;
+  }
+
+  /* ── Tag Footer ─────────────────────────────────────────────────── */
+  .article-tag-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--sf-border);
+  }
+  .article-tag-footer__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-text-muted);
+  }
+  .article-tag-footer__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   .article-tag-footer__link {
-    display: inline-block; padding: 5px 14px; border: 1px solid var(--ab-line); border-radius: 100px; font-size: 13px;
-    color: var(--ab-ink-soft); text-decoration: none; transition: all .2s;
+    display: inline-block;
+    padding: 5px 14px;
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border);
+    border-radius: 100px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--sf-text-muted);
+    text-decoration: none;
+    transition: all var(--sf-transition);
   }
-  .article-tag-footer__link:hover { border-color: var(--ab-green-700); color: var(--ab-green-700); background: var(--ab-green-tint); }
+  .article-tag-footer__link:hover {
+    border-color: var(--sf-primary);
+    color: var(--sf-primary);
+    background: var(--sf-surface-tint);
+    transform: translateY(-1px);
+  }
 
-  /* ── Author card ── */
-  .article-author-card { margin-top: 40px; padding: 24px; background: #fff; border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); display: flex; gap: 16px; align-items: center; }
-  .article-author-card__name { font-size: 15px; font-weight: 700; margin: 0; color: var(--ab-ink); }
-  .article-author-card__label { font-size: 12.5px; color: var(--ab-ink-soft); margin: 2px 0 0; }
+  /* ── Author Bio Box ─────────────────────────────────────────────── */
+  .article-author-card {
+    margin-top: 36px;
+    padding: 28px;
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-lg);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-author-card__content {
+    flex: 1;
+    min-width: 0;
+  }
+  .article-author-card__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .article-author-card__name {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--sf-text);
+  }
+  .article-author-card__badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--sf-surface-tint);
+    color: var(--sf-primary-dark);
+    padding: 3px 8px;
+    border-radius: 100px;
+  }
+  .article-author-card__bio {
+    font-size: 13.5px;
+    color: var(--sf-text-muted);
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+  .article-author-card__links {
+    display: flex;
+  }
+  .article-author-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-primary);
+    text-decoration: none;
+    transition: gap var(--sf-transition);
+  }
+  .article-author-card__link:hover {
+    gap: 8px;
+    text-decoration: underline;
+  }
 
-  /* ── Prev/next ── */
-  .article-prev-next { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .article-pn-card { border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); padding: 18px 20px; background: #fff; text-decoration: none; transition: border-color .2s; }
-  .article-pn-card:hover { border-color: var(--ab-green-700); }
-  .article-pn-card small { color: var(--ab-ink-soft); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
-  .article-pn-card p { margin: 8px 0 0; font-weight: 700; font-size: 14px; line-height: 1.4; color: var(--ab-ink); }
-  .article-pn-card--next { text-align: right; grid-column: 2; }
-  @media screen and (max-width: 640px) { .article-prev-next { grid-template-columns: 1fr; } .article-pn-card--next { grid-column: 1; text-align: left; } }
+  /* ── Prev / Next Article Navigation ─────────────────────────────── */
+  .article-prev-next {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .article-pn-card {
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-md);
+    padding: 18px 20px;
+    background: var(--sf-surface);
+    text-decoration: none;
+    transition: all var(--sf-transition);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .article-pn-card:hover {
+    border-color: var(--sf-primary);
+    box-shadow: var(--sf-shadow-sm);
+    transform: translateY(-2px);
+  }
+  .article-pn-card__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sf-text-muted);
+  }
+  .article-pn-card__header svg {
+    color: var(--sf-primary);
+  }
+  .article-pn-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--sf-text);
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .article-pn-card--next {
+    text-align: right;
+  }
+  .article-pn-card--next .article-pn-card__header {
+    justify-content: flex-end;
+  }
 
-  /* ── Sidebar ── */
-  .article-sidebar { display: flex; flex-direction: column; gap: 22px; position: sticky; top: 88px; }
-  .article-side-card { background: #fff; border: 1px solid var(--ab-line); border-radius: var(--ab-radius-md); padding: 22px; }
-  .article-side-card__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
-  .article-side-card__title { font-size: 15px; font-weight: 700; color: var(--ab-ink); margin: 0; }
-  .article-side-card__title--light { color: #fff; }
-  .article-side-card__view-all { font-size: 12px; color: var(--ab-ink-soft); text-decoration: none; }
-  .article-side-card__view-all:hover { color: var(--ab-green-700); }
+  @media screen and (max-width: 640px) {
+    .article-prev-next {
+      grid-template-columns: 1fr;
+    }
+    .article-pn-card--next {
+      text-align: left;
+    }
+    .article-pn-card--next .article-pn-card__header {
+      justify-content: flex-start;
+    }
+  }
 
-  .article-promo-card { text-align: center; }
-  .article-promo-card__image { margin: -22px -22px 16px; overflow: hidden; }
-  .article-promo-card__image img { width: 100%; display: block; }
-  .article-promo-card__body { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .article-promo-card__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
-  .article-promo-card__list li { font-size: 13px; color: var(--ab-ink); padding-left: 20px; position: relative; }
-  .article-promo-card__list li::before { content: '✓'; position: absolute; left: 0; color: var(--ab-red); font-weight: 700; }
+  /* ══════════════════════════════════════════════════════════════════
+     SIDEBAR CARDS (B2B Conversion System)
+     ══════════════════════════════════════════════════════════════════ */
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 88px;
+  }
+  .article-side-card {
+    background: var(--sf-surface);
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-lg);
+    padding: 24px;
+    box-shadow: var(--sf-shadow-sm);
+    transition: box-shadow var(--sf-transition);
+  }
+  .article-side-card:hover {
+    box-shadow: var(--sf-shadow-md);
+  }
+  .article-side-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--sf-border-light);
+  }
+  .article-side-card__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--sf-text);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .article-side-card__view-all {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-primary);
+    text-decoration: none;
+  }
+  .article-side-card__view-all:hover {
+    text-decoration: underline;
+  }
 
-  .article-quote-card { background: var(--ab-green-900); color: #fff; }
-  .article-quote-card__title { font-size: 18px; font-weight: 700; color: var(--ab-gold); margin: 0 0 6px; }
-  .article-quote-card__sub { font-size: 13px; color: rgba(255,255,255,.7); margin: 0 0 16px; }
-  .article-quote-card__list { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-direction: column; gap: 8px; }
-  .article-quote-card__list li { font-size: 13px; display: flex; gap: 8px; align-items: flex-start; }
-  .article-quote-card__list li::before { content: '✓'; color: var(--ab-gold); font-weight: 700; }
-  .article-quote-card__submit { width: 100%; justify-content: center; }
-  .article-quote-card__success { font-size: 13px; color: var(--ab-gold); }
+  /* ── Promo Solution Card ────────────────────────────────────────── */
+  .article-promo-card {
+    text-align: left;
+    overflow: hidden;
+  }
+  .article-promo-card__image {
+    margin: -24px -24px 18px;
+    overflow: hidden;
+  }
+  .article-promo-card__image img {
+    width: 100%;
+    display: block;
+  }
+  .article-promo-card__icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--sf-radius-md);
+    background: var(--sf-surface-soft);
+    color: var(--sf-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    border: 1px solid var(--sf-border);
+  }
+  .article-promo-card__list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .article-promo-card__list li {
+    font-size: 13px;
+    color: var(--sf-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .article-promo-card__list li svg {
+    color: var(--sf-primary);
+    flex-shrink: 0;
+  }
+  .article-promo-card__btn {
+    width: 100%;
+    justify-content: center;
+  }
 
-  .article-brochure-card { background: linear-gradient(160deg, #1C1F1C, var(--ab-green-900)); color: #fff; text-align: center; }
-  .article-brochure-card__sub { font-size: 12.5px; color: rgba(255,255,255,.6); margin: 0 0 16px; }
-  .article-brochure-card__image { margin-bottom: 16px; }
-  .article-brochure-card__image img { max-width: 60%; margin: 0 auto; border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
-  .article-brochure-card__btn { width: 100%; justify-content: center; }
+  /* ── Request a Quote Card (Dark Green Luxury) ────────────────────── */
+  .article-quote-card {
+    background: linear-gradient(145deg, #123B2B 0%, #1A4F3A 100%);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .article-quote-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(52, 211, 153, 0.15);
+    color: #34D399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+  .article-quote-card__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0 0 6px;
+  }
+  .article-quote-card__sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0 0 16px;
+    line-height: 1.45;
+  }
+  .article-quote-card__perks {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .article-quote-perk {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .article-quote-perk svg {
+    color: #34D399;
+    flex-shrink: 0;
+  }
+  
+  .article-quote-card__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .article-quote-card__form input.article-quote-card__input,
+  .article-quote-card__form input[type="text"],
+  .article-quote-card__form input[type="tel"],
+  .article-quote-card__form input[type="email"] {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #34D399 !important;
+    background: rgba(18, 59, 43, 0.65) !important;
+    color: #FFFFFF !important;
+    font-size: 13.5px !important;
+    font-family: inherit !important;
+    line-height: 1.4 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: all var(--sf-transition) !important;
+    -webkit-appearance: none !important;
+  }
+  .article-quote-card__form input.article-quote-card__input::placeholder,
+  .article-quote-card__form input[type="text"]::placeholder,
+  .article-quote-card__form input[type="tel"]::placeholder,
+  .article-quote-card__form input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-size: 13px !important;
+  }
+  .article-quote-card__form input.article-quote-card__input:hover,
+  .article-quote-card__form input[type="text"]:hover,
+  .article-quote-card__form input[type="tel"]:hover,
+  .article-quote-card__form input[type="email"]:hover {
+    border-color: #6EE7B7 !important;
+    background: rgba(18, 59, 43, 0.8) !important;
+  }
+  .article-quote-card__form input.article-quote-card__input:focus,
+  .article-quote-card__form input[type="text"]:focus,
+  .article-quote-card__form input[type="tel"]:focus,
+  .article-quote-card__form input[type="email"]:focus {
+    border-color: #34D399 !important;
+    background: rgba(18, 59, 43, 0.9) !important;
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25) !important;
+  }
+  .article-quote-card__submit {
+    width: 100%;
+    justify-content: center;
+    background: #1F6B4D;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 4px;
+  }
+  .article-quote-card__submit:hover {
+    background: #288E67;
+  }
+  .article-quote-card__success {
+    background: rgba(52, 211, 153, 0.1);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    padding: 16px;
+    border-radius: var(--sf-radius-sm);
+    font-size: 13px;
+    color: #FFFFFF;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .article-quote-card__error {
+    font-size: 12.5px;
+    color: #FF8A80;
+    margin: 0 0 10px;
+  }
 
-  .article-related-list { display: flex; flex-direction: column; }
-  .article-related-item { display: flex; gap: 12px; align-items: flex-start; text-decoration: none; padding: 12px 0; border-bottom: 1px solid #F1F3F0; }
-  .article-related-item:last-child { border-bottom: none; }
+  .article-quote-card__direct {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .article-quote-card__direct-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .article-direct-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border-radius: var(--sf-radius-sm);
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--sf-transition);
+  }
+  .article-direct-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .article-direct-btn--line {
+    background: #06C755;
+    color: #FFFFFF;
+  }
+  .article-direct-btn--line:hover {
+    background: #05B34C;
+  }
+
+  /* ── Download Brochure Card ─────────────────────────────────────── */
+  .article-brochure-card {
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border);
+    text-align: center;
+  }
+  .article-brochure-card__badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--sf-primary);
+    background: var(--sf-surface-tint);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .article-brochure-card__sub {
+    font-size: 12.5px;
+    color: var(--sf-text-muted);
+    margin: 6px 0 16px;
+    line-height: 1.45;
+  }
+  .article-brochure-card__preview {
+    padding: 20px;
+    background: var(--sf-surface);
+    border: 1px dashed var(--sf-border);
+    border-radius: var(--sf-radius-md);
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--sf-primary);
+  }
+  .article-brochure-card__file-meta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-text-muted);
+  }
+  .article-brochure-card__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ── Related Articles & Equipment Lists ─────────────────────────── */
+  .article-related-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .article-related-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    text-decoration: none;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--sf-border-light);
+    transition: transform var(--sf-transition);
+  }
+  .article-related-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .article-related-item:first-child {
+    padding-top: 0;
+  }
+  .article-related-item:hover {
+    transform: translateX(2px);
+  }
   .article-related-item__thumb {
-    flex-shrink: 0; width: 60px; height: 60px; border-radius: 10px; overflow: hidden; background: var(--ab-green-tint);
-    display: flex; align-items: center; justify-content: center; color: var(--ab-line);
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: var(--sf-radius-sm);
+    overflow: hidden;
+    background: var(--sf-surface-soft);
+    border: 1px solid var(--sf-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sf-text-subtle);
   }
-  .article-related-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .article-related-item__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .article-related-item__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .article-related-item__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .article-related-item__date {
+    font-size: 11.5px;
+    color: var(--sf-text-subtle);
+  }
   .article-related-item__title {
-    font-size: 13px; font-weight: 600; color: var(--ab-ink); line-height: 1.4; display: -webkit-box;
-    -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sf-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color var(--sf-transition);
   }
-  .article-related-item:hover .article-related-item__title { color: var(--ab-green-700); }
-  .article-related-item__sub { font-size: 12px; color: var(--ab-ink-soft); font-weight: 600; }
-  .article-related-item__link { color: var(--ab-red); font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .article-related-item:hover .article-related-item__title {
+    color: var(--sf-primary);
+  }
+  .article-related-item__sub {
+    font-size: 12px;
+    color: var(--sf-primary);
+    font-weight: 600;
+  }
+  .article-related-item__link,
+  .article-related-item__action {
+    color: var(--sf-primary);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
 
   @media screen and (max-width: 1024px) {
     .article-layout { grid-template-columns: 1fr; }
     .article-sidebar { position: static; }
   }
 
-  /* ── Buttons ── */
+  /* ══════════════════════════════════════════════════════════════════
+     BUTTON SYSTEM
+     ══════════════════════════════════════════════════════════════════ */
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700;
-    padding: 12px 22px; border-radius: 100px; white-space: nowrap; text-decoration: none; border: none; cursor: pointer;
-    transition: transform .15s, opacity .15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: var(--sf-radius-md);
+    white-space: nowrap;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--sf-transition);
+    line-height: 1;
   }
-  .btn:hover { transform: translateY(-1px); }
-  .btn--red { background: var(--ab-red); color: #fff; }
-  .btn--gold { background: var(--ab-gold); color: var(--ab-green-900); }
-  .btn--outline-red { background: transparent; border: 1.5px solid var(--ab-red); color: var(--ab-red); }
-  .btn--outline-white { background: transparent; border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+  .btn--lg {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+  .btn--primary {
+    background: var(--sf-primary);
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(31, 107, 77, 0.25);
+  }
+  .btn--primary:hover {
+    background: var(--sf-primary-hover);
+    box-shadow: 0 4px 12px rgba(31, 107, 77, 0.35);
+  }
+  .btn--outline-primary {
+    background: transparent;
+    border: 1.5px solid var(--sf-primary);
+    color: var(--sf-primary);
+  }
+  .btn--outline-primary:hover {
+    background: var(--sf-surface-soft);
+    border-color: var(--sf-primary-dark);
+    color: var(--sf-primary-dark);
+  }
+  .btn--outline-light {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+  }
+  .btn--outline-light:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #FFFFFF;
+  }
 
-  /* ── Bottom CTA ── */
+  /* ── Bottom B2B Consultation CTA Banner ──────────────────────────── */
   .article-bottom-cta {
-    background: radial-gradient(120% 140% at 20% 0%, var(--ab-green-700) 0%, var(--ab-green-900) 55%, #0A2018 100%);
-    color: #fff; border-radius: 24px; padding: 48px; display: flex; align-items: center; justify-content: space-between;
-    gap: 40px; flex-wrap: wrap; margin-top: 8px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #123B2B 0%, #1F6B4D 60%, #17553D 100%);
+    color: #FFFFFF;
+    border-radius: var(--sf-radius-xl);
+    padding: 48px 40px;
+    margin-top: 16px;
+    box-shadow: var(--sf-shadow-lg);
+    position: relative;
+    overflow: hidden;
   }
-  .article-bottom-cta__title { font-size: 26px; font-weight: 700; margin: 0 0 10px; max-width: 480px; line-height: 1.3; }
-  .article-bottom-cta__sub { color: rgba(255,255,255,.72); font-size: 14.5px; max-width: 440px; margin: 0 0 22px; }
-  .article-bottom-cta__actions { display: flex; gap: 12px; flex-wrap: wrap; }
-  .article-bottom-cta__image { width: 200px; flex-shrink: 0; }
-  .article-bottom-cta__image img { width: 100%; height: auto; display: block; border-radius: 8px; }
+  .article-bottom-cta::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    bottom: -60px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .article-bottom-cta__content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+  .article-bottom-cta__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(4px);
+  }
+  .article-bottom-cta__title {
+    font-size: clamp(24px, 3.2vw, 36px);
+    font-weight: 700;
+    margin: 0 0 12px;
+    line-height: 1.25;
+    color: #FFFFFF;
+  }
+  .article-bottom-cta__sub {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 28px;
+  }
+  .article-bottom-cta__actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Copy Toast Notification ─────────────────────────────────────── */
+  .article-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #123B2B;
+    color: #FFFFFF;
+    padding: 12px 20px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .article-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -651,12 +1868,24 @@
       "id": "show_toc",
       "label": "Show table of contents",
       "default": true,
-      "info": "Auto-generates from H2 headings in the article. Requires at least 2 headings."
+      "info": "Auto-generates from H2 headings in the article."
     },
     {
       "type": "checkbox",
       "id": "show_tags",
-      "label": "Show tags",
+      "label": "Show tags in header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_time",
+      "label": "Show reading time",
       "default": true
     },
     {
@@ -668,42 +1897,42 @@
     {
       "type": "checkbox",
       "id": "show_sidebar_tags",
-      "label": "Show tag list at end of article",
+      "label": "Show topic tags at end of article",
       "default": true
     },
     {
       "type": "header",
-      "content": "Promo CTA"
+      "content": "Promo / Solutions Card"
     },
     {
       "type": "checkbox",
       "id": "show_cta",
-      "label": "Show promo CTA",
+      "label": "Show solutions card",
       "default": true
     },
     {
       "type": "text",
       "id": "cta_title",
-      "label": "CTA Title",
-      "default": "Complete Solutions for Restaurant Businesses"
+      "label": "Card Title",
+      "default": "Complete Solutions for Commercial Kitchens"
     },
     {
       "type": "text",
       "id": "cta_bullet_1",
       "label": "Bullet 1",
-      "default": "Professional Kitchen Design"
+      "default": "Custom 3D Kitchen Design & Layout"
     },
     {
       "type": "text",
       "id": "cta_bullet_2",
       "label": "Bullet 2",
-      "default": "International Standard Quality Equipment"
+      "default": "Direct Import Commercial Equipment"
     },
     {
       "type": "text",
       "id": "cta_bullet_3",
       "label": "Bullet 3",
-      "default": "Installation and After-sales Service"
+      "default": "Turnkey Installation & 24/7 Service"
     },
     {
       "type": "text",
@@ -719,17 +1948,17 @@
     {
       "type": "image_picker",
       "id": "cta_image",
-      "label": "CTA Image"
+      "label": "Card Image"
     },
     {
       "type": "checkbox",
       "id": "show_related",
-      "label": "Show related posts",
+      "label": "Show related articles in sidebar",
       "default": true
     },
     {
       "type": "header",
-      "content": "Style"
+      "content": "Style & Spacing"
     },
     {
       "type": "color_scheme",
@@ -738,13 +1967,9 @@
       "default": "scheme-1"
     },
     {
-      "type": "header",
-      "content": "Padding"
-    },
-    {
       "type": "range",
       "id": "padding-block-start",
-      "label": "Top",
+      "label": "Top Padding",
       "min": 0,
       "max": 120,
       "step": 4,
@@ -754,72 +1979,84 @@
     {
       "type": "range",
       "id": "padding-block-end",
-      "label": "Bottom",
+      "label": "Bottom Padding",
       "min": 0,
       "max": 120,
       "step": 4,
       "unit": "px",
-      "default": 0
+      "default": 64
     },
     {
       "type": "header",
-      "content": "Bottom CTA"
+      "content": "Bottom CTA Banner"
     },
     {
       "type": "checkbox",
       "id": "show_bottom_cta",
-      "label": "Show Bottom CTA",
+      "label": "Show Bottom Consultation Banner",
       "default": true
     },
     {
       "type": "text",
       "id": "bottom_cta_title",
-      "label": "Bottom CTA Title",
-      "default": "Let us help you choose the best for your business"
+      "label": "Banner Title",
+      "default": "Planning a Commercial Kitchen or Upgrading Your Equipment?"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "bottom_cta_text",
-      "label": "Bottom CTA Subtitle",
-      "default": "Kitchen design, equipment installation, full service — all in one place"
+      "label": "Banner Description",
+      "default": "Consult with Sevenfive specialists for turnkey commercial kitchen design, MEP engineering, high-efficiency equipment, and 24/7 after-sales service nationwide."
     },
     {
       "type": "text",
       "id": "bottom_cta_btn_1_text",
-      "label": "Button 1 Text",
-      "default": "Request a Quote"
+      "label": "Primary Button Text",
+      "default": "Request Free Consultation"
     },
     {
       "type": "url",
       "id": "bottom_cta_btn_1_link",
-      "label": "Button 1 Link"
+      "label": "Primary Button Link"
     },
     {
       "type": "text",
       "id": "bottom_cta_btn_2_text",
-      "label": "Button 2 Text",
-      "default": "Consult a Specialist Free"
+      "label": "Secondary Button Text",
+      "default": "Browse Commercial Equipment"
     },
     {
       "type": "url",
       "id": "bottom_cta_btn_2_link",
-      "label": "Button 2 Link"
-    },
-    {
-      "type": "image_picker",
-      "id": "bottom_cta_image",
-      "label": "Bottom CTA Image"
+      "label": "Secondary Button Link"
     }
   ],
   "blocks": [
     {
       "type": "quote_form",
-      "name": "Quote Form",
+      "name": "Request a Quote Form",
       "limit": 1
     },
     {
+      "type": "download_brochure",
+      "name": "Catalogue Download Card",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Cover Image"
+        },
+        {
+          "type": "url",
+          "id": "brochure_file",
+          "label": "Download / Page Link"
+        }
+      ]
+    },
+    {
       "type": "recommended_products",
-      "name": "Recommended Products",
+      "name": "Featured Equipment",
       "limit": 1,
       "settings": [
         {
@@ -828,28 +2065,19 @@
           "label": "Collection"
         }
       ]
-    },
-    {
-      "type": "download_brochure",
-      "name": "Download Brochure",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Brochure Image"
-        },
-        {
-          "type": "url",
-          "id": "brochure_file",
-          "label": "Brochure File / Link"
-        }
-      ]
     }
   ],
   "presets": [
     {
-      "name": "Article Body"
+      "name": "Article Body",
+      "blocks": [
+        {
+          "type": "quote_form"
+        },
+        {
+          "type": "download_brochure"
+        }
+      ]
     }
   ]
 }

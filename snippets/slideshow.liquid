@@ -61,7 +61,10 @@
       assign align_items = '--slideshow-align-items: stretch;'
   endcase
 
-  assign style = style | strip | strip_newlines | append: align_items | append: slide_min_height | append: slide_min_height_desktop
+  # Computed defaults go first so an explicit --slide-min-height in the caller-supplied
+  # `style` (e.g. sections/slideshow.liquid's adapt_image aspect-ratio calc) wins the
+  # cascade instead of being silently overwritten by this snippet's own per-size default.
+  assign style = align_items | append: slide_min_height | append: slide_min_height_desktop | append: style | strip | strip_newlines
 -%}
 
 {%- liquid

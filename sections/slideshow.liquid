@@ -65,6 +65,9 @@
 <div
   class="slideshow-section spacing-style section {{ section_width_class }} color-{{ section.settings.color_scheme }} disable-section-top-offset"
   style="{% render 'spacing-padding', settings: section.settings %}; --slideshow-gap: {{ section.settings.slideshow_gap }}px;{% if rounded_slide_corners %} --corner-radius: {{ section.settings.corner_radius }}px;{% endif %}"
+  {% if autoplay == true %}
+    data-autoplay-speed="{{ section.settings.autoplay_speed }}"
+  {% endif %}
 >
   {% comment %} Calculate first slide preview image aspect ratio and pass an inline style
      to set the slideshow min-height when `slide_height` is `adapt_image`. {% endcomment %}
@@ -102,6 +105,51 @@
   %}
 
 </div>
+
+{% javascript %}
+  (function () {
+    var MOBILE_QUERY = '(max-width: 749px)';
+
+    function syncAutoplay(section, isMobile) {
+      var slideshowEl = section.querySelector('slideshow-component');
+      if (!slideshowEl) return;
+
+      if (isMobile) {
+        slideshowEl.removeAttribute('autoplay');
+        slideshowEl.setAttribute('paused', '');
+        if (typeof slideshowEl.suspend === 'function') slideshowEl.suspend();
+      } else {
+        var speed = section.dataset.autoplaySpeed;
+        if (speed) slideshowEl.setAttribute('autoplay', speed);
+        slideshowEl.removeAttribute('paused');
+        if (typeof slideshowEl.resume === 'function') slideshowEl.resume();
+      }
+    }
+
+    function syncAll(isMobile) {
+      document.querySelectorAll('.slideshow-section[data-autoplay-speed]').forEach(function (section) {
+        syncAutoplay(section, isMobile);
+      });
+    }
+
+    var mobileQuery = window.matchMedia(MOBILE_QUERY);
+    // Auto-rotating slides on mobile burns battery for a UX many shoppers scroll past anyway,
+    // and it was one of the sources of the layout-thrashing this theme's CLS fixes address —
+    // disable it below the mobile breakpoint, restore it if the viewport grows past it
+    // (rotation, foldables, resizing a desktop browser window).
+    mobileQuery.addEventListener('change', function (event) {
+      syncAll(event.matches);
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        syncAll(mobileQuery.matches);
+      });
+    } else {
+      syncAll(mobileQuery.matches);
+    }
+  })();
+{% endjavascript %}
 
 {% stylesheet %}
   .slideshow-section {
