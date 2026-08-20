@@ -15,15 +15,10 @@
             "show_view_all": true,
             "view_all_text": "View All →"
           }
-        },
-        "quote-form": {
-          "type": "quote_form",
-          "settings": {}
         }
       },
       "block_order": [
-        "recommended-products",
-        "quote-form"
+        "recommended-products"
       ],
       "settings": {
         "show_excerpt": true,
@@ -35,6 +30,11 @@
         "show_sidebar_tags": true,
         "show_cta": true,
         "show_related": true,
+        "show_faq": true,
+        "auto_parse_faq": true,
+        "faq_badge": "Q&A / FAQ",
+        "faq_title": "Frequently Asked Questions (FAQ)",
+        "faq_subtitle": "Common questions regarding commercial equipment selection, operation, and maintenance.",
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 64,

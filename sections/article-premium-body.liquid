@@ -138,6 +138,68 @@
           {{ article.content }}
         </div>
 
+        {%- comment -%} Interactive FAQ / Q&A Accordion Section (from Customizer blocks) {%- endcomment -%}
+        {%- assign faq_blocks = section.blocks | where: "type", "faq_item" -%}
+        {%- if section.settings.show_faq and faq_blocks.size > 0 -%}
+          <section class="article-faq-section" id="article-faq-section" aria-labelledby="section-faq-heading">
+            <div class="article-faq-header">
+              {%- if section.settings.faq_badge != blank -%}
+                <span class="article-faq-badge">{{ section.settings.faq_badge }}</span>
+              {%- endif -%}
+              <h2 class="article-faq-title" id="section-faq-heading">
+                <span class="article-faq-title__icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>
+                <span>{{ section.settings.faq_title | default: 'Frequently Asked Questions (FAQ)' }}</span>
+              </h2>
+              {%- if section.settings.faq_subtitle != blank -%}
+                <p class="article-faq-subtitle">{{ section.settings.faq_subtitle }}</p>
+              {%- endif -%}
+            </div>
+
+            <div class="article-faq-list">
+              {%- for block in faq_blocks -%}
+                <details class="article-faq-item" {{ block.shopify_attributes }}>
+                  <summary class="article-faq-item__question">
+                    <span class="article-faq-item__q-badge">Q</span>
+                    <span class="article-faq-item__q-text">{{ block.settings.question }}</span>
+                    <span class="article-faq-item__icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </span>
+                  </summary>
+                  <div class="article-faq-item__answer">
+                    <div class="article-faq-item__a-wrapper">
+                      <span class="article-faq-item__a-badge">A</span>
+                      <div class="article-faq-item__a-text">
+                        {{ block.settings.answer }}
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              {%- endfor -%}
+            </div>
+          </section>
+
+          <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {%- for block in faq_blocks -%}
+                {
+                  "@type": "Question",
+                  "name": {{ block.settings.question | json }},
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ block.settings.answer | strip_html | json }}
+                  }
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          }
+          </script>
+        {%- endif -%}
+
         {%- comment -%} Tags Footer {%- endcomment -%}
         {%- if article.tags.size > 0 and section.settings.show_sidebar_tags -%}
           <div class="article-tag-footer">
@@ -265,6 +327,8 @@
           {%- case block.type -%}
 
             {%- when 'quote_form' -%}
+              {%- comment -%}
+                Quote form temporarily hidden
               <div class="article-side-card article-quote-card" {{ block.shopify_attributes }}>
                 <div class="article-quote-card__badge">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
@@ -332,13 +396,14 @@
                   </div>
                 </div>
               </div>
+              {%- endcomment -%}
 
             {%- when 'download_brochure' -%}
               <div class="article-side-card article-brochure-card" {{ block.shopify_attributes }}>
                 <div class="article-brochure-card__top">
-                  <span class="article-brochure-card__badge">PDF CATALOGUE</span>
-                  <p class="article-side-card__title">2026 Commercial Kitchen Catalog</p>
-                  <p class="article-brochure-card__sub">Comprehensive specifications, energy ratings, and commercial equipment pricing.</p>
+                  <span class="article-brochure-card__badge">{{ block.settings.badge | default: 'PDF CATALOGUE' }}</span>
+                  <p class="article-side-card__title">{{ block.settings.title | default: '2026 Commercial Kitchen Catalog' }}</p>
+                  <p class="article-brochure-card__sub">{{ block.settings.subtitle | default: 'Comprehensive specifications, energy ratings, and commercial equipment pricing.' }}</p>
                 </div>
                 {%- if block.settings.image != blank -%}
                   <div class="article-brochure-card__image">
@@ -347,48 +412,248 @@
                 {%- else -%}
                   <div class="article-brochure-card__preview">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <span class="article-brochure-card__file-meta">50,000+ SKUs • Full Spec Sheets</span>
+                    <span class="article-brochure-card__file-meta">{{ block.settings.meta_text | default: '50,000+ SKUs • Full Spec Sheets' }}</span>
                   </div>
                 {%- endif -%}
                 <a href="{{ block.settings.brochure_file | default: '/pages/catalogue' }}" class="btn btn--primary article-brochure-card__btn">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span>Download Catalogue Free</span>
+                  <span>{{ block.settings.btn_text | default: 'Download Catalogue Free' }}</span>
                 </a>
               </div>
 
-            {%- when 'recommended_products' -%}
-              {%- assign collection = collections[block.settings.collection] -%}
-              {%- if collection != blank and collection.products.size > 0 -%}
-                <div class="article-side-card article-products-card" {{ block.shopify_attributes }}>
-                  <div class="article-side-card__head">
-                    <p class="article-side-card__title">Featured Equipment</p>
-                    <a href="{{ collection.url }}" class="article-side-card__view-all">View All →</a>
-                  </div>
-                  <div class="article-related-list">
-                    {%- for product in collection.products limit: 3 -%}
-                      <a href="{{ product.url }}" class="article-related-item">
-                        <span class="article-related-item__thumb">
-                          {%- if product.featured_image -%}
-                            {{ product.featured_image | image_url: width: 140 | image_tag: loading: 'lazy' }}
-                          {%- else -%}
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                          {%- endif -%}
-                        </span>
-                        <span class="article-related-item__info">
-                          <span class="article-related-item__title">{{ product.title }}</span>
-                          <span class="article-related-item__sub">
-                            {%- if product.price > 0 -%}
-                              Starting at {{ product.price | money }}
-                            {%- else -%}
-                              Price on Request
+            {%- when 'recommended_products', 'related_products' -%}
+              {%- liquid
+                assign prod_list = nil
+                assign target_coll_url = routes.all_products_collection_url
+                assign show_count = block.settings.products_to_show | default: 3
+
+                # 1. Custom metafield product list on article
+                if article.metafields.custom.related_products.value != blank
+                  assign prod_list = article.metafields.custom.related_products.value
+                elsif article.metafields.custom.spapart_or_product.value != blank
+                  assign prod_list = article.metafields.custom.spapart_or_product.value
+                elsif article.metafields.custom.products.value != blank
+                  assign prod_list = article.metafields.custom.products.value
+                elsif article.metafields.custom.product_list.value != blank
+                  assign prod_list = article.metafields.custom.product_list.value
+                endif
+
+                # 2. Block settings product_list (Shopify theme editor manual or dynamic source)
+                if prod_list == blank and block.settings.product_list != blank and block.settings.product_list.count > 0
+                  assign prod_list = block.settings.product_list
+                endif
+
+                # 3. Custom metafield collection on article
+                if prod_list == blank and article.metafields.custom.related_collection.value != blank
+                  assign art_coll = article.metafields.custom.related_collection.value
+                  assign prod_list = art_coll.products
+                  assign target_coll_url = art_coll.url
+                endif
+
+                # 4. Block settings collection
+                if prod_list == blank and block.settings.collection != blank
+                  assign setting_coll = collections[block.settings.collection]
+                  if setting_coll != blank and setting_coll.products.size > 0
+                    assign prod_list = setting_coll.products
+                    assign target_coll_url = setting_coll.url
+                  endif
+                endif
+
+                # 5. Smart matching by article tags / vendor
+                if prod_list == blank and article.tags.size > 0
+                  for tag in article.tags
+                    assign tag_handle = tag | handle
+                    if collections[tag_handle] != blank and collections[tag_handle].products.size > 0
+                      assign prod_list = collections[tag_handle].products
+                      assign target_coll_url = collections[tag_handle].url
+                      break
+                    endif
+                  endfor
+                endif
+
+                # 6. Fallback to store products
+                if prod_list == blank
+                  if collections['all'] != blank and collections['all'].products.size > 0
+                    assign prod_list = collections['all'].products
+                    assign target_coll_url = collections['all'].url
+                  else
+                    for coll in collections
+                      if coll.products.size > 0
+                        assign prod_list = coll.products
+                        assign target_coll_url = coll.url
+                        break
+                      endif
+                    endfor
+                  endif
+                endif
+
+                assign view_all_url = block.settings.view_all_url | default: target_coll_url
+              -%}
+
+              {%- if prod_list != blank or collections['all'] != blank -%}
+                {%- assign rendered_count = 0 -%}
+                {%- assign rendered_ids = '' -%}
+                {%- capture product_items_html -%}
+                  {%- if prod_list != blank -%}
+                    {%- for product in prod_list -%}
+                      {%- if rendered_count >= show_count -%}
+                        {%- break -%}
+                      {%- endif -%}
+
+                      {%- liquid
+                        # 1. Rule: Must have a real product image (no placeholder)
+                        assign has_image = false
+                        if product.featured_image != blank or product.featured_media != blank
+                          assign has_image = true
+                        endif
+
+                        # 2. Rule: custom.spapart_or_product must be "สินค้า" (or product), exclude "อะไหล่" / spare parts
+                        assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
+                        assign meta_str = meta_raw | downcase | strip
+                        assign is_product_item = false
+
+                        if meta_str == 'สินค้า' or meta_str contains 'สินค้า' or meta_str == 'product' or meta_str contains 'product'
+                          assign is_product_item = true
+                        elsif product.metafields.custom.spapart_or_product == blank
+                          assign is_product_item = true
+                        endif
+
+                        if meta_str == 'อะไหล่' or meta_str contains 'อะไหล่' or meta_str == 'spare' or meta_str contains 'spare'
+                          assign is_product_item = false
+                        endif
+                      -%}
+
+                      {%- if has_image and is_product_item -%}
+                        {%- assign rendered_count = rendered_count | plus: 1 -%}
+                        {%- assign rendered_ids = rendered_ids | append: product.id | append: ',' -%}
+                        <a href="{{ product.url }}" class="article-related-item article-related-item--product">
+                          <span class="article-related-item__thumb">
+                            {%- if product.featured_image -%}
+                              {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                            {%- elsif product.featured_media -%}
+                              {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
                             {%- endif -%}
                           </span>
-                          <span class="article-related-item__action">View Specs →</span>
-                        </span>
-                      </a>
+                          <span class="article-related-item__info">
+                            {%- if block.settings.show_vendor and product.vendor != blank -%}
+                              <span class="article-related-item__vendor">{{ product.vendor }}</span>
+                            {%- endif -%}
+                            <span class="article-related-item__title">{{ product.title }}</span>
+                            {%- if block.settings.show_price and product.price > 0 -%}
+                              <span class="article-related-item__price-row">
+                                <span class="article-related-item__price">{{ product.price | money }}</span>
+                                {%- if product.compare_at_price > product.price -%}
+                                  <span class="article-related-item__compare-price">{{ product.compare_at_price | money }}</span>
+                                {%- endif -%}
+                              </span>
+                            {%- endif -%}
+                            <span class="article-related-item__action">
+                              <span>View Specs</span>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </span>
+                          </span>
+                        </a>
+                      {%- endif -%}
                     {%- endfor -%}
+                  {%- endif -%}
+
+                  {%- # Supplement with store products if primary collection has fewer items -%}
+                  {%- if rendered_count < show_count and collections['all'] != blank -%}
+                    {%- for product in collections['all'].products -%}
+                      {%- if rendered_count >= show_count -%}
+                        {%- break -%}
+                      {%- endif -%}
+
+                      {%- assign p_id_str = product.id | append: ',' -%}
+                      {%- unless rendered_ids contains p_id_str -%}
+                        {%- liquid
+                          assign has_image = false
+                          if product.featured_image != blank or product.featured_media != blank
+                            assign has_image = true
+                          endif
+
+                          assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
+                          assign meta_str = meta_raw | downcase | strip
+                          assign is_product_item = false
+
+                          if meta_str == 'สินค้า' or meta_str contains 'สินค้า' or meta_str == 'product' or meta_str contains 'product'
+                            assign is_product_item = true
+                          elsif product.metafields.custom.spapart_or_product == blank
+                            assign is_product_item = true
+                          endif
+
+                          if meta_str == 'อะไหล่' or meta_str contains 'อะไหล่' or meta_str == 'spare' or meta_str contains 'spare'
+                            assign is_product_item = false
+                          endif
+                        -%}
+
+                        {%- if has_image and is_product_item -%}
+                          {%- assign rendered_count = rendered_count | plus: 1 -%}
+                          {%- assign rendered_ids = rendered_ids | append: product.id | append: ',' -%}
+                          <a href="{{ product.url }}" class="article-related-item article-related-item--product">
+                            <span class="article-related-item__thumb">
+                              {%- if product.featured_image -%}
+                                {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                              {%- elsif product.featured_media -%}
+                                {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                              {%- endif -%}
+                            </span>
+                            <span class="article-related-item__info">
+                              {%- if block.settings.show_vendor and product.vendor != blank -%}
+                                <span class="article-related-item__vendor">{{ product.vendor }}</span>
+                              {%- endif -%}
+                              <span class="article-related-item__title">{{ product.title }}</span>
+                              {%- if block.settings.show_price and product.price > 0 -%}
+                                <span class="article-related-item__price-row">
+                                  <span class="article-related-item__price">{{ product.price | money }}</span>
+                                  {%- if product.compare_at_price > product.price -%}
+                                    <span class="article-related-item__compare-price">{{ product.compare_at_price | money }}</span>
+                                  {%- endif -%}
+                                </span>
+                              {%- endif -%}
+                              <span class="article-related-item__action">
+                                <span>View Specs</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                              </span>
+                            </span>
+                          </a>
+                        {%- endif -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                {%- endcapture -%}
+
+                {%- if rendered_count > 0 -%}
+                  <div class="article-side-card article-products-card" {{ block.shopify_attributes }}>
+                    <div class="article-products-card__top">
+                      {%- if block.settings.badge != blank -%}
+                        <span class="article-products-card__badge">{{ block.settings.badge }}</span>
+                      {%- endif -%}
+                      <div class="article-side-card__head">
+                        <p class="article-side-card__title">{{ block.settings.title | default: 'Featured Equipment' }}</p>
+                        {%- if block.settings.show_view_all != false -%}
+                          <a href="{{ view_all_url }}" class="article-side-card__view-all">
+                            {{ block.settings.view_all_text | default: 'View All →' }}
+                          </a>
+                        {%- endif -%}
+                      </div>
+                      {%- if block.settings.subtitle != blank -%}
+                        <p class="article-products-card__sub">{{ block.settings.subtitle }}</p>
+                      {%- endif -%}
+                    </div>
+
+                    <div class="article-related-list">
+                      {{ product_items_html }}
+                    </div>
+
+                    {%- if block.settings.cta_btn_text != blank -%}
+                      <a href="{{ view_all_url }}" class="btn btn--outline-primary article-products-card__btn">
+                        <span>{{ block.settings.cta_btn_text }}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </a>
+                    {%- endif -%}
                   </div>
-                </div>
+                {%- endif -%}
               {%- endif -%}
 
           {%- endcase -%}
@@ -467,9 +732,293 @@
   <span>Article link copied to clipboard!</span>
 </div>
 
+{%- liquid
+  assign colged_col = collections['colged']
+  assign colged_logo_url = ''
+  if colged_col != blank and colged_col.image != blank
+    assign colged_logo_url = colged_col.image | image_url: width: 280
+  elsif colged_col != blank and colged_col.featured_image != blank
+    assign colged_logo_url = colged_col.featured_image | image_url: width: 280
+  endif
+-%}
+
 <script>
   (function() {
+    var colgedLogoUrl = {{ colged_logo_url | json }};
     var tocEnabled = {{ section.settings.show_toc | json }};
+    var autoParseFaqEnabled = {{ section.settings.auto_parse_faq | default: true | json }};
+    var faqBadgeText = {{ section.settings.faq_badge | default: 'Q&A / FAQ' | json }};
+    var faqTitleText = {{ section.settings.faq_title | default: 'Frequently Asked Questions (FAQ)' | json }};
+    var faqSubText = {{ section.settings.faq_subtitle | default: 'Common questions regarding commercial equipment selection, operation, and maintenance.' | json }};
+
+    function parseArticleFAQ() {
+      if (!autoParseFaqEnabled) return;
+      var rte = document.getElementById('article-rte');
+      if (!rte) return;
+
+      // Avoid double-parsing if blocks already present
+      if (document.getElementById('article-faq-section')) return;
+
+      var children = Array.from(rte.children);
+      var faqPairs = [];
+      var elementsToRemove = [];
+      var faqHeadingEl = null;
+
+      for (var i = 0; i < children.length; i++) {
+        var el = children[i];
+        var text = (el.innerText || el.textContent || '').trim();
+        var inner = el.innerHTML || '';
+
+        // Check if element is an FAQ heading
+        if (/^(คำถามที่พบบ่อย|คำถามพบบ่อย|frequently asked questions|frequently asked questions\s*\(faq\)|faq|q&a|q\s*&\s*a)$/i.test(text.replace(/[:\-]/g, '').trim())) {
+          faqHeadingEl = el;
+          elementsToRemove.push(el);
+          continue;
+        }
+
+        // Check single paragraph with Q: and A: inside
+        if (/(?:^|\n|\r|<br\s*\/?>)\s*(?:<strong>|<b>)?\s*(?:Q|Question|ถาม)\s*[:.]\s*([\s\S]+?)(?=(?:^|\n|\r|<br\s*\/?>)\s*(?:<strong>|<b>)?\s*(?:A|Answer|ตอบ)\s*[:.])/i.test(inner)) {
+          var match = inner.match(/(?:^|\n|\r|<br\s*\/?>)\s*(?:<strong>|<b>)?\s*(?:Q|Question|ถาม)\s*[:.]\s*([\s\S]+?)(?:<br\s*\/?>|\n|\r)\s*(?:<strong>|<b>)?\s*(?:A|Answer|ตอบ)\s*[:.]\s*([\s\S]+)$/i);
+          if (match) {
+            var qText = match[1].replace(/<\/?[^>]+(>|$)/g, "").trim();
+            var aText = match[2].trim();
+            faqPairs.push({ q: qText, a: aText });
+            elementsToRemove.push(el);
+            continue;
+          }
+        }
+
+        // Check paired paragraphs (Q in one, A in next)
+        if (/^\s*(?:<strong>|<b>)?\s*(?:Q|Question|ถาม)\s*[:.]/i.test(inner) || /^\s*(?:Q|Question|ถาม)\s*[:.]/i.test(text)) {
+          var qClean = text.replace(/^\s*(?:Q|Question|ถาม)\s*[:.]\s*/i, '').trim();
+          var nextEl = children[i + 1];
+          if (nextEl) {
+            var nextText = (nextEl.innerText || nextEl.textContent || '').trim();
+            var nextInner = nextEl.innerHTML || '';
+            if (/^\s*(?:<strong>|<b>)?\s*(?:A|Answer|ตอบ)\s*[:.]/i.test(nextInner) || /^\s*(?:A|Answer|ตอบ)\s*[:.]/i.test(nextText)) {
+              var aClean = nextInner.replace(/^\s*(?:<strong>|<b>)?\s*(?:A|Answer|ตอบ)\s*[:.]\s*(?:<\/strong>|<\/b>)?\s*/i, '').trim();
+              if (!aClean) aClean = nextText.replace(/^\s*(?:A|Answer|ตอบ)\s*[:.]\s*/i, '').trim();
+              faqPairs.push({ q: qClean, a: aClean });
+              elementsToRemove.push(el);
+              elementsToRemove.push(nextEl);
+              i++; // Skip next element
+              continue;
+            }
+          }
+        }
+      }
+
+      if (faqPairs.length > 0) {
+        var faqContainer = document.createElement('section');
+        faqContainer.className = 'article-faq-section';
+        faqContainer.id = 'article-faq-section';
+
+        var headerHTML = '<div class="article-faq-header">' +
+          (faqBadgeText ? '<span class="article-faq-badge">' + faqBadgeText + '</span>' : '') +
+          '<h2 class="article-faq-title" id="section-faq">' +
+            '<span class="article-faq-title__icon">' +
+              '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>' +
+            '</span>' +
+            '<span>' + faqTitleText + '</span>' +
+          '</h2>' +
+          (faqSubText ? '<p class="article-faq-subtitle">' + faqSubText + '</p>' : '') +
+        '</div>';
+
+        var listHTML = '<div class="article-faq-list">';
+        faqPairs.forEach(function(pair, idx) {
+          var isOpen = idx === 0 ? ' open' : '';
+          listHTML += '<details class="article-faq-item"' + isOpen + '>' +
+            '<summary class="article-faq-item__question">' +
+              '<span class="article-faq-item__q-badge">Q</span>' +
+              '<span class="article-faq-item__q-text">' + pair.q + '</span>' +
+              '<span class="article-faq-item__icon">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+              '</span>' +
+            '</summary>' +
+            '<div class="article-faq-item__answer">' +
+              '<div class="article-faq-item__a-wrapper">' +
+                '<span class="article-faq-item__a-badge">A</span>' +
+                '<div class="article-faq-item__a-text">' + pair.a + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</details>';
+        });
+        listHTML += '</div>';
+
+        faqContainer.innerHTML = headerHTML + listHTML;
+
+        var targetInsert = elementsToRemove[0] || faqHeadingEl;
+        if (targetInsert && targetInsert.parentNode) {
+          targetInsert.parentNode.insertBefore(faqContainer, targetInsert);
+        } else {
+          rte.appendChild(faqContainer);
+        }
+
+        elementsToRemove.forEach(function(el) {
+          if (el && el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        });
+
+        // Inject FAQPage Schema JSON-LD for Google SEO
+        try {
+          var schemaData = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqPairs.map(function(pair) {
+              return {
+                "@type": "Question",
+                "name": pair.q,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": pair.a.replace(/<\/?[^>]+(>|$)/g, "")
+                }
+              };
+            })
+          };
+          var script = document.createElement('script');
+          script.type = 'application/ld+json';
+          script.text = JSON.stringify(schemaData);
+          document.head.appendChild(script);
+        } catch (e) {}
+      }
+
+      // Check and enhance closing product CTA callout if present
+      enhanceClosingCallout(rte);
+    }
+
+    function enhanceClosingCallout(rte) {
+      if (rte.querySelector('.article-product-card')) return;
+      var paragraphs = Array.from(rte.querySelectorAll('p'));
+      if (!paragraphs.length) return;
+
+      for (var pIdx = paragraphs.length - 1; pIdx >= Math.max(0, paragraphs.length - 4); pIdx--) {
+        var targetP = paragraphs[pIdx];
+        var text = (targetP.innerText || targetP.textContent || '').trim();
+        var link = targetP.querySelector('a');
+        var rawUrlMatch = text.match(/https?:\/\/[^\s\)]+/);
+
+        if ((text.includes('Seven Five') || text.includes('SevenFive') || text.includes('sevenfive') || text.includes('ใบเสนอราคา') || text.includes('สนใจ') || text.includes('Colged') || text.includes('Foodservice') || text.includes('dishwasher') || text.includes('เครื่องล้างจาน')) && (link || rawUrlMatch)) {
+          var targetUrl = link ? link.getAttribute('href') : (rawUrlMatch ? rawUrlMatch[0] : 'https://www.sevenfive.co.th/products/hood-dishwasher-500x500mm-rack?variant=46281487843527');
+          var cleanText = text.replace(rawUrlMatch ? rawUrlMatch[0] : '', '').trim();
+
+          var isThai = /[\u0E00-\u0E7F]/.test(cleanText);
+          var handleMatch = targetUrl.match(/\/products\/([a-zA-Z0-9\-_]+)/);
+          var productHandle = handleMatch ? handleMatch[1] : 'hood-dishwasher-500x500mm-rack';
+
+          var badgeText = isThai ? 'MADE IN ITALY' : 'MADE IN ITALY';
+          var vendorText = 'COLGED';
+          var statusText = isThai ? 'พร้อมส่ง • บริการติดตั้งครบวงจร' : 'In Stock • Turnkey Installation';
+          var titleText = isThai ? 'เครื่องล้างจานแบบยกฝา Colged SteelTech 38-00 (Rack 500x500mm)' : 'Colged SteelTech 38-00 (Hood Type Dishwasher 500x500mm)';
+          var btnText = isThai ? 'ดูรายละเอียดสินค้า / ขอใบเสนอราคา' : 'Explore Colged SteelTech 38-00 & Request Quote';
+          var callText = '02-423-7575';
+
+          var spec1Label = isThai ? 'ขนาดกะบะ:' : 'Rack:';
+          var spec1Val = isThai ? '500 x 500 มม.' : '500 x 500 mm';
+          var spec2Label = isThai ? 'ความเร็ว:' : 'Speed:';
+          var spec2Val = isThai ? 'สูงสุด 60 แร็ค/ชม.' : 'Up to 60 Racks/hr';
+          var spec3Label = isThai ? 'ประหยัด:' : 'Eco:';
+          var spec3Val = isThai ? 'ระบบล้างน้ำอัจฉริยะ' : 'Water-Saving Rinse';
+          var spec4Label = isThai ? 'บริการ:' : 'Service:';
+          var spec4Val = isThai ? 'ทีมช่างดูแลทั่วประเทศ' : '24/7 Nationwide';
+
+          var brandBadgeHtml = '';
+          if (colgedLogoUrl) {
+            brandBadgeHtml = '<a href="/collections/colged" class="article-product-card__brand-link js-product-card-vendor-link" target="_blank" rel="noopener" title="View Colged Collection">' +
+                '<img class="article-product-card__brand-logo js-product-card-brand-logo" src="' + colgedLogoUrl + '" alt="' + vendorText + '" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'inline-flex\';">' +
+                '<span class="article-product-card__vendor" style="display:none;"><span>' + vendorText + '</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>' +
+              '</a>';
+          } else {
+            brandBadgeHtml = '<a href="/collections/colged" class="article-product-card__vendor js-product-card-vendor js-product-card-vendor-link" target="_blank" rel="noopener" title="View Colged Collection">' +
+                '<span>' + vendorText + '</span>' +
+                '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
+              '</a>';
+          }
+
+          var card = document.createElement('div');
+          card.className = 'article-product-card';
+          card.innerHTML = '<div class="article-product-card__media">' +
+              '<span class="article-product-card__badge">' + badgeText + '</span>' +
+              '<img class="article-product-card__img js-product-card-img" src="" alt="' + titleText + '" loading="lazy" style="display:none;">' +
+              '<div class="article-product-card__placeholder js-product-card-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#1F6B4D;gap:8px;">' +
+                '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/><circle cx="15" cy="15" r="2"/></svg>' +
+                '<span style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#123B2B;">COLGED HOOD DISHWASHER</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="article-product-card__info">' +
+              '<div class="article-product-card__meta-top">' +
+                brandBadgeHtml +
+                '<span class="article-product-card__status">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>' +
+                  '<span>' + statusText + '</span>' +
+                '</span>' +
+              '</div>' +
+              '<h3 class="article-product-card__title">' +
+                '<a href="' + targetUrl + '" class="js-product-card-title" target="_blank" rel="noopener">' + titleText + '</a>' +
+              '</h3>' +
+              '<p class="article-product-card__desc">' + cleanText + '</p>' +
+              '<div class="article-product-card__specs">' +
+                '<div class="article-product-spec">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>' +
+                  '<span>' + spec1Label + ' <strong>' + spec1Val + '</strong></span>' +
+                '</div>' +
+                '<div class="article-product-spec">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+                  '<span>' + spec2Label + ' <strong>' + spec2Val + '</strong></span>' +
+                '</div>' +
+                '<div class="article-product-spec">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' +
+                  '<span>' + spec3Label + ' <strong>' + spec3Val + '</strong></span>' +
+                '</div>' +
+                '<div class="article-product-spec">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' +
+                  '<span>' + spec4Label + ' <strong>' + spec4Val + '</strong></span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="article-product-card__actions">' +
+                '<a href="' + targetUrl + '" class="article-product-card__btn-primary" target="_blank" rel="noopener">' +
+                  '<span>' + btnText + '</span>' +
+                  '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>' +
+                '</a>' +
+                '<a href="tel:024237575" class="article-product-card__btn-secondary">' +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>' +
+                  '<span>' + callText + '</span>' +
+                '</a>' +
+              '</div>' +
+            '</div>';
+
+          targetP.parentNode.replaceChild(card, targetP);
+
+          // Fetch real product details dynamically via Shopify Product JSON API from handle
+          if (productHandle) {
+            fetch('/products/' + productHandle + '.js')
+              .then(function(res) { return res.ok ? res.json() : null; })
+              .then(function(prod) {
+                if (!prod) return;
+                var imgEl = card.querySelector('.js-product-card-img');
+                var phEl = card.querySelector('.js-product-card-placeholder');
+                var titleEl = card.querySelector('.js-product-card-title');
+                var btnEl = card.querySelector('.article-product-card__btn-primary');
+
+                if (prod.featured_image && imgEl) {
+                  imgEl.src = prod.featured_image;
+                  imgEl.style.display = 'block';
+                  if (phEl) phEl.style.display = 'none';
+                }
+                if (prod.title && titleEl && (!titleEl.textContent || titleEl.textContent.includes('Colged SteelTech 38-00'))) {
+                  titleEl.textContent = prod.title;
+                  if (prod.url) titleEl.href = prod.url;
+                }
+                if (prod.url && btnEl) {
+                  btnEl.href = prod.url;
+                }
+              })
+              .catch(function() {});
+          }
+          break;
+        }
+      }
+    }
 
     function buildTOC() {
       if (!tocEnabled) return;
@@ -479,7 +1028,7 @@
       var countEl = document.getElementById('article-toc-count');
       if (!rte || !list || !toc) return;
 
-      var headings = rte.querySelectorAll('h2');
+      var headings = Array.from(document.querySelectorAll('#article-rte h2, .article-faq-title'));
       if (headings.length < 2) {
         var wrapper = toc.closest('.article-toc-wrapper');
         if (wrapper) wrapper.style.display = 'none';
@@ -495,13 +1044,13 @@
         if (!h.id) h.id = 'section-' + (i + 1);
         var num = (i + 1).toString().padStart(2, '0');
         
-        // Enhance H2 with numbered pill badge if not already added
-        if (!h.querySelector('.article-h2__num')) {
+        // Enhance H2 with numbered pill badge if not already added (except FAQ header)
+        if (!h.classList.contains('article-faq-title') && !h.querySelector('.article-h2__num')) {
           var cleanText = h.textContent.replace(/^\d+\s*/, '').trim();
           h.innerHTML = '<span class="article-h2__num">' + num + '</span> <span class="article-h2__text">' + cleanText + '</span>';
         }
         
-        var linkText = h.querySelector('.article-h2__text') ? h.querySelector('.article-h2__text').textContent : h.textContent.replace(/^\d+\s*/, '');
+        var linkText = h.querySelector('.article-h2__text') ? h.querySelector('.article-h2__text').textContent : h.textContent.replace(/^\d+\s*/, '').trim();
         items += '<li><a href="#' + h.id + '" class="article-toc__item"><span class="article-toc__num">' + num + '</span><span class="article-toc__text">' + linkText + '</span></a></li>';
       });
       list.innerHTML = items;
@@ -586,6 +1135,7 @@
     }
 
     function init() {
+      parseArticleFAQ();
       buildTOC();
       bindCopyButtons();
     }
@@ -1616,6 +2166,42 @@
   }
 
   /* ── Related Articles & Equipment Lists ─────────────────────────── */
+  .article-products-card {
+    background: var(--sf-surface);
+    border: 1px solid var(--sf-border);
+    position: relative;
+    overflow: hidden;
+  }
+  .article-products-card__top {
+    margin-bottom: 12px;
+  }
+  .article-products-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sf-primary);
+    background: var(--sf-surface-tint);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .article-products-card__sub {
+    font-size: 12.5px;
+    color: var(--sf-text-muted);
+    margin: -8px 0 12px;
+    line-height: 1.4;
+  }
+  .article-products-card__btn {
+    width: 100%;
+    margin-top: 14px;
+    justify-content: center;
+    font-size: 12.5px;
+    padding: 9px 16px;
+  }
   .article-related-list {
     display: flex;
     flex-direction: column;
@@ -1665,6 +2251,14 @@
     flex-direction: column;
     gap: 3px;
   }
+  .article-related-item__vendor {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sf-primary);
+    opacity: 0.9;
+  }
   .article-related-item__date {
     font-size: 11.5px;
     color: var(--sf-text-subtle);
@@ -1683,6 +2277,28 @@
   .article-related-item:hover .article-related-item__title {
     color: var(--sf-primary);
   }
+  .article-related-item__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 1px;
+  }
+  .article-related-item__price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sf-primary-dark);
+  }
+  .article-related-item__compare-price {
+    font-size: 11.5px;
+    color: var(--sf-text-subtle);
+    text-decoration: line-through;
+  }
+  .article-related-item__price-request {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sf-primary);
+  }
   .article-related-item__sub {
     font-size: 12px;
     color: var(--sf-primary);
@@ -1699,9 +2315,468 @@
     margin-top: 2px;
   }
 
-  @media screen and (max-width: 1024px) {
-    .article-layout { grid-template-columns: 1fr; }
-    .article-sidebar { position: static; }
+  /* ── FAQ / Q&A Accordion Section ────────────────────────────────── */
+  .article-faq-section {
+    margin: 44px 0;
+    padding: 32px 28px;
+    background: linear-gradient(180deg, #F7FAF8 0%, #FFFFFF 100%);
+    border: 1.5px solid rgba(31, 107, 77, 0.18);
+    border-radius: var(--sf-radius-lg);
+    box-shadow: 0 4px 20px rgba(18, 59, 43, 0.04);
+  }
+  .article-faq-header {
+    margin-bottom: 22px;
+  }
+  .article-faq-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(31, 107, 77, 0.1);
+    color: var(--sf-primary);
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+  .article-faq-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sf-primary-dark);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.01em;
+  }
+  .article-faq-title__icon {
+    display: inline-flex;
+    color: var(--sf-primary);
+    flex-shrink: 0;
+  }
+  .article-faq-subtitle {
+    font-size: 13.5px;
+    color: var(--sf-text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .article-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .article-faq-item {
+    background: #FFFFFF;
+    border: 1px solid var(--sf-border);
+    border-radius: var(--sf-radius-md);
+    overflow: hidden;
+    transition: all var(--sf-transition);
+  }
+  .article-faq-item:hover {
+    border-color: var(--sf-primary);
+    box-shadow: 0 3px 12px rgba(31, 107, 77, 0.06);
+  }
+  .article-faq-item[open] {
+    border-color: var(--sf-primary);
+    box-shadow: 0 4px 16px rgba(31, 107, 77, 0.08);
+  }
+  .article-faq-item__question {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--sf-text);
+    transition: background var(--sf-transition);
+  }
+  .article-faq-item__question::-webkit-details-marker {
+    display: none;
+  }
+  .article-faq-item__question:hover {
+    background: #FAFCFA;
+  }
+  .article-faq-item__q-badge {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--sf-primary);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(31, 107, 77, 0.25);
+  }
+  .article-faq-item__q-text {
+    flex: 1;
+    line-height: 1.45;
+  }
+  .article-faq-item__icon {
+    flex-shrink: 0;
+    color: var(--sf-primary);
+    transition: transform var(--sf-transition);
+  }
+  .article-faq-item[open] .article-faq-item__icon {
+    transform: rotate(180deg);
+  }
+  .article-faq-item__answer {
+    padding: 0 18px 18px;
+    background: #FAFCFA;
+    border-top: 1px dashed var(--sf-border-light);
+  }
+  .article-faq-item__a-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-top: 14px;
+  }
+  .article-faq-item__a-badge {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: rgba(31, 107, 77, 0.12);
+    color: var(--sf-primary-dark);
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .article-faq-item__a-text {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+  }
+
+  /* ── Product Callout Box ─────────────────────────────────────────── */
+  .article-product-callout {
+    margin-top: 36px;
+    padding: 26px 28px;
+    background: linear-gradient(135deg, #F3F8F5 0%, #EDF5F1 100%);
+    border: 1.5px solid rgba(31, 107, 77, 0.22);
+    border-radius: var(--sf-radius-lg);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    box-shadow: 0 2px 10px rgba(18, 59, 43, 0.04);
+  }
+  .article-product-callout__icon {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: #123B2B;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(18, 59, 43, 0.25);
+  }
+  .article-product-callout__content {
+    flex: 1;
+    min-width: 0;
+  }
+  .article-product-callout__text {
+    font-size: 14.5px;
+    color: #1C1F1D;
+    line-height: 1.68;
+    margin: 0 0 16px;
+    font-weight: 450;
+  }
+  .article-product-callout__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: var(--sf-radius-sm);
+    background: var(--sf-primary);
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 6px rgba(31, 107, 77, 0.25);
+    transition: all var(--sf-transition);
+  }
+  .article-product-callout__btn:hover {
+    background: var(--sf-primary-hover);
+    color: #FFFFFF !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 107, 77, 0.35);
+  }
+
+  @media screen and (max-width: 640px) {
+    .article-faq-section {
+      padding: 24px 18px;
+    }
+    .article-product-callout {
+      flex-direction: column;
+      padding: 20px;
+      gap: 14px;
+    }
+  }
+
+  /* ── Dedicated B2B Featured Product Card ─────────────────────────── */
+  .article-product-card {
+    margin: 40px 0;
+    padding: 24px;
+    background: #FFFFFF;
+    border: 1.5px solid rgba(31, 107, 77, 0.2);
+    border-radius: var(--sf-radius-lg);
+    box-shadow: 0 6px 24px rgba(18, 59, 43, 0.07);
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--sf-transition), box-shadow var(--sf-transition), border-color var(--sf-transition);
+  }
+  .article-product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #123B2B, #1F6B4D, #34D399);
+  }
+  .article-product-card:hover {
+    border-color: var(--sf-primary);
+    box-shadow: 0 10px 32px rgba(18, 59, 43, 0.12);
+    transform: translateY(-2px);
+  }
+  .article-product-card__media {
+    position: relative;
+    background: #F4F8F6;
+    border: 1px solid var(--sf-border-light);
+    border-radius: var(--sf-radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+  .article-product-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    z-index: 1;
+  }
+  .article-product-card:hover .article-product-card__img {
+    transform: scale(1.04);
+  }
+  .article-product-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #123B2B;
+    color: #FFFFFF;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    z-index: 3;
+    line-height: 1.2;
+  }
+  .article-product-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .article-product-card__meta-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 42px;
+    margin-bottom: 4px;
+  }
+  .article-product-card__brand-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+    padding: 0;
+    transition: all var(--sf-transition);
+  }
+  .article-product-card__brand-link:hover {
+    transform: translateY(-1px) scale(1.03);
+    opacity: 0.88;
+  }
+  .article-product-card__brand-logo {
+    max-height: 40px;
+    max-width: 165px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .article-product-card__vendor {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1F6B4D !important;
+    background: #EAF3EF;
+    border: 1px solid rgba(31, 107, 77, 0.2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all var(--sf-transition);
+  }
+  .article-product-card__vendor:hover {
+    background: #1F6B4D;
+    color: #FFFFFF !important;
+    border-color: #1F6B4D;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(31, 107, 77, 0.25);
+  }
+  .article-product-card__vendor svg {
+    transition: transform var(--sf-transition);
+  }
+  .article-product-card__vendor:hover svg {
+    transform: translate(1px, -1px);
+  }
+  .article-product-card__status {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1F6B4D;
+    background: #EAF3EF;
+    border: 1px solid rgba(31, 107, 77, 0.18);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.02em;
+  }
+  .article-product-card__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #123B2B;
+    margin: 2px 0 0;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .article-product-card__title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--sf-transition);
+  }
+  .article-product-card__title a:hover {
+    color: var(--sf-primary);
+  }
+  .article-product-card__desc {
+    font-size: 13.5px;
+    color: var(--sf-text-muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .article-product-card__specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .article-product-spec {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #F5F9F7;
+    border: 1px solid #E2EDE7;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #2D3748;
+  }
+  .article-product-spec svg {
+    color: var(--sf-primary);
+    flex-shrink: 0;
+  }
+  .article-product-spec strong {
+    font-weight: 600;
+  }
+  .article-product-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--sf-border-light);
+  }
+  .article-product-card__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #1F6B4D;
+    color: #FFFFFF !important;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: var(--sf-radius-sm);
+    text-decoration: none !important;
+    transition: all var(--sf-transition);
+    box-shadow: 0 2px 6px rgba(31, 107, 77, 0.25);
+  }
+  .article-product-card__btn-primary:hover {
+    background: #17553D;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(31, 107, 77, 0.35);
+  }
+  .article-product-card__btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--sf-primary) !important;
+    border: 1.5px solid var(--sf-border);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: var(--sf-radius-sm);
+    text-decoration: none !important;
+    transition: all var(--sf-transition);
+  }
+  .article-product-card__btn-secondary:hover {
+    background: var(--sf-surface-soft);
+    border-color: var(--sf-primary);
+    color: var(--sf-primary-dark) !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    .article-product-card {
+      grid-template-columns: 1fr;
+      padding: 20px;
+      gap: 16px;
+    }
+    .article-product-card__media {
+      max-height: 220px;
+    }
+    .article-product-card__specs {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -1958,6 +3033,41 @@
     },
     {
       "type": "header",
+      "content": "FAQ / Q&A Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_faq",
+      "label": "Enable FAQ Section",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_parse_faq",
+      "label": "Auto-parse Q&A in Article Content",
+      "info": "Automatically converts Q: and A: in blog content to interactive accordions and Google FAQ schema",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "faq_badge",
+      "label": "FAQ Badge Text",
+      "default": "Q&A / FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "FAQ Section Title",
+      "default": "Frequently Asked Questions (FAQ)"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_subtitle",
+      "label": "FAQ Subtitle",
+      "default": "Common questions regarding commercial equipment selection, operation, and maintenance."
+    },
+    {
+      "type": "header",
       "content": "Style & Spacing"
     },
     {
@@ -2043,9 +3153,39 @@
       "limit": 1,
       "settings": [
         {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Text",
+          "default": "PDF CATALOGUE"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "2026 Commercial Kitchen Catalog"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Description",
+          "default": "Comprehensive specifications, energy ratings, and commercial equipment pricing."
+        },
+        {
+          "type": "text",
+          "id": "meta_text",
+          "label": "File Meta Text",
+          "default": "50,000+ SKUs • Full Spec Sheets"
+        },
+        {
           "type": "image_picker",
           "id": "image",
           "label": "Cover Image"
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button Text",
+          "default": "Download Catalogue Free"
         },
         {
           "type": "url",
@@ -2056,13 +3196,100 @@
     },
     {
       "type": "recommended_products",
-      "name": "Featured Equipment",
-      "limit": 1,
+      "name": "Related Products",
+      "limit": 2,
       "settings": [
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Text",
+          "default": "RELATED EQUIPMENT"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card Heading",
+          "default": "Featured Equipment"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Card Subtitle",
+          "default": "Commercial equipment featured in this guide"
+        },
+        {
+          "type": "product_list",
+          "id": "product_list",
+          "label": "Select Products (Dynamic / Manual)",
+          "info": "Leave blank to auto-detect from article metafields (custom.related_products) or tags"
+        },
         {
           "type": "collection",
           "id": "collection",
-          "label": "Collection"
+          "label": "Fallback Collection",
+          "info": "Used if no metafield or product list is set"
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "label": "Products to show",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "checkbox",
+          "id": "show_vendor",
+          "label": "Show Brand / Vendor",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price",
+          "label": "Show Price",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_view_all",
+          "label": "Show View All Link",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "view_all_text",
+          "label": "View All Text",
+          "default": "View All →"
+        },
+        {
+          "type": "url",
+          "id": "view_all_url",
+          "label": "Custom View All Link"
+        },
+        {
+          "type": "text",
+          "id": "cta_btn_text",
+          "label": "Bottom Button Text",
+          "info": "Optional: e.g. Browse Equipment Catalog"
+        }
+      ]
+    },
+    {
+      "type": "faq_item",
+      "name": "FAQ Question & Answer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "คำถามที่พบบ่อย?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "คำตอบสำหรับข้อสงสัยนี้..."
         }
       ]
     }
@@ -2072,10 +3299,10 @@
       "name": "Article Body",
       "blocks": [
         {
-          "type": "quote_form"
+          "type": "recommended_products"
         },
         {
-          "type": "download_brochure"
+          "type": "quote_form"
         }
       ]
     }

@@ -3,23 +3,27 @@
     "article-body": {
       "type": "article-premium-body",
       "blocks": {
-        "quote-form": {
-          "type": "quote_form",
-          "settings": {}
-        },
-        "download-brochure": {
-          "type": "download_brochure",
-          "settings": {}
-        },
         "recommended-products": {
           "type": "recommended_products",
+          "settings": {
+            "badge": "RELATED PRODUCTS",
+            "title": "Featured Equipment",
+            "subtitle": "Commercial equipment featured in this guide",
+            "products_to_show": 3,
+            "show_vendor": true,
+            "show_price": true,
+            "show_view_all": true,
+            "view_all_text": "View All →"
+          }
+        },
+        "quote-form": {
+          "type": "quote_form",
           "settings": {}
         }
       },
       "block_order": [
-        "quote-form",
-        "download-brochure",
-        "recommended-products"
+        "recommended-products",
+        "quote-form"
       ],
       "settings": {
         "show_excerpt": true,
