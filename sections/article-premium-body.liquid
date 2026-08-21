@@ -459,40 +459,34 @@
                   endif
                 endif
 
-                # 5. Smart matching by article tags / vendor
+                # 5. Smart matching by article tags / vendor / category (Product = Tags)
                 if prod_list == blank and article.tags.size > 0
                   for tag in article.tags
                     assign tag_handle = tag | handle
+                    assign tag_plural = tag_handle | append: 's'
                     if collections[tag_handle] != blank and collections[tag_handle].products.size > 0
                       assign prod_list = collections[tag_handle].products
                       assign target_coll_url = collections[tag_handle].url
-                      break
-                    endif
-                  endfor
-                endif
-
-                # 6. Fallback to store products
-                if prod_list == blank
-                  if collections['all'] != blank and collections['all'].products.size > 0
-                    assign prod_list = collections['all'].products
-                    assign target_coll_url = collections['all'].url
-                  else
-                    for coll in collections
-                      if coll.products.size > 0
-                        assign prod_list = coll.products
-                        assign target_coll_url = coll.url
+                      if prod_list.size >= show_count
                         break
                       endif
-                    endfor
-                  endif
+                    elsif collections[tag_plural] != blank and collections[tag_plural].products.size > 0
+                      assign prod_list = collections[tag_plural].products
+                      assign target_coll_url = collections[tag_plural].url
+                      if prod_list.size >= show_count
+                        break
+                      endif
+                    endif
+                  endfor
                 endif
 
                 assign view_all_url = block.settings.view_all_url | default: target_coll_url
               -%}
 
-              {%- if prod_list != blank or collections['all'] != blank -%}
+              {%- if prod_list != blank or article.tags.size > 0 -%}
                 {%- assign rendered_count = 0 -%}
                 {%- assign rendered_ids = '' -%}
+                {%- assign dynamic_coll_url = '' -%}
                 {%- capture product_items_html -%}
                   {%- if prod_list != blank -%}
                     {%- for product in prod_list -%}
@@ -501,13 +495,11 @@
                       {%- endif -%}
 
                       {%- liquid
-                        # 1. Rule: Must have a real product image (no placeholder)
                         assign has_image = false
                         if product.featured_image != blank or product.featured_media != blank
                           assign has_image = true
                         endif
 
-                        # 2. Rule: custom.spapart_or_product must be "สินค้า" (or product), exclude "อะไหล่" / spare parts
                         assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
                         assign meta_str = meta_raw | downcase | strip
                         assign is_product_item = false
@@ -557,71 +549,177 @@
                     {%- endfor -%}
                   {%- endif -%}
 
-                  {%- # Supplement with store products if primary collection has fewer items -%}
-                  {%- if rendered_count < show_count and collections['all'] != blank -%}
-                    {%- for product in collections['all'].products -%}
+                  {%- if rendered_count < show_count and article.tags.size > 0 -%}
+                    {%- for tag in article.tags -%}
                       {%- if rendered_count >= show_count -%}
                         {%- break -%}
                       {%- endif -%}
+                      {%- assign extra_tag_handle = tag | handle -%}
+                      {%- assign extra_tag_plural = extra_tag_handle | append: 's' -%}
+                      {%- assign target_coll = nil -%}
+                      {%- if collections[extra_tag_handle] != blank and collections[extra_tag_handle].products.size > 0 -%}
+                        {%- assign target_coll = collections[extra_tag_handle] -%}
+                        {%- assign dynamic_coll_url = target_coll.url -%}
+                      {%- elsif collections[extra_tag_plural] != blank and collections[extra_tag_plural].products.size > 0 -%}
+                        {%- assign target_coll = collections[extra_tag_plural] -%}
+                        {%- assign dynamic_coll_url = target_coll.url -%}
+                      {%- endif -%}
 
-                      {%- assign p_id_str = product.id | append: ',' -%}
-                      {%- unless rendered_ids contains p_id_str -%}
-                        {%- liquid
-                          assign has_image = false
-                          if product.featured_image != blank or product.featured_media != blank
-                            assign has_image = true
-                          endif
+                      {%- if target_coll != blank -%}
+                        {%- for product in target_coll.products -%}
+                          {%- if rendered_count >= show_count -%}
+                            {%- break -%}
+                          {%- endif -%}
+                          {%- assign p_id_str = product.id | append: ',' -%}
+                          {%- unless rendered_ids contains p_id_str -%}
+                            {%- liquid
+                              assign has_image = false
+                              if product.featured_image != blank or product.featured_media != blank
+                                assign has_image = true
+                              endif
 
-                          assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
-                          assign meta_str = meta_raw | downcase | strip
-                          assign is_product_item = false
+                              assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
+                              assign meta_str = meta_raw | downcase | strip
+                              assign is_product_item = false
 
-                          if meta_str == 'สินค้า' or meta_str contains 'สินค้า' or meta_str == 'product' or meta_str contains 'product'
-                            assign is_product_item = true
-                          elsif product.metafields.custom.spapart_or_product == blank
-                            assign is_product_item = true
-                          endif
+                              if meta_str == 'สินค้า' or meta_str contains 'สินค้า' or meta_str == 'product' or meta_str contains 'product'
+                                assign is_product_item = true
+                              elsif product.metafields.custom.spapart_or_product == blank
+                                assign is_product_item = true
+                              endif
 
-                          if meta_str == 'อะไหล่' or meta_str contains 'อะไหล่' or meta_str == 'spare' or meta_str contains 'spare'
-                            assign is_product_item = false
-                          endif
-                        -%}
+                              if meta_str == 'อะไหล่' or meta_str contains 'อะไหล่' or meta_str == 'spare' or meta_str contains 'spare'
+                                assign is_product_item = false
+                              endif
+                            -%}
 
-                        {%- if has_image and is_product_item -%}
-                          {%- assign rendered_count = rendered_count | plus: 1 -%}
-                          {%- assign rendered_ids = rendered_ids | append: product.id | append: ',' -%}
-                          <a href="{{ product.url }}" class="article-related-item article-related-item--product">
-                            <span class="article-related-item__thumb">
-                              {%- if product.featured_image -%}
-                                {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
-                              {%- elsif product.featured_media -%}
-                                {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
-                              {%- endif -%}
-                            </span>
-                            <span class="article-related-item__info">
-                              {%- if block.settings.show_vendor and product.vendor != blank -%}
-                                <span class="article-related-item__vendor">{{ product.vendor }}</span>
-                              {%- endif -%}
-                              <span class="article-related-item__title">{{ product.title }}</span>
-                              {%- if block.settings.show_price and product.price > 0 -%}
-                                <span class="article-related-item__price-row">
-                                  <span class="article-related-item__price">{{ product.price | money }}</span>
-                                  {%- if product.compare_at_price > product.price -%}
-                                    <span class="article-related-item__compare-price">{{ product.compare_at_price | money }}</span>
+                            {%- if has_image and is_product_item -%}
+                              {%- assign rendered_count = rendered_count | plus: 1 -%}
+                              {%- assign rendered_ids = rendered_ids | append: product.id | append: ',' -%}
+                              <a href="{{ product.url }}" class="article-related-item article-related-item--product">
+                                <span class="article-related-item__thumb">
+                                  {%- if product.featured_image -%}
+                                    {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                                  {%- elsif product.featured_media -%}
+                                    {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
                                   {%- endif -%}
                                 </span>
-                              {%- endif -%}
-                              <span class="article-related-item__action">
-                                <span>View Specs</span>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                              </span>
-                            </span>
-                          </a>
+                                <span class="article-related-item__info">
+                                  {%- if block.settings.show_vendor and product.vendor != blank -%}
+                                    <span class="article-related-item__vendor">{{ product.vendor }}</span>
+                                  {%- endif -%}
+                                  <span class="article-related-item__title">{{ product.title }}</span>
+                                  {%- if block.settings.show_price and product.price > 0 -%}
+                                    <span class="article-related-item__price-row">
+                                      <span class="article-related-item__price">{{ product.price | money }}</span>
+                                      {%- if product.compare_at_price > product.price -%}
+                                        <span class="article-related-item__compare-price">{{ product.compare_at_price | money }}</span>
+                                      {%- endif -%}
+                                    </span>
+                                  {%- endif -%}
+                                  <span class="article-related-item__action">
+                                        <span>View Specs</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                      </span>
+                                    </span>
+                                  </a>
+                                {%- endif -%}
+                              {%- endunless -%}
+                            {%- endfor -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+
+                  {%- if rendered_count < show_count and prod_list != blank -%}
+                    {%- for primary_prod in prod_list -%}
+                      {%- if rendered_count >= show_count -%}
+                        {%- break -%}
+                      {%- endif -%}
+                      {%- for coll in primary_prod.collections -%}
+                        {%- if rendered_count >= show_count -%}
+                          {%- break -%}
                         {%- endif -%}
-                      {%- endunless -%}
+                        {%- assign ch = coll.handle | downcase -%}
+                        {%- unless ch == 'all' or ch == 'frontpage' or ch contains 'filter' or ch == 'recommend' or ch == 'equipment' -%}
+                          {%- if coll.products.size > 1 -%}
+                            {%- assign dynamic_coll_url = coll.url -%}
+                            {%- for product in coll.products -%}
+                              {%- if rendered_count >= show_count -%}
+                                {%- break -%}
+                              {%- endif -%}
+                              {%- assign p_id_str = product.id | append: ',' -%}
+                              {%- unless rendered_ids contains p_id_str -%}
+                                {%- liquid
+                                  assign has_image = false
+                                  if product.featured_image != blank or product.featured_media != blank
+                                    assign has_image = true
+                                  endif
+
+                                  assign meta_raw = product.metafields.custom.spapart_or_product.value | default: product.metafields.custom.spapart_or_product
+                                  assign meta_str = meta_raw | downcase | strip
+                                  assign is_product_item = false
+
+                                  if meta_str == 'สินค้า' or meta_str contains 'สินค้า' or meta_str == 'product' or meta_str contains 'product'
+                                    assign is_product_item = true
+                                  elsif product.metafields.custom.spapart_or_product == blank
+                                    assign is_product_item = true
+                                  endif
+
+                                  if meta_str == 'อะไหล่' or meta_str contains 'อะไหล่' or meta_str == 'spare' or meta_str contains 'spare'
+                                    assign is_product_item = false
+                                  endif
+                                -%}
+
+                                {%- if has_image and is_product_item -%}
+                                  {%- assign rendered_count = rendered_count | plus: 1 -%}
+                                  {%- assign rendered_ids = rendered_ids | append: product.id | append: ',' -%}
+                                  <a href="{{ product.url }}" class="article-related-item article-related-item--product">
+                                    <span class="article-related-item__thumb">
+                                      {%- if product.featured_image -%}
+                                        {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                                      {%- elsif product.featured_media -%}
+                                        {{ product.featured_media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+                                      {%- endif -%}
+                                    </span>
+                                    <span class="article-related-item__info">
+                                      {%- if block.settings.show_vendor and product.vendor != blank -%}
+                                        <span class="article-related-item__vendor">{{ product.vendor }}</span>
+                                      {%- endif -%}
+                                      <span class="article-related-item__title">{{ product.title }}</span>
+                                      {%- if block.settings.show_price and product.price > 0 -%}
+                                        <span class="article-related-item__price-row">
+                                          <span class="article-related-item__price">{{ product.price | money }}</span>
+                                          {%- if product.compare_at_price > product.price -%}
+                                            <span class="article-related-item__compare-price">{{ product.compare_at_price | money }}</span>
+                                          {%- endif -%}
+                                        </span>
+                                      {%- endif -%}
+                                      <span class="article-related-item__action">
+                                        <span>View Specs</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                      </span>
+                                    </span>
+                                  </a>
+                                {%- endif -%}
+                              {%- endunless -%}
+                            {%- endfor -%}
+                          {%- endif -%}
+                        {%- endunless -%}
+                      {%- endfor -%}
                     {%- endfor -%}
                   {%- endif -%}
                 {%- endcapture -%}
+
+                {%- liquid
+                  assign final_view_all_url = block.settings.view_all_url
+                  if final_view_all_url == blank
+                    if dynamic_coll_url != blank
+                      assign final_view_all_url = dynamic_coll_url
+                    else
+                      assign final_view_all_url = view_all_url | default: routes.all_products_collection_url
+                    endif
+                  endif
+                -%}
 
                 {%- if rendered_count > 0 -%}
                   <div class="article-side-card article-products-card" {{ block.shopify_attributes }}>
@@ -632,7 +730,7 @@
                       <div class="article-side-card__head">
                         <p class="article-side-card__title">{{ block.settings.title | default: 'Featured Equipment' }}</p>
                         {%- if block.settings.show_view_all != false -%}
-                          <a href="{{ view_all_url }}" class="article-side-card__view-all">
+                          <a href="{{ final_view_all_url }}" class="article-side-card__view-all">
                             {{ block.settings.view_all_text | default: 'View All →' }}
                           </a>
                         {%- endif -%}
@@ -647,7 +745,7 @@
                     </div>
 
                     {%- if block.settings.cta_btn_text != blank -%}
-                      <a href="{{ view_all_url }}" class="btn btn--outline-primary article-products-card__btn">
+                      <a href="{{ final_view_all_url }}" class="btn btn--outline-primary article-products-card__btn">
                         <span>{{ block.settings.cta_btn_text }}</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                       </a>
@@ -742,9 +840,24 @@
   endif
 -%}
 
+{%- capture collection_logos_json -%}
+{
+  {%- assign first_c = true -%}
+  {%- for c in collections -%}
+    {%- assign c_img = c.image | default: c.featured_image -%}
+    {%- if c_img != blank -%}
+      {%- unless first_c -%},{%- endunless -%}
+      {{ c.handle | json }}: {{ c_img | image_url: width: 280 | json }}
+      {%- assign first_c = false -%}
+    {%- endif -%}
+  {%- endfor -%}
+}
+{%- endcapture -%}
+
 <script>
   (function() {
     var colgedLogoUrl = {{ colged_logo_url | json }};
+    var collectionLogos = {{ collection_logos_json | strip }};
     var tocEnabled = {{ section.settings.show_toc | json }};
     var autoParseFaqEnabled = {{ section.settings.auto_parse_faq | default: true | json }};
     var faqBadgeText = {{ section.settings.faq_badge | default: 'Q&A / FAQ' | json }};
@@ -906,43 +1019,28 @@
           var handleMatch = targetUrl.match(/\/products\/([a-zA-Z0-9\-_]+)/);
           var productHandle = handleMatch ? handleMatch[1] : 'hood-dishwasher-500x500mm-rack';
 
-          var badgeText = isThai ? 'MADE IN ITALY' : 'MADE IN ITALY';
-          var vendorText = 'COLGED';
+          var vendorText = 'SEVEN FIVE';
           var statusText = isThai ? 'พร้อมส่ง • บริการติดตั้งครบวงจร' : 'In Stock • Turnkey Installation';
-          var titleText = isThai ? 'เครื่องล้างจานแบบยกฝา Colged SteelTech 38-00 (Rack 500x500mm)' : 'Colged SteelTech 38-00 (Hood Type Dishwasher 500x500mm)';
-          var btnText = isThai ? 'ดูรายละเอียดสินค้า / ขอใบเสนอราคา' : 'Explore Colged SteelTech 38-00 & Request Quote';
+          var titleText = isThai ? 'อุปกรณ์ครัวเชิงพาณิชย์มาตรฐานสากล' : 'Commercial Kitchen Equipment';
+          var btnText = isThai ? 'ดูรายละเอียดสินค้า' : 'View Product Details';
           var callText = '02-423-7575';
+          var descText = isThai
+            ? 'สนใจยกระดับครัวการค้าของคุณด้วยอุปกรณ์ประสิทธิภาพสูง ติดต่อสอบถามข้อมูลเพิ่มเติมหรือสั่งซื้อได้ที่ Seven Five พร้อมบริการติดตั้งและดูแลหลังการขายครบวงจร'
+            : 'Upgrade your commercial kitchen with high-performance equipment. Contact Seven Five today for more information or ordering, complete with turnkey installation and comprehensive after-sales service.';
 
-          var spec1Label = isThai ? 'ขนาดกะบะ:' : 'Rack:';
-          var spec1Val = isThai ? '500 x 500 มม.' : '500 x 500 mm';
-          var spec2Label = isThai ? 'ความเร็ว:' : 'Speed:';
-          var spec2Val = isThai ? 'สูงสุด 60 แร็ค/ชม.' : 'Up to 60 Racks/hr';
-          var spec3Label = isThai ? 'ประหยัด:' : 'Eco:';
-          var spec3Val = isThai ? 'ระบบล้างน้ำอัจฉริยะ' : 'Water-Saving Rinse';
-          var spec4Label = isThai ? 'บริการ:' : 'Service:';
-          var spec4Val = isThai ? 'ทีมช่างดูแลทั่วประเทศ' : '24/7 Nationwide';
-
-          var brandBadgeHtml = '';
-          if (colgedLogoUrl) {
-            brandBadgeHtml = '<a href="/collections/colged" class="article-product-card__brand-link js-product-card-vendor-link" target="_blank" rel="noopener" title="View Colged Collection">' +
-                '<img class="article-product-card__brand-logo js-product-card-brand-logo" src="' + colgedLogoUrl + '" alt="' + vendorText + '" loading="lazy" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'inline-flex\';">' +
-                '<span class="article-product-card__vendor" style="display:none;"><span>' + vendorText + '</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>' +
-              '</a>';
-          } else {
-            brandBadgeHtml = '<a href="/collections/colged" class="article-product-card__vendor js-product-card-vendor js-product-card-vendor-link" target="_blank" rel="noopener" title="View Colged Collection">' +
-                '<span>' + vendorText + '</span>' +
-                '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>' +
-              '</a>';
-          }
+          var initialLogo = collectionLogos['colged'] || colgedLogoUrl || '';
+          var brandBadgeHtml = '<a href="/collections/colged" class="article-product-card__brand-link js-product-card-brand-link js-product-card-vendor-link" target="_blank" rel="noopener" title="View Collection">' +
+              '<img class="article-product-card__brand-logo js-product-card-brand-logo" src="' + initialLogo + '" alt="' + vendorText + '" loading="lazy" style="' + (initialLogo ? '' : 'display:none;') + '" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'inline-flex\';">' +
+              '<span class="article-product-card__vendor js-product-card-vendor" style="' + (initialLogo ? 'display:none;' : '') + '"><span>' + vendorText + '</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>' +
+            '</a>';
 
           var card = document.createElement('div');
           card.className = 'article-product-card';
           card.innerHTML = '<div class="article-product-card__media">' +
-              '<span class="article-product-card__badge">' + badgeText + '</span>' +
               '<img class="article-product-card__img js-product-card-img" src="" alt="' + titleText + '" loading="lazy" style="display:none;">' +
               '<div class="article-product-card__placeholder js-product-card-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#1F6B4D;gap:8px;">' +
                 '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/><circle cx="15" cy="15" r="2"/></svg>' +
-                '<span style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#123B2B;">COLGED HOOD DISHWASHER</span>' +
+                '<span style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#123B2B;">COMMERCIAL KITCHEN EQUIPMENT</span>' +
               '</div>' +
             '</div>' +
             '<div class="article-product-card__info">' +
@@ -956,25 +1054,7 @@
               '<h3 class="article-product-card__title">' +
                 '<a href="' + targetUrl + '" class="js-product-card-title" target="_blank" rel="noopener">' + titleText + '</a>' +
               '</h3>' +
-              '<p class="article-product-card__desc">' + cleanText + '</p>' +
-              '<div class="article-product-card__specs">' +
-                '<div class="article-product-spec">' +
-                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>' +
-                  '<span>' + spec1Label + ' <strong>' + spec1Val + '</strong></span>' +
-                '</div>' +
-                '<div class="article-product-spec">' +
-                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
-                  '<span>' + spec2Label + ' <strong>' + spec2Val + '</strong></span>' +
-                '</div>' +
-                '<div class="article-product-spec">' +
-                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' +
-                  '<span>' + spec3Label + ' <strong>' + spec3Val + '</strong></span>' +
-                '</div>' +
-                '<div class="article-product-spec">' +
-                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>' +
-                  '<span>' + spec4Label + ' <strong>' + spec4Val + '</strong></span>' +
-                '</div>' +
-              '</div>' +
+              '<p class="article-product-card__desc">' + descText + '</p>' +
               '<div class="article-product-card__actions">' +
                 '<a href="' + targetUrl + '" class="article-product-card__btn-primary" target="_blank" rel="noopener">' +
                   '<span>' + btnText + '</span>' +
@@ -999,15 +1079,37 @@
                 var phEl = card.querySelector('.js-product-card-placeholder');
                 var titleEl = card.querySelector('.js-product-card-title');
                 var btnEl = card.querySelector('.article-product-card__btn-primary');
+                var brandLinkEl = card.querySelector('.js-product-card-brand-link');
+                var brandLogoEl = card.querySelector('.js-product-card-brand-logo');
+                var vendorEl = card.querySelector('.js-product-card-vendor');
 
                 if (prod.featured_image && imgEl) {
                   imgEl.src = prod.featured_image;
                   imgEl.style.display = 'block';
                   if (phEl) phEl.style.display = 'none';
                 }
-                if (prod.title && titleEl && (!titleEl.textContent || titleEl.textContent.includes('Colged SteelTech 38-00'))) {
+                if (prod.title && titleEl) {
                   titleEl.textContent = prod.title;
                   if (prod.url) titleEl.href = prod.url;
+                }
+                if (prod.vendor) {
+                  var vHandle = prod.vendor.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  if (brandLinkEl) {
+                    brandLinkEl.href = '/collections/' + vHandle;
+                    brandLinkEl.title = 'View ' + prod.vendor + ' Collection';
+                  }
+
+                  var dynamicLogo = collectionLogos[vHandle] || (vHandle === 'colged' ? (colgedLogoUrl || collectionLogos['colged']) : '');
+                  if (dynamicLogo && brandLogoEl) {
+                    brandLogoEl.src = dynamicLogo;
+                    brandLogoEl.alt = prod.vendor;
+                    brandLogoEl.style.display = 'block';
+                    if (vendorEl) vendorEl.style.display = 'none';
+                  } else if (vendorEl) {
+                    vendorEl.querySelector('span').textContent = prod.vendor.toUpperCase();
+                    vendorEl.style.display = 'inline-flex';
+                    if (brandLogoEl) brandLogoEl.style.display = 'none';
+                  }
                 }
                 if (prod.url && btnEl) {
                   btnEl.href = prod.url;
@@ -2610,17 +2712,20 @@
   .article-product-card__brand-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     text-decoration: none !important;
     padding: 0;
+    background: transparent;
+    border: none;
     transition: all var(--sf-transition);
   }
   .article-product-card__brand-link:hover {
-    transform: translateY(-1px) scale(1.03);
-    opacity: 0.88;
+    transform: translateY(-1px) scale(1.02);
+    opacity: 0.92;
   }
   .article-product-card__brand-logo {
-    max-height: 40px;
-    max-width: 165px;
+    max-height: 38px;
+    max-width: 140px;
     width: auto;
     height: auto;
     object-fit: contain;
