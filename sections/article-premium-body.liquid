@@ -1017,7 +1017,8 @@
 
           var isThai = /[\u0E00-\u0E7F]/.test(cleanText);
           var handleMatch = targetUrl.match(/\/products\/([a-zA-Z0-9\-_]+)/);
-          var productHandle = handleMatch ? handleMatch[1] : 'hood-dishwasher-500x500mm-rack';
+          // Only product links get live product details; other links keep the generic card.
+          var productHandle = handleMatch ? handleMatch[1] : '';
 
           var vendorText = 'SEVEN FIVE';
           var statusText = isThai ? 'พร้อมส่ง • บริการติดตั้งครบวงจร' : 'In Stock • Turnkey Installation';
