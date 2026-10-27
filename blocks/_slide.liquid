@@ -212,14 +212,7 @@
   {%- endif -%}
 {%- endcapture -%}
 
-{% render 'slideshow-slide',
-  index: block_index,
-  class: class | append: ' slide--block-' | append: block.id,
-  children: children,
-  attributes: block.shopify_attributes,
-  slide_size: section.settings.slide_height,
-  navigate_to_slide: true
-%}
+{% render 'slideshow-slide', index: block_index, class: class, append: block.id, children: children, attributes: block.shopify_attributes, slide_size: section.settings.slide_height, navigate_to_slide: true %}
 
 {% stylesheet %}
   .slide__content {
@@ -618,3 +611,23 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'slideshow-slide',
+      index: block_index,
+      class: class | append: ' slide--block-' | append: block.id,
+      children: children,
+      attributes: block.shopify_attributes,
+      slide_size: section.settings.slide_height,
+      navigate_to_slide: true
+    %}
+  to: "{% render 'slideshow-slide', index: block_index, class: class, append: block.id,
+    children: children, attributes: block.shopify_attributes, slide_size: section.settings.slide_height,
+    navigate_to_slide: true %}"
+  position: 9374..9582
+{% endcomment %}
