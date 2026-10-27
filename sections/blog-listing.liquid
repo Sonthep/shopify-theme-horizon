@@ -1,4 +1,4 @@
-{%- comment -%} sections/blog-listing.liquid — Custom Blog Listing with modern UX/UI {%- endcomment -%}
+{%- comment -%} sections/blog-listing.liquid — Sevenfive B2B Premium Blog Listing {%- endcomment -%}
 
 {%- assign articles_per_page = section.settings.articles_per_page | default: 9 -%}
 {%- assign show_hero = section.settings.show_hero -%}
@@ -7,236 +7,323 @@
 
 {%- paginate blog.articles by articles_per_page -%}
 
-<div class="blog-listing color-{{ section.settings.color_scheme }}">
+<div class="blog-listing color-{{ section.settings.color_scheme }} spacing-style"
+  style="{% render 'spacing-style', settings: section.settings %}">
 
-  {%- comment -%} ── PAGE HEADER ─────────────────────────────────── {%- endcomment -%}
-  <div class="blog-listing__header">
-    <div class="blog-listing__header-inner">
-      <p class="blog-listing__eyebrow">{{ section.settings.eyebrow | default: 'Our Blog' }}</p>
-      <h1 class="blog-listing__title">{{ section.settings.heading | default: blog.title }}</h1>
-      {%- if section.settings.subheading != blank -%}
-        <p class="blog-listing__subheading">{{ section.settings.subheading }}</p>
-      {%- endif -%}
-    </div>
-  </div>
-
-  {%- comment -%} ── TAG FILTER ───────────────────────────────────── {%- endcomment -%}
-  {%- if all_tags.size > 0 and section.settings.show_tags -%}
-    <div class="blog-listing__tags">
-      <div class="blog-listing__tags-inner">
-        <a href="{{ blog.url }}" class="blog-tag{% unless current_tag %} is-active{% endunless %}">
-          All
-        </a>
-        {%- for tag in all_tags -%}
-          <a href="{{ blog.url }}/tagged/{{ tag | handleize }}"
-             class="blog-tag{% if current_tag == tag %} is-active{% endif %}">
-            {{ tag }}
-          </a>
-        {%- endfor -%}
+  <div class="section">
+    {%- comment -%} ── PAGE HEADER ─────────────────────────────────── {%- endcomment -%}
+    <div class="blog-listing__header">
+      <div class="blog-listing__badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span>{{ section.settings.eyebrow | default: 'Sevenfive Knowledge & Guides' }}</span>
       </div>
+      <h1 class="blog-listing__title">{{ section.settings.heading | default: blog.title }}</h1>
+      <p class="blog-listing__subheading">
+        {{ section.settings.subheading | default: 'Specialized insights, equipment selection guides, maintenance best practices, and commercial kitchen planning advice for culinary professionals.' }}
+      </p>
     </div>
-  {%- endif -%}
 
-  <div class="blog-listing__content">
-
-    {%- comment -%} ── HERO FEATURED POST ───────────────────────── {%- endcomment -%}
-    {%- if show_hero and blog.articles.size > 0 -%}
-      {%- assign hero = blog.articles[0] -%}
-      {%- assign reading_words = hero.content | strip_html | split: ' ' -%}
-      {%- assign reading_minutes = reading_words.size | divided_by: 200 | plus: 1 -%}
-      <a href="{{ hero.url }}" class="blog-hero" aria-label="{{ hero.title }}">
-        <div class="blog-hero__image-wrap">
-          {%- if hero.image -%}
-            <img
-              src="{{ hero.image | image_url: width: 1400 }}"
-              alt="{{ hero.image.alt | escape | default: hero.title }}"
-              loading="eager"
-              width="{{ hero.image.width }}"
-              height="{{ hero.image.height }}"
-              class="blog-hero__image"
-            >
-          {%- else -%}
-            <div class="blog-hero__image blog-hero__image--placeholder"></div>
-          {%- endif -%}
-          <div class="blog-hero__overlay"></div>
+    {%- comment -%} ── CATEGORY / TAG FILTER ───────────────────────── {%- endcomment -%}
+    {%- if all_tags.size > 0 and section.settings.show_tags -%}
+      <div class="blog-listing__tags-container">
+        <div class="blog-listing__tags">
+          <a href="{{ blog.url }}" class="blog-tag{% unless current_tag %} is-active{% endunless %}">
+            <span>All Articles</span>
+            <span class="blog-tag__count">{{ blog.articles_count }}</span>
+          </a>
+          {%- for tag in all_tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handleize }}"
+               class="blog-tag{% if current_tag == tag %} is-active{% endif %}">
+              <span>{{ tag }}</span>
+            </a>
+          {%- endfor -%}
         </div>
-        <div class="blog-hero__body">
-          {%- if hero.tags.size > 0 -%}
-            <span class="blog-hero__tag">{{ hero.tags | first }}</span>
-          {%- endif -%}
-          <h2 class="blog-hero__title">{{ hero.title }}</h2>
-          <p class="blog-hero__excerpt">{{ hero.excerpt_or_content | strip_html | truncate: 160 }}</p>
-          <div class="blog-hero__meta">
-            <span class="blog-hero__date">{{ hero.published_at | date: '%B %d, %Y' }}</span>
-            <span class="blog-hero__sep">·</span>
-            <span class="blog-hero__reading-time">{{ reading_minutes }} min read</span>
-            {%- if section.settings.show_author -%}
-              <span class="blog-hero__sep">·</span>
-              <span class="blog-hero__author">{{ hero.author }}</span>
-            {%- endif -%}
-          </div>
-          <span class="blog-hero__cta">
-            Read Article
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-        </div>
-      </a>
+      </div>
     {%- endif -%}
 
-    {%- comment -%} ── ARTICLE GRID ─────────────────────────────── {%- endcomment -%}
-    {%- assign start_index = 0 -%}
-    {%- if show_hero and current_tag == blank -%}
-      {%- assign start_index = 1 -%}
-    {%- endif -%}
+    <div class="blog-listing__content">
 
-    {%- assign loop_articles = blog.articles -%}
-
-    <div class="blog-grid">
-      {%- for article in loop_articles -%}
-        {%- if forloop.index0 < start_index -%}{%- continue -%}{%- endif -%}
-        {%- assign words = article.content | strip_html | split: ' ' -%}
-        {%- assign mins = words.size | divided_by: 200 | plus: 1 -%}
-        <article class="blog-card">
-          <a href="{{ article.url }}" class="blog-card__image-link" tabindex="-1" aria-hidden="true">
-            <div class="blog-card__image-wrap">
-              {%- if article.image -%}
+      {%- comment -%} ── FEATURED HERO ARTICLE ───────────────────────── {%- endcomment -%}
+      {%- if show_hero and blog.articles.size > 0 and current_tag == blank and paginate.current_page == 1 -%}
+        {%- assign hero = blog.articles[0] -%}
+        {%- assign reading_words = hero.content | strip_html | split: ' ' -%}
+        {%- assign reading_minutes = reading_words.size | divided_by: 200 | plus: 1 -%}
+        
+        <div class="blog-hero-wrapper">
+          <a href="{{ hero.url }}" class="blog-hero" aria-label="{{ hero.title }}">
+            <div class="blog-hero__image-wrap">
+              {%- if hero.image -%}
                 <img
-                  src="{{ article.image | image_url: width: 600 }}"
-                  alt="{{ article.image.alt | escape | default: article.title }}"
-                  loading="lazy"
-                  width="{{ article.image.width }}"
-                  height="{{ article.image.height }}"
-                  class="blog-card__image"
+                  src="{{ hero.image | image_url: width: 1600 }}"
+                  alt="{{ hero.image.alt | escape | default: hero.title }}"
+                  loading="eager"
+                  width="{{ hero.image.width }}"
+                  height="{{ hero.image.height }}"
+                  class="blog-hero__image"
                 >
               {%- else -%}
-                <div class="blog-card__image blog-card__image--placeholder">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-6 4 4"/>
-                  </svg>
-                </div>
+                <div class="blog-hero__image blog-hero__image--placeholder"></div>
               {%- endif -%}
+              <div class="blog-hero__overlay"></div>
+            </div>
+            
+            <div class="blog-hero__body">
+              <div class="blog-hero__top-meta">
+                <span class="blog-hero__featured-badge">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>Featured Guide</span>
+                </span>
+                {%- if hero.tags.size > 0 -%}
+                  <span class="blog-hero__tag">{{ hero.tags | first }}</span>
+                {%- endif -%}
+              </div>
+              
+              <h2 class="blog-hero__title">{{ hero.title }}</h2>
+              
+              {%- if section.settings.show_excerpt -%}
+                <p class="blog-hero__excerpt">{{ hero.excerpt_or_content | strip_html | truncate: 170 }}</p>
+              {%- endif -%}
+              
+              <div class="blog-hero__footer">
+                <div class="blog-hero__meta">
+                  <span class="blog-hero__meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>{{ hero.published_at | date: '%d %B %Y' }}</span>
+                  </span>
+                  <span class="blog-hero__sep">·</span>
+                  <span class="blog-hero__meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>{{ reading_minutes }} min read</span>
+                  </span>
+                  {%- if section.settings.show_author and hero.author != blank -%}
+                    <span class="blog-hero__sep">·</span>
+                    <span class="blog-hero__meta-item blog-hero__author">By {{ hero.author }}</span>
+                  {%- endif -%}
+                </div>
+
+                <span class="blog-hero__cta">
+                  <span>Read Full Article</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </span>
+              </div>
             </div>
           </a>
-          <div class="blog-card__body">
-            {%- if article.tags.size > 0 -%}
-              <a href="{{ blog.url }}/tagged/{{ article.tags | first | handleize }}" class="blog-card__tag">
-                {{ article.tags | first }}
-              </a>
-            {%- endif -%}
-            <h2 class="blog-card__title">
-              <a href="{{ article.url }}">{{ article.title }}</a>
-            </h2>
-            {%- if section.settings.show_excerpt -%}
-              <p class="blog-card__excerpt">
-                {{ article.excerpt_or_content | strip_html | truncate: 110 }}
-              </p>
-            {%- endif -%}
-            <div class="blog-card__footer">
-              <div class="blog-card__meta">
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} ── ARTICLE GRID ─────────────────────────────── {%- endcomment -%}
+      {%- assign start_index = 0 -%}
+      {%- if show_hero and current_tag == blank and paginate.current_page == 1 -%}
+        {%- assign start_index = 1 -%}
+      {%- endif -%}
+
+      <div class="blog-grid">
+        {%- for article in blog.articles -%}
+          {%- if forloop.index0 < start_index -%}{%- continue -%}{%- endif -%}
+          {%- assign words = article.content | strip_html | split: ' ' -%}
+          {%- assign mins = words.size | divided_by: 200 | plus: 1 -%}
+          
+          <article class="blog-card">
+            <a href="{{ article.url }}" class="blog-card__image-link" tabindex="-1" aria-hidden="true">
+              <div class="blog-card__image-wrap">
+                {%- if article.image -%}
+                  <img
+                    src="{{ article.image | image_url: width: 700 }}"
+                    alt="{{ article.image.alt | escape | default: article.title }}"
+                    loading="lazy"
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                    class="blog-card__image"
+                  >
+                {%- else -%}
+                  <div class="blog-card__image blog-card__image--placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+                {%- if article.tags.size > 0 -%}
+                  <span class="blog-card__floating-tag">{{ article.tags | first }}</span>
+                {%- endif -%}
+              </div>
+            </a>
+
+            <div class="blog-card__body">
+              <div class="blog-card__meta-top">
                 <time class="blog-card__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
                   {{ article.published_at | date: '%b %d, %Y' }}
                 </time>
                 <span class="blog-card__sep">·</span>
                 <span class="blog-card__reading-time">{{ mins }} min read</span>
               </div>
-              <a href="{{ article.url }}" class="blog-card__read-more" aria-label="Read {{ article.title }}">
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+
+              <h2 class="blog-card__title">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h2>
+
+              {%- if section.settings.show_excerpt -%}
+                <p class="blog-card__excerpt">
+                  {{ article.excerpt_or_content | strip_html | truncate: 120 }}
+                </p>
+              {%- endif -%}
+
+              <div class="blog-card__footer">
+                {%- if article.author != blank -%}
+                  <span class="blog-card__author">
+                    <span class="blog-card__author-avatar">{{ article.author | slice: 0, 1 | upcase }}</span>
+                    <span>{{ article.author }}</span>
+                  </span>
+                {%- endif -%}
+                
+                <a href="{{ article.url }}" class="blog-card__read-more" aria-label="Read {{ article.title }}">
+                  <span>Read</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+              </div>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} ── B2B KITCHEN PLANNING GUIDE CTA BANNER ───── {%- endcomment -%}
+      {%- if section.settings.show_banner_cta -%}
+        <div class="blog-lead-banner">
+          <div class="blog-lead-banner__inner">
+            <div class="blog-lead-banner__text">
+              <span class="blog-lead-banner__tag">COMMERCIAL FOODSERVICE SPECIALIST</span>
+              <h3 class="blog-lead-banner__title">{{ section.settings.banner_cta_title | default: 'Need a Custom Kitchen Design or Commercial Equipment Sourcing?' }}</h3>
+              <p class="blog-lead-banner__sub">{{ section.settings.banner_cta_sub | default: 'Sevenfive provides end-to-end commercial kitchen solutions with 3D floor planning, certified equipment installation, and nationwide technical maintenance.' }}</p>
+            </div>
+            <div class="blog-lead-banner__actions">
+              <a href="{{ section.settings.banner_cta_link | default: '/pages/contact' }}" class="btn btn--primary btn--lg">
+                <span>{{ section.settings.banner_cta_btn | default: 'Contact Engineering Team' }}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
+              <a href="tel:024237575" class="btn btn--outline-primary btn--lg">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>Call 02-423-7575</span>
               </a>
             </div>
           </div>
-        </article>
-      {%- endfor -%}
-    </div>
-
-    {%- comment -%} ── PAGINATION ────────────────────────────────── {%- endcomment -%}
-    {%- if paginate.pages > 1 -%}
-      <nav class="blog-pagination" aria-label="Blog pagination">
-        {%- if paginate.previous -%}
-          <a href="{{ paginate.previous.url }}" class="blog-pagination__btn blog-pagination__btn--prev">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Prev
-          </a>
-        {%- endif -%}
-        <div class="blog-pagination__pages">
-          {%- for part in paginate.parts -%}
-            {%- if part.is_link -%}
-              <a href="{{ part.url }}" class="blog-pagination__page">{{ part.title }}</a>
-            {%- elsif part.title == paginate.current_page -%}
-              <span class="blog-pagination__page is-current">{{ part.title }}</span>
-            {%- else -%}
-              <span class="blog-pagination__ellipsis">…</span>
-            {%- endif -%}
-          {%- endfor -%}
         </div>
-        {%- if paginate.next -%}
-          <a href="{{ paginate.next.url }}" class="blog-pagination__btn blog-pagination__btn--next">
-            Next
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-        {%- endif -%}
-      </nav>
-    {%- endif -%}
+      {%- endif -%}
 
+      {%- comment -%} ── PAGINATION ────────────────────────────────── {%- endcomment -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="blog-pagination" aria-label="Blog pagination">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="blog-pagination__btn blog-pagination__btn--prev">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+              <span>Previous</span>
+            </a>
+          {%- endif -%}
+          
+          <div class="blog-pagination__pages">
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" class="blog-pagination__page">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}
+                <span class="blog-pagination__page is-current">{{ part.title }}</span>
+              {%- else -%}
+                <span class="blog-pagination__ellipsis">…</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="blog-pagination__btn blog-pagination__btn--next">
+              <span>Next</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+
+    </div>
   </div>
 </div>
 
 {%- endpaginate -%}
 
 {% stylesheet %}
-/* ── Variables ─────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   SEVENFIVE B2B BLOG LISTING DESIGN SYSTEM
+   ══════════════════════════════════════════════════════════════════ */
 .blog-listing {
-  --blog-accent: #b8960c;
-  --blog-accent-light: #f5f0e0;
-  --blog-radius: 12px;
-  --blog-card-gap: 28px;
-  --blog-transition: 0.25s ease;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px 80px;
+  --sf-primary: #1F6B4D;
+  --sf-primary-hover: #17553D;
+  --sf-primary-dark: #123B2B;
+  --sf-surface: #FFFFFF;
+  --sf-surface-soft: #F3F8F5;
+  --sf-surface-tint: #EAF2EE;
+  --sf-border: #D9E3DD;
+  --sf-border-light: #EBEFE8;
+  --sf-text: #1C1F1D;
+  --sf-text-muted: #5E6A63;
+  --sf-text-subtle: #87948C;
+  --sf-radius-sm: 8px;
+  --sf-radius-md: 12px;
+  --sf-radius-lg: 16px;
+  --sf-radius-xl: 20px;
+  --sf-shadow-sm: 0 1px 3px rgba(18, 59, 43, 0.05);
+  --sf-shadow-md: 0 8px 24px rgba(18, 59, 43, 0.07);
+  --sf-shadow-lg: 0 16px 36px rgba(18, 59, 43, 0.10);
+  --sf-transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  color: var(--sf-text);
+  background-color: var(--sf-surface);
+  font-family: inherit;
 }
 
-/* ── Header ────────────────────────────────────── */
+/* ── Header ───────────────────────────────────────────────────────── */
 .blog-listing__header {
   text-align: center;
-  padding: 64px 20px 48px;
+  padding: 48px 20px 32px;
+  max-width: 820px;
+  margin: 0 auto;
 }
-.blog-listing__eyebrow {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+.blog-listing__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--blog-accent);
-  margin-bottom: 12px;
+  color: var(--sf-primary);
+  background: var(--sf-surface-soft);
+  border: 1px solid var(--sf-border);
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 16px;
 }
 .blog-listing__title {
-  font-size: clamp(1.75rem, 4vw, 2.8rem);
+  font-size: clamp(28px, 4vw, 44px);
   font-weight: 700;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
   line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--sf-text);
 }
 .blog-listing__subheading {
-  font-size: 1rem;
-  color: #666;
-  max-width: 520px;
+  font-size: 15.5px;
+  color: var(--sf-text-muted);
+  max-width: 640px;
   margin: 0 auto;
   line-height: 1.6;
 }
 
-/* ── Tag Filter ────────────────────────────────── */
-.blog-listing__tags {
-  margin-bottom: 40px;
+/* ── Tag / Category Filter ────────────────────────────────────────── */
+.blog-listing__tags-container {
+  margin-bottom: 36px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.blog-listing__tags-inner {
+.blog-listing__tags-container::-webkit-scrollbar {
+  display: none;
+}
+.blog-listing__tags {
   display: flex;
   gap: 8px;
   padding: 4px 0 12px;
@@ -244,37 +331,61 @@
   flex-wrap: wrap;
 }
 .blog-tag {
-  display: inline-block;
-  padding: 6px 16px;
-  border: 1.5px solid #e0e0e0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
   border-radius: 100px;
-  font-size: 0.82rem;
+  font-size: 13px;
   font-weight: 500;
-  color: #555;
+  color: var(--sf-text-muted);
   text-decoration: none;
   white-space: nowrap;
-  transition: all var(--blog-transition);
+  transition: all var(--sf-transition);
 }
-.blog-tag:hover { border-color: var(--blog-accent); color: var(--blog-accent); }
-.blog-tag.is-active {
-  background: var(--blog-accent);
-  border-color: var(--blog-accent);
-  color: #fff;
+.blog-tag__count {
+  font-size: 11px;
+  background: var(--sf-surface-tint);
+  color: var(--sf-primary-dark);
+  padding: 1px 6px;
+  border-radius: 100px;
   font-weight: 600;
 }
+.blog-tag:hover {
+  border-color: var(--sf-primary);
+  color: var(--sf-primary);
+  background: var(--sf-surface-soft);
+  transform: translateY(-1px);
+}
+.blog-tag.is-active {
+  background: var(--sf-primary);
+  border-color: var(--sf-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(31, 107, 77, 0.25);
+}
+.blog-tag.is-active .blog-tag__count {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
 
-/* ── Hero ──────────────────────────────────────── */
+/* ── Featured Hero Article ────────────────────────────────────────── */
+.blog-hero-wrapper {
+  margin-bottom: 40px;
+}
 .blog-hero {
   display: block;
   position: relative;
-  border-radius: var(--blog-radius);
+  border-radius: var(--sf-radius-xl);
   overflow: hidden;
   text-decoration: none;
-  color: #fff;
-  margin-bottom: var(--blog-card-gap);
-  height: clamp(360px, 50vw, 520px);
+  color: #FFFFFF;
+  height: clamp(380px, 46vw, 520px);
+  box-shadow: var(--sf-shadow-lg);
+  border: 1px solid var(--sf-border);
 }
-.blog-hero:hover .blog-hero__image { transform: scale(1.04); }
 .blog-hero__image-wrap {
   position: absolute;
   inset: 0;
@@ -283,168 +394,232 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+.blog-hero:hover .blog-hero__image {
+  transform: scale(1.035);
 }
 .blog-hero__image--placeholder {
-  background: linear-gradient(135deg, #e8e0d0 0%, #c8b86a 100%);
+  background: linear-gradient(135deg, #123B2B 0%, #1F6B4D 100%);
 }
 .blog-hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 55%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(18, 59, 43, 0.95) 0%,
+    rgba(18, 59, 43, 0.65) 45%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
 }
 .blog-hero__body {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 40px;
+  padding: clamp(24px, 4vw, 48px);
+  z-index: 1;
+}
+.blog-hero__top-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.blog-hero__featured-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #34D399;
+  color: #123B2B;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
 }
 .blog-hero__tag {
   display: inline-block;
-  background: var(--blog-accent);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   padding: 4px 10px;
-  border-radius: 4px;
-  margin-bottom: 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .blog-hero__title {
-  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-size: clamp(22px, 3.2vw, 36px);
   font-weight: 700;
   margin: 0 0 12px;
   line-height: 1.25;
-  max-width: 680px;
+  color: #FFFFFF;
+  max-width: 820px;
+  letter-spacing: -0.015em;
 }
 .blog-hero__excerpt {
-  font-size: 0.95rem;
-  opacity: 0.88;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.88);
   margin: 0 0 20px;
-  max-width: 580px;
+  max-width: 680px;
   line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.blog-hero__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .blog-hero__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  opacity: 0.8;
-  margin-bottom: 20px;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
 }
-.blog-hero__sep { opacity: 0.5; }
-.blog-hero__cta {
+.blog-hero__meta-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 8px 18px;
-  border-radius: 100px;
-  transition: background var(--blog-transition);
 }
-.blog-hero:hover .blog-hero__cta { background: rgba(255,255,255,0.25); }
+.blog-hero__sep {
+  opacity: 0.5;
+}
+.blog-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  background: var(--sf-primary);
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: var(--sf-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--sf-transition);
+}
+.blog-hero:hover .blog-hero__cta {
+  background: #288E67;
+  transform: translateX(4px);
+}
 
-/* ── Card Grid ─────────────────────────────────── */
+/* ── 3-Column Article Card Grid ───────────────────────────────────── */
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--blog-card-gap);
+  gap: 32px;
 }
 
 .blog-card {
-  background: #fff;
-  border-radius: var(--blog-radius);
+  background: var(--sf-surface);
+  border-radius: var(--sf-radius-lg);
   overflow: hidden;
-  border: 1px solid #ebebeb;
+  border: 1px solid var(--sf-border);
   display: flex;
   flex-direction: column;
-  transition: box-shadow var(--blog-transition), transform var(--blog-transition);
+  transition: all var(--sf-transition);
+  box-shadow: var(--sf-shadow-sm);
 }
 .blog-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-  transform: translateY(-3px);
+  box-shadow: var(--sf-shadow-md);
+  transform: translateY(-4px);
+  border-color: #B8D6C6;
 }
 
-.blog-card__image-link { display: block; }
+.blog-card__image-link {
+  display: block;
+}
 .blog-card__image-wrap {
+  position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--sf-surface-soft);
 }
 .blog-card__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
 }
-.blog-card:hover .blog-card__image { transform: scale(1.06); }
+.blog-card:hover .blog-card__image {
+  transform: scale(1.05);
+}
 .blog-card__image--placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f0e8 0%, #e8d8a0 100%);
-  color: #b8960c;
+  background: var(--sf-surface-soft);
+  color: var(--sf-text-subtle);
+}
+.blog-card__floating-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(18, 59, 43, 0.85);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .blog-card__body {
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-.blog-card__tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--blog-accent);
-  background: var(--blog-accent-light);
-  padding: 3px 9px;
-  border-radius: 4px;
-  text-decoration: none;
+.blog-card__meta-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--sf-text-subtle);
   margin-bottom: 10px;
-  align-self: flex-start;
-  transition: background var(--blog-transition);
 }
-.blog-card__tag:hover { background: #ead98a; }
-
 .blog-card__title {
-  font-size: 1rem;
+  font-size: 17px;
   font-weight: 700;
   margin: 0 0 10px;
   line-height: 1.4;
-  flex: 1;
+  letter-spacing: -0.01em;
 }
 .blog-card__title a {
-  color: inherit;
+  color: var(--sf-text);
   text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color var(--sf-transition);
 }
-.blog-card__title a:hover { color: var(--blog-accent); }
+.blog-card__title a:hover {
+  color: var(--sf-primary);
+}
 
 .blog-card__excerpt {
-  font-size: 0.85rem;
-  color: #666;
+  font-size: 13.5px;
+  color: var(--sf-text-muted);
   line-height: 1.6;
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -456,107 +631,188 @@
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+  border-top: 1px solid var(--sf-border-light);
 }
-.blog-card__meta {
+.blog-card__author {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  color: #999;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sf-text);
 }
-.blog-card__sep { opacity: 0.5; }
-.blog-card__read-more {
-  display: flex;
+.blog-card__author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--sf-primary);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid #e0e0e0;
-  color: #555;
-  text-decoration: none;
-  transition: all var(--blog-transition);
-  flex-shrink: 0;
-}
-.blog-card__read-more:hover {
-  background: var(--blog-accent);
-  border-color: var(--blog-accent);
-  color: #fff;
 }
 
-/* ── Pagination ────────────────────────────────── */
+.blog-card__read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--sf-primary);
+  text-decoration: none;
+  transition: gap var(--sf-transition);
+}
+.blog-card:hover .blog-card__read-more {
+  gap: 8px;
+  color: var(--sf-primary-dark);
+}
+
+/* ── B2B Kitchen Planning Guide CTA Banner ────────────────────────── */
+.blog-lead-banner {
+  margin-top: 48px;
+  background: var(--sf-surface-soft);
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius-xl);
+  padding: 40px 36px;
+}
+.blog-lead-banner__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.blog-lead-banner__text {
+  max-width: 600px;
+}
+.blog-lead-banner__tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--sf-primary);
+  margin-bottom: 8px;
+}
+.blog-lead-banner__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sf-text);
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+.blog-lead-banner__sub {
+  font-size: 14px;
+  color: var(--sf-text-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+.blog-lead-banner__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Pagination ───────────────────────────────────────────────────── */
 .blog-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   margin-top: 56px;
+  padding-bottom: 24px;
 }
 .blog-pagination__btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 18px;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #444;
+  padding: 10px 20px;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--sf-text);
+  background: var(--sf-surface);
   text-decoration: none;
-  transition: all var(--blog-transition);
+  transition: all var(--sf-transition);
 }
 .blog-pagination__btn:hover {
-  border-color: var(--blog-accent);
-  color: var(--blog-accent);
+  border-color: var(--sf-primary);
+  color: var(--sf-primary);
+  background: var(--sf-surface-soft);
 }
 .blog-pagination__pages {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 .blog-pagination__page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #444;
+  min-width: 40px;
+  height: 40px;
+  border-radius: var(--sf-radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--sf-text);
   text-decoration: none;
-  border: 1.5px solid transparent;
-  transition: all var(--blog-transition);
+  border: 1px solid transparent;
+  transition: all var(--sf-transition);
 }
-.blog-pagination__page:hover { border-color: #ddd; }
+.blog-pagination__page:hover {
+  border-color: var(--sf-border);
+  background: var(--sf-surface-soft);
+}
 .blog-pagination__page.is-current {
-  background: var(--blog-accent);
-  color: #fff;
-  font-weight: 700;
+  background: var(--sf-primary);
+  color: #FFFFFF;
+  border-color: var(--sf-primary);
+  box-shadow: 0 2px 6px rgba(31, 107, 77, 0.25);
 }
 .blog-pagination__ellipsis {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 36px;
-  color: #aaa;
+  color: var(--sf-text-subtle);
 }
 
-/* ── Responsive ────────────────────────────────── */
-@media (max-width: 900px) {
-  .blog-grid { grid-template-columns: repeat(2, 1fr); }
-  .blog-hero__body { padding: 28px; }
-}
-@media (max-width: 600px) {
-  .blog-grid { grid-template-columns: 1fr; }
-  .blog-listing__header { padding: 40px 0 32px; }
-  .blog-hero {
-    height: 300px;
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
-  .blog-hero__title { font-size: 1.2rem; }
-  .blog-hero__excerpt { display: none; }
+}
+@media (max-width: 680px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .blog-listing__header {
+    padding: 32px 0 24px;
+  }
+  .blog-hero {
+    height: 360px;
+  }
+  .blog-hero__title {
+    font-size: 20px;
+  }
+  .blog-hero__excerpt {
+    display: none;
+  }
+  .blog-lead-banner {
+    padding: 24px 20px;
+  }
+  .blog-lead-banner__actions {
+    width: 100%;
+  }
+  .blog-lead-banner__actions .btn {
+    width: 100%;
+  }
 }
 {% endstylesheet %}
 
@@ -578,7 +834,7 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow label",
-      "default": "Our Blog"
+      "default": "Sevenfive Knowledge & Guides"
     },
     {
       "type": "text",
@@ -589,11 +845,12 @@
     {
       "type": "textarea",
       "id": "subheading",
-      "label": "Subheading"
+      "label": "Subheading",
+      "default": "Specialized insights, equipment selection guides, maintenance best practices, and commercial kitchen planning advice for culinary professionals."
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "Layout & Options"
     },
     {
       "type": "checkbox",
@@ -604,7 +861,7 @@
     {
       "type": "checkbox",
       "id": "show_tags",
-      "label": "Show tag filter",
+      "label": "Show category / tag filter",
       "default": true
     },
     {
@@ -617,7 +874,7 @@
       "type": "checkbox",
       "id": "show_author",
       "label": "Show author name in hero",
-      "default": false
+      "default": true
     },
     {
       "type": "range",
@@ -627,6 +884,39 @@
       "max": 12,
       "step": 3,
       "default": 9
+    },
+    {
+      "type": "header",
+      "content": "Lead Capture Banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner_cta",
+      "label": "Show B2B Kitchen Planning Banner",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "banner_cta_title",
+      "label": "Banner Title",
+      "default": "Need a Custom Kitchen Design or Commercial Equipment Sourcing?"
+    },
+    {
+      "type": "textarea",
+      "id": "banner_cta_sub",
+      "label": "Banner Subheading",
+      "default": "Sevenfive provides end-to-end commercial kitchen solutions with 3D floor planning, certified equipment installation, and nationwide technical maintenance."
+    },
+    {
+      "type": "text",
+      "id": "banner_cta_btn",
+      "label": "Button Text",
+      "default": "Contact Engineering Team"
+    },
+    {
+      "type": "url",
+      "id": "banner_cta_link",
+      "label": "Button Link"
     }
   ],
   "presets": [

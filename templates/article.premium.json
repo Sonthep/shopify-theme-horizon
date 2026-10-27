@@ -1,45 +1,44 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "article-body": {
       "type": "article-premium-body",
       "blocks": {
-        "quote-form": {
-          "type": "quote_form",
-          "settings": {}
-        },
         "recommended-products": {
           "type": "recommended_products",
-          "settings": {}
+          "settings": {
+            "badge": "RELATED PRODUCTS",
+            "title": "Featured Equipment",
+            "subtitle": "Commercial equipment featured in this guide",
+            "products_to_show": 3,
+            "show_vendor": true,
+            "show_price": true,
+            "show_view_all": true,
+            "view_all_text": "View All →"
+          }
         },
-        "download-brochure": {
-          "type": "download_brochure",
+        "quote-form": {
+          "type": "quote_form",
           "settings": {}
         }
       },
       "block_order": [
-        "quote-form",
         "recommended-products",
-        "download-brochure"
+        "quote-form"
       ],
       "settings": {
         "show_excerpt": true,
         "show_toc": true,
-        "show_sidebar_tags": true,
+        "show_tags": true,
+        "show_date": true,
+        "show_read_time": true,
         "show_share_sidebar": true,
+        "show_sidebar_tags": true,
         "show_cta": true,
         "show_related": true,
-        "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 80
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 64,
+        "show_bottom_cta": true
       }
     }
   },

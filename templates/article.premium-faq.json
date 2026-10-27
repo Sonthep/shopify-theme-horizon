@@ -1,0 +1,48 @@
+{
+  "sections": {
+    "article-body": {
+      "type": "article-premium-body",
+      "blocks": {
+        "recommended-products": {
+          "type": "recommended_products",
+          "settings": {
+            "badge": "RELATED PRODUCTS",
+            "title": "Featured Equipment",
+            "subtitle": "Commercial equipment featured in this guide",
+            "products_to_show": 3,
+            "show_vendor": true,
+            "show_price": true,
+            "show_view_all": true,
+            "view_all_text": "View All →"
+          }
+        }
+      },
+      "block_order": [
+        "recommended-products"
+      ],
+      "settings": {
+        "show_excerpt": true,
+        "show_toc": true,
+        "show_tags": true,
+        "show_date": true,
+        "show_read_time": true,
+        "show_share_sidebar": true,
+        "show_sidebar_tags": true,
+        "show_cta": true,
+        "show_related": true,
+        "show_faq": true,
+        "auto_parse_faq": true,
+        "faq_badge": "Q&A / FAQ",
+        "faq_title": "Frequently Asked Questions (FAQ)",
+        "faq_subtitle": "Common questions regarding commercial equipment selection, operation, and maintenance.",
+        "color_scheme": "scheme-1",
+        "padding-block-start": 0,
+        "padding-block-end": 64,
+        "show_bottom_cta": true
+      }
+    }
+  },
+  "order": [
+    "article-body"
+  ]
+}
