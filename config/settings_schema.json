@@ -1776,6 +1776,46 @@
       },
       {
         "type": "header",
+        "content": "t:content.cart_quote"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_quote_enabled",
+        "label": "t:settings.cart_quote_enabled",
+        "info": "t:info.cart_quote_enabled",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_quote_replace_checkout",
+        "label": "t:settings.cart_quote_replace_checkout",
+        "info": "t:info.cart_quote_replace_checkout",
+        "default": false,
+        "visible_if": "{{ settings.cart_quote_enabled == true }}"
+      },
+      {
+        "type": "text",
+        "id": "cart_quote_payment_term",
+        "label": "t:settings.cart_quote_payment_term",
+        "default": "CASH / BANK TRANSFER",
+        "visible_if": "{{ settings.cart_quote_enabled == true }}"
+      },
+      {
+        "type": "number",
+        "id": "cart_quote_validity_days",
+        "label": "t:settings.cart_quote_validity_days",
+        "default": 30,
+        "visible_if": "{{ settings.cart_quote_enabled == true }}"
+      },
+      {
+        "type": "textarea",
+        "id": "cart_quote_remark",
+        "label": "t:settings.cart_quote_remark",
+        "default": "กรุณาตอบกลับใบยืนยันการสั่งซื้อ (P/O) มาพร้อมหนังสือรับรองบริษัท เพื่อใช้ในการเปิดใบกำกับภาษี",
+        "visible_if": "{{ settings.cart_quote_enabled == true }}"
+      },
+      {
+        "type": "header",
         "content": "t:content.product_media"
       },
       {

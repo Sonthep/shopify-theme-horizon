@@ -1,0 +1,97 @@
+{%- doc -%}
+  Renders the request-quotation control under the cart checkout buttons.
+  Signed-in customers download a PDF quotation of the current cart from the
+  quotation app proxy, which reads the cart and customer from Shopify itself.
+  Guests get a login link instead. Controlled by the `cart_quote_*` theme settings.
+
+  @param {boolean} [primary] - Styles the control as the main cart action when it replaces checkout.
+
+  @example
+  {% render 'cart-quote', primary: true %}
+{%- enddoc -%}
+
+{%- if settings.cart_quote_enabled and cart != empty -%}
+  {%- if customer -%}
+    <script
+      type="module"
+      src="{{ 'cart-quote.js' | asset_url }}"
+    ></script>
+
+    <cart-quote
+      class="cart-quote"
+      data-endpoint="/apps/quotation/cart-quote"
+      data-payment-term="{{ settings.cart_quote_payment_term | escape }}"
+      data-validity-days="{{ settings.cart_quote_validity_days }}"
+      data-remark="{{ settings.cart_quote_remark | escape }}"
+      data-message-preparing="{{ 'content.cart_quote_preparing' | t | escape }}"
+      data-message-ready="{{ 'content.cart_quote_ready' | t: number: '[number]' | escape }}"
+      data-message-error="{{ 'content.cart_quote_error' | t | escape }}"
+      data-message-error-cart="{{ 'content.cart_quote_error_cart' | t | escape }}"
+      data-message-error-login="{{ 'content.cart_quote_error_login' | t | escape }}"
+      data-message-error-rate="{{ 'content.cart_quote_error_rate' | t | escape }}"
+    >
+      <button
+        type="button"
+        class="button{% unless primary %} button-secondary{% endunless %} cart-quote__button"
+        ref="button"
+        on:click="/requestQuote"
+      >
+        {{ 'content.cart_quote_request' | t }}
+      </button>
+      <p
+        class="cart-quote__status cart-primary-typography"
+        ref="status"
+        role="status"
+      ></p>
+    </cart-quote>
+  {%- elsif shop.customer_accounts_enabled -%}
+    {%- assign login_url = routes.account_login_url | append: '?return_url=' | append: routes.cart_url -%}
+    {%- if primary -%}
+      <a
+        href="{{ login_url }}"
+        class="button cart-quote__button"
+      >
+        {{ 'content.cart_quote_login' | t }}
+      </a>
+    {%- else -%}
+      <p class="cart-quote__login cart-primary-typography">
+        {{ 'content.cart_quote_login_html' | t: link: login_url }}
+      </p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .cart-quote {
+    display: grid;
+    gap: var(--gap-2xs);
+    min-width: 0;
+  }
+
+  .cart-quote__button {
+    width: 100%;
+    height: clamp(25px, var(--height-buy-buttons), 55px);
+    padding-inline: var(--padding-4xl);
+  }
+
+  .cart-quote__button[aria-busy='true'] {
+    cursor: progress;
+  }
+
+  .cart-quote__status:empty {
+    display: none;
+  }
+
+  .cart-quote__status,
+  .cart-quote__login {
+    margin: 0;
+    font-size: var(--font-size--xs);
+    text-align: center;
+    overflow-wrap: anywhere;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .cart-quote__login a {
+    color: var(--color-foreground);
+  }
+{% endstylesheet %}

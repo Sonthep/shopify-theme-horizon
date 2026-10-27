@@ -253,7 +253,16 @@
   </div>
 </div>
 
+{%- liquid
+  # Quotation-only stores hide online payment and make the quotation the primary action.
+  assign quote_replaces_checkout = false
+  if settings.cart_quote_enabled and settings.cart_quote_replace_checkout
+    assign quote_replaces_checkout = true
+  endif
+-%}
+
 <div class="cart__ctas">
+  {% unless quote_replaces_checkout %}
   <button
     type="submit"
     id="checkout"
@@ -279,6 +288,9 @@
       {{ content_for_additional_checkout_buttons }}
     </div>
   {% endif %}
+  {% endunless %}
+
+  {% render 'cart-quote', primary: quote_replaces_checkout %}
 </div>
 
 {% stylesheet %}
