@@ -8,30 +8,41 @@ const REQUEST_TIMEOUT_MS = 120000;
  * @property {HTMLInputElement} file - The customer's quotation PDF.
  * @property {HTMLButtonElement} button - Starts the upload.
  * @property {HTMLElement} status - Live region for progress and errors.
+ * @property {HTMLElement} preview - Read-only preview of the result with download actions.
+ * @property {HTMLIFrameElement} frame - Shows the resulting PDF.
+ * @property {HTMLAnchorElement} downloadLink - Saves the resulting PDF.
+ * @property {HTMLAnchorElement} openLink - Opens the PDF in a new tab for browsers that cannot embed it.
  */
 
 /**
- * Sends a quotation PDF to the quotation app proxy and downloads the copy with
- * product images. The proxy identifies the signed-in customer; there is no review step.
+ * Sends a quotation PDF to the quotation app proxy and previews the copy with
+ * product images before the customer downloads it. The proxy identifies the
+ * signed-in customer; the preview is read-only.
  * @extends {Component<QuoteImageUploadRefs>}
  */
 class QuoteImageUpload extends Component {
-  requiredRefs = ['file', 'button', 'status'];
+  requiredRefs = ['file', 'button', 'status', 'preview', 'frame', 'downloadLink', 'openLink'];
 
   /** @type {AbortController | null} */
   #activeRequest = null;
+
+  /** @type {string | null} */
+  #resultUrl = null;
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#activeRequest?.abort();
     this.#activeRequest = null;
+    this.#clearResult();
   }
 
   /**
    * Clears the previous result when another file is chosen.
    */
   clearStatus = () => {
-    if (!this.#activeRequest) this.refs.status.textContent = '';
+    if (this.#activeRequest) return;
+    this.refs.status.textContent = '';
+    this.#clearResult();
   };
 
   /**
@@ -55,6 +66,7 @@ class QuoteImageUpload extends Component {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     this.#activeRequest = controller;
+    this.#clearResult();
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
     status.textContent = this.dataset.messagePreparing ?? '';
@@ -73,7 +85,7 @@ class QuoteImageUpload extends Component {
       }
 
       const inserted = Number(response.headers.get('X-Images-Inserted') ?? '');
-      download(await response.blob(), `${file.name.replace(/\.pdf$/i, '')}-images.pdf`);
+      this.#showResult(await response.blob(), `${file.name.replace(/\.pdf$/i, '')}-images.pdf`);
       status.textContent =
         inserted === 0
           ? this.dataset.messageReadyNone ?? ''
@@ -87,6 +99,31 @@ class QuoteImageUpload extends Component {
       button.removeAttribute('aria-busy');
     }
   };
+
+  /**
+   * @param {Blob} blob
+   * @param {string} filename
+   */
+  #showResult(blob, filename) {
+    const { preview, frame, downloadLink, openLink } = this.refs;
+    this.#resultUrl = URL.createObjectURL(blob);
+    frame.src = this.#resultUrl;
+    downloadLink.href = this.#resultUrl;
+    downloadLink.download = filename;
+    openLink.href = this.#resultUrl;
+    preview.hidden = false;
+  }
+
+  #clearResult() {
+    if (!this.#resultUrl) return;
+    const { preview, frame, downloadLink, openLink } = this.refs;
+    preview.hidden = true;
+    frame.removeAttribute('src');
+    downloadLink.href = '#';
+    openLink.href = '#';
+    URL.revokeObjectURL(this.#resultUrl);
+    this.#resultUrl = null;
+  }
 
   /**
    * @param {Response} response
@@ -122,22 +159,6 @@ class QuoteImageUpload extends Component {
  */
 function isPdf(file) {
   return file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
-}
-
-/**
- * @param {Blob} blob
- * @param {string} filename
- */
-function download(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.hidden = true;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 if (!customElements.get('quote-image-upload')) {

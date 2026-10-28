@@ -66,6 +66,35 @@
           ref="status"
           role="status"
         ></p>
+        <div
+          class="quote-image-upload__preview"
+          ref="preview"
+          hidden
+        >
+          <div class="quote-image-upload__actions">
+            <a
+              class="button quote-image-upload__button"
+              ref="downloadLink"
+              href="#"
+            >
+              {{- 'content.quote_images_download' | t -}}
+            </a>
+            <a
+              class="button button-secondary quote-image-upload__button"
+              ref="openLink"
+              href="#"
+              target="_blank"
+              rel="noopener"
+            >
+              {{- 'content.quote_images_open' | t -}}
+            </a>
+          </div>
+          <iframe
+            class="quote-image-upload__frame"
+            ref="frame"
+            title="{{ 'content.quote_images_preview_title' | t }}"
+          ></iframe>
+        </div>
       </quote-image-upload>
     {%- elsif shop.customer_accounts_enabled -%}
       {%- assign login_url = routes.account_login_url | append: '?return_url=' | append: request.path -%}
@@ -83,7 +112,7 @@
   .quote-image-upload {
     display: grid;
     gap: var(--gap-md);
-    max-width: 40rem;
+    max-width: 60rem;
     min-width: 0;
     margin-inline: auto;
     text-align: center;
@@ -126,6 +155,31 @@
 
   .quote-image-upload__status:empty {
     display: none;
+  }
+
+  .quote-image-upload__preview {
+    display: grid;
+    gap: var(--gap-sm);
+    justify-self: stretch;
+    min-width: 0;
+  }
+
+  .quote-image-upload__preview[hidden] {
+    display: none;
+  }
+
+  .quote-image-upload__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-sm);
+    justify-content: center;
+  }
+
+  .quote-image-upload__frame {
+    inline-size: 100%;
+    block-size: min(80vh, 60rem);
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    background: var(--color-background);
   }
 {% endstylesheet %}
 
