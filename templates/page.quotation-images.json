@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "quote-image-upload",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

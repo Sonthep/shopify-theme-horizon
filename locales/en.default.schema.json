@@ -239,6 +239,7 @@
     "media_type_info": "Features are populated from your menu links"
   },
   "names": {
+    "quote_image_upload": "Quotation images",
     "column": "Column",
     "product_title": "Product title",
     "custom_liquid": "Custom Liquid",
