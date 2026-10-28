@@ -2,7 +2,10 @@
   "sections": {
     "main": {
       "type": "quote-image-upload",
-      "settings": {}
+      "settings": {
+        "heading": "",
+        "text": ""
+      }
     }
   },
   "order": [

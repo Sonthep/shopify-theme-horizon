@@ -2,7 +2,7 @@
   Section contract.
   Lets signed-in customers upload a Seven Five quotation PDF and download it back
   with product images inserted. The quotation app proxy matches products and
-  renders the file in one step; there is no review or editing.
+  renders the file in one step; customers preview the result but cannot edit it.
   @example
   <!-- Add the "Quotation images" section to a page template, e.g. page.quotation-images -->
 {% endcomment %}
@@ -20,6 +20,24 @@
       <div class="quote-image-upload__text rte">{{ section.settings.text }}</div>
     {%- endif -%}
 
+    {%- capture upload_icon -%}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M12 13v8"/><path d="m8 17 4-4 4 4"/><path d="M20 16.6A5 5 0 0 0 18 7h-1.3A8 8 0 1 0 4 15.3"/>
+      </svg>
+    {%- endcapture -%}
+
     {%- if customer -%}
       <script
         type="module"
@@ -29,7 +47,7 @@
       <quote-image-upload
         class="quote-image-upload__form"
         data-endpoint="/apps/quotation/quote-images"
-        data-max-bytes="10485760"
+        data-max-bytes="104857600"
         data-message-preparing="{{ 'content.quote_images_preparing' | t }}"
         data-message-ready="{{ 'content.quote_images_ready' | t: count: '[count]' }}"
         data-message-ready-none="{{ 'content.quote_images_ready_none' | t }}"
@@ -39,28 +57,44 @@
         data-message-error-login="{{ 'content.cart_quote_error_login' | t }}"
         data-message-error-rate="{{ 'content.cart_quote_error_rate' | t }}"
       >
-        <label
-          class="quote-image-upload__label"
-          for="QuoteImageFile-{{ section.id }}"
+        <div
+          class="quote-image-upload__dropzone"
+          ref="dropzone"
         >
-          {{- 'content.quote_images_choose' | t -}}
-        </label>
-        <input
-          id="QuoteImageFile-{{ section.id }}"
-          class="quote-image-upload__input"
-          type="file"
-          accept="application/pdf,.pdf"
-          ref="file"
-          on:change="/clearStatus"
-        >
-        <button
-          type="button"
-          class="button quote-image-upload__button"
-          ref="button"
-          on:click="/upload"
-        >
-          {{ 'content.quote_images_submit' | t }}
-        </button>
+          <span class="quote-image-upload__icon">{{ upload_icon }}</span>
+          <p class="quote-image-upload__drop-title">{{ 'content.quote_images_drop' | t }}</p>
+          <p class="quote-image-upload__drop-text">{{ 'content.quote_images_browse' | t }}</p>
+          <input
+            id="QuoteImageFile-{{ section.id }}"
+            class="quote-image-upload__input"
+            type="file"
+            accept="application/pdf,.pdf"
+            ref="file"
+            on:change="/upload"
+          >
+          <label
+            class="button quote-image-upload__choose"
+            for="QuoteImageFile-{{ section.id }}"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/>
+            </svg>
+            {{- 'content.quote_images_choose_button' | t -}}
+          </label>
+          <p class="quote-image-upload__limits">{{ 'content.quote_images_limits' | t }}</p>
+        </div>
         <p
           class="quote-image-upload__status"
           ref="status"
@@ -88,6 +122,13 @@
             >
               {{- 'content.quote_images_open' | t -}}
             </a>
+            <button
+              type="button"
+              class="button button-secondary quote-image-upload__button"
+              on:click="/reset"
+            >
+              {{- 'content.quote_images_another' | t -}}
+            </button>
           </div>
           <iframe
             class="quote-image-upload__frame"
@@ -98,12 +139,15 @@
       </quote-image-upload>
     {%- elsif shop.customer_accounts_enabled -%}
       {%- assign login_url = routes.account_login_url | append: '?return_url=' | append: request.path -%}
-      <a
-        href="{{ login_url }}"
-        class="button quote-image-upload__button"
-      >
-        {{ 'content.quote_images_login' | t }}
-      </a>
+      <div class="quote-image-upload__dropzone">
+        <span class="quote-image-upload__icon">{{ upload_icon }}</span>
+        <a
+          href="{{ login_url }}"
+          class="button quote-image-upload__choose"
+        >
+          {{ 'content.quote_images_login' | t }}
+        </a>
+      </div>
     {%- endif -%}
   </div>
 </div>
@@ -111,7 +155,8 @@
 {% stylesheet %}
   .quote-image-upload {
     display: grid;
-    gap: var(--gap-md);
+    gap: var(--gap-lg);
+    width: 100%;
     max-width: 60rem;
     min-width: 0;
     margin-inline: auto;
@@ -126,25 +171,95 @@
 
   .quote-image-upload__form {
     display: grid;
-    gap: var(--gap-sm);
-    justify-items: center;
+    gap: var(--gap-md);
     min-width: 0;
   }
 
-  .quote-image-upload__label {
-    font-weight: var(--font-weight-bold, 700);
+  .quote-image-upload__dropzone {
+    position: relative;
+    display: grid;
+    gap: var(--gap-xs);
+    justify-items: center;
+    min-width: 0;
+    padding: var(--padding-5xl) var(--padding-xl);
+    border: 2px dashed rgb(var(--color-primary-rgb) / var(--opacity-40));
+    border-radius: var(--style-border-radius-lg, 1.5rem);
+    background: var(--color-background);
+    box-shadow: 0 1rem 2.5rem rgb(var(--color-shadow-rgb) / var(--opacity-5));
+    transition: border-color var(--animation-speed) var(--animation-easing),
+      background-color var(--animation-speed) var(--animation-easing);
   }
 
-  .quote-image-upload__input {
-    max-width: 100%;
+  .quote-image-upload__dropzone[hidden] {
+    display: none;
   }
 
-  .quote-image-upload__button {
-    justify-self: center;
+  .quote-image-upload__dropzone[data-dragging='true'] {
+    border-color: var(--color-primary);
+    background: rgb(var(--color-primary-rgb) / var(--opacity-5));
   }
 
-  .quote-image-upload__button[aria-busy='true'] {
+  .quote-image-upload__dropzone[aria-busy='true'] {
     cursor: progress;
+    opacity: var(--opacity-70);
+  }
+
+  .quote-image-upload__icon {
+    display: grid;
+    place-items: center;
+    inline-size: 4.5rem;
+    block-size: 4.5rem;
+    margin-block-end: var(--margin-sm, 0.5rem);
+    border-radius: var(--style-border-radius-md, 1rem);
+    color: var(--color-primary);
+    background: rgb(var(--color-primary-rgb) / var(--opacity-10));
+  }
+
+  .quote-image-upload__drop-title {
+    margin: 0;
+    font-size: var(--font-size--lg);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--color-foreground-heading);
+    overflow-wrap: anywhere;
+  }
+
+  .quote-image-upload__drop-text,
+  .quote-image-upload__limits {
+    margin: 0;
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    overflow-wrap: anywhere;
+  }
+
+  .quote-image-upload__limits {
+    font-size: var(--font-size--xs);
+  }
+
+  /* Keeps the native file input focusable while the label acts as its visible button. */
+  .quote-image-upload__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .quote-image-upload__choose {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap-xs);
+    margin-block: var(--margin-sm, 0.5rem);
+    cursor: pointer;
+  }
+
+  .quote-image-upload__input:focus-visible + .quote-image-upload__choose {
+    outline: var(--focus-outline-width, 2px) solid currentColor;
+    outline-offset: var(--focus-outline-offset, 3px);
+  }
+
+  .quote-image-upload__input:disabled + .quote-image-upload__choose {
+    pointer-events: none;
+    opacity: var(--opacity-50);
   }
 
   .quote-image-upload__status {
@@ -160,7 +275,6 @@
   .quote-image-upload__preview {
     display: grid;
     gap: var(--gap-sm);
-    justify-self: stretch;
     min-width: 0;
   }
 
@@ -180,6 +294,12 @@
     block-size: min(80vh, 60rem);
     border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
     background: var(--color-background);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quote-image-upload__dropzone {
+      transition: none;
+    }
   }
 {% endstylesheet %}
 

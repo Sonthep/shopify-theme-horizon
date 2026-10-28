@@ -8,28 +8,45 @@ const REQUEST_TIMEOUT_MS = 90000;
  * @typedef {object} CartQuoteRefs
  * @property {HTMLButtonElement} button - Starts the quotation request.
  * @property {HTMLElement} status - Live region for progress and errors.
+ * @property {HTMLDialogElement} dialog - Read-only preview of the quotation.
+ * @property {HTMLElement} title - Preview heading.
+ * @property {HTMLIFrameElement} frame - Shows the quotation PDF.
+ * @property {HTMLAnchorElement} downloadLink - Saves the quotation PDF.
+ * @property {HTMLAnchorElement} openLink - Opens the PDF in a new tab for browsers that cannot embed it.
  */
 
 /**
- * Downloads a PDF quotation of the current cart from the quotation app proxy.
+ * Previews a PDF quotation of the current cart from the quotation app proxy
+ * before the customer downloads it.
  * The proxy identifies the signed-in customer and reads cart prices from Shopify,
  * so only the cart token and merchant-configured terms are sent.
  * @extends {Component<CartQuoteRefs>}
  */
 class CartQuote extends Component {
-  requiredRefs = ['button', 'status'];
+  requiredRefs = ['button', 'status', 'dialog', 'title', 'frame', 'downloadLink', 'openLink'];
 
   /** @type {AbortController | null} */
   #activeRequest = null;
+
+  /** @type {string | null} */
+  #resultUrl = null;
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#activeRequest?.abort();
     this.#activeRequest = null;
+    this.#clearResult();
   }
 
   /**
-   * Requests the quotation and starts the PDF download.
+   * Closes the preview; the file stays available until the next request.
+   */
+  closePreview = () => {
+    this.refs.dialog.close();
+  };
+
+  /**
+   * Requests the quotation and opens its preview.
    */
   requestQuote = async () => {
     if (this.#activeRequest) return;
@@ -38,6 +55,7 @@ class CartQuote extends Component {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     this.#activeRequest = controller;
+    this.#clearResult();
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
     status.textContent = this.dataset.messagePreparing ?? '';
@@ -64,7 +82,7 @@ class CartQuote extends Component {
       }
 
       const number = quoteNumber(response);
-      download(await response.blob(), `${number}.pdf`);
+      this.#showResult(await response.blob(), number);
       status.textContent = (this.dataset.messageReady ?? '').replace('[number]', number);
     } catch (error) {
       if (this.isConnected) status.textContent = this.dataset.messageError ?? '';
@@ -75,6 +93,32 @@ class CartQuote extends Component {
       button.removeAttribute('aria-busy');
     }
   };
+
+  /**
+   * @param {Blob} blob
+   * @param {string} number
+   */
+  #showResult(blob, number) {
+    const { dialog, title, frame, downloadLink, openLink } = this.refs;
+    this.#resultUrl = URL.createObjectURL(blob);
+    title.textContent = number;
+    frame.src = this.#resultUrl;
+    downloadLink.href = this.#resultUrl;
+    downloadLink.download = `${number}.pdf`;
+    openLink.href = this.#resultUrl;
+    dialog.showModal();
+  }
+
+  #clearResult() {
+    if (!this.#resultUrl) return;
+    const { dialog, frame, downloadLink, openLink } = this.refs;
+    if (dialog.open) dialog.close();
+    frame.removeAttribute('src');
+    downloadLink.href = '#';
+    openLink.href = '#';
+    URL.revokeObjectURL(this.#resultUrl);
+    this.#resultUrl = null;
+  }
 
   /**
    * @param {Response} response
@@ -111,22 +155,6 @@ function quoteNumber(response) {
   if (header) return header;
   const match = response.headers.get('Content-Disposition')?.match(/filename="?([^";]+)\.pdf/);
   return match?.[1] ?? 'quotation';
-}
-
-/**
- * @param {Blob} blob
- * @param {string} filename
- */
-function download(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.hidden = true;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 if (!customElements.get('cart-quote')) {

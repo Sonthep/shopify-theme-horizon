@@ -1,6 +1,6 @@
 {%- doc -%}
   Renders the request-quotation control under the cart checkout buttons.
-  Signed-in customers download a PDF quotation of the current cart from the
+  Signed-in customers preview and download a PDF quotation of the current cart from the
   quotation app proxy, which reads the cart and customer from Shopify itself.
   Guests get a login link instead. Controlled by the `cart_quote_*` theme settings.
 
@@ -43,6 +43,56 @@
         ref="status"
         role="status"
       ></p>
+      <dialog
+        class="cart-quote__dialog"
+        ref="dialog"
+        aria-label="{{ 'content.cart_quote_preview_title' | t }}"
+      >
+        <div class="cart-quote__dialog-header">
+          <h2
+            class="cart-quote__dialog-title"
+            ref="title"
+          >
+            {{- 'content.cart_quote_preview_title' | t -}}
+          </h2>
+          <button
+            type="button"
+            class="button button-unstyled cart-quote__close"
+            on:click="/closePreview"
+          >
+            <span
+              class="svg-wrapper"
+              aria-hidden="true"
+            >
+              {{- 'icon-close.svg' | inline_asset_content -}}
+            </span>
+            <span class="visually-hidden">{{ 'accessibility.close_dialog' | t }}</span>
+          </button>
+        </div>
+        <iframe
+          class="cart-quote__frame"
+          ref="frame"
+          title="{{ 'content.cart_quote_preview_title' | t }}"
+        ></iframe>
+        <div class="cart-quote__actions">
+          <a
+            class="button cart-quote__action"
+            ref="downloadLink"
+            href="#"
+          >
+            {{- 'content.quote_images_download' | t -}}
+          </a>
+          <a
+            class="button button-secondary cart-quote__action"
+            ref="openLink"
+            href="#"
+            target="_blank"
+            rel="noopener"
+          >
+            {{- 'content.quote_images_open' | t -}}
+          </a>
+        </div>
+      </dialog>
     </cart-quote>
   {%- elsif shop.customer_accounts_enabled -%}
     {%- assign login_url = routes.account_login_url | append: '?return_url=' | append: routes.cart_url -%}
@@ -93,5 +143,60 @@
 
   .cart-quote__login a {
     color: var(--color-foreground);
+  }
+
+  .cart-quote__dialog {
+    inline-size: min(60rem, calc(100vw - 2rem));
+    max-inline-size: none;
+    block-size: min(90dvh, 70rem);
+    max-block-size: none;
+    padding: var(--padding-lg);
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    color: var(--color-foreground);
+    background: var(--color-background);
+  }
+
+  .cart-quote__dialog[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--gap-sm);
+  }
+
+  .cart-quote__dialog::backdrop {
+    background: rgb(0 0 0 / 0.5);
+  }
+
+  .cart-quote__dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-sm);
+    min-width: 0;
+  }
+
+  .cart-quote__dialog-title {
+    margin: 0;
+    font-size: var(--font-size--md);
+    overflow-wrap: anywhere;
+  }
+
+  .cart-quote__close {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: var(--padding-xs);
+    color: var(--color-foreground);
+  }
+
+  .cart-quote__frame {
+    inline-size: 100%;
+    block-size: 100%;
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+
+  .cart-quote__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-sm);
+    justify-content: center;
   }
 {% endstylesheet %}
