@@ -1794,6 +1794,14 @@
         "visible_if": "{{ settings.cart_quote_enabled == true }}"
       },
       {
+        "type": "textarea",
+        "id": "cart_quote_next_steps",
+        "label": "t:settings.cart_quote_next_steps",
+        "info": "t:info.cart_quote_next_steps",
+        "default": "Download your quotation, then send it to our sales team on LINE or by email.",
+        "visible_if": "{{ settings.cart_quote_enabled == true }}"
+      },
+      {
         "type": "text",
         "id": "cart_quote_payment_term",
         "label": "t:settings.cart_quote_payment_term",

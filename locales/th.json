@@ -78,6 +78,7 @@
     "header_navigation_label": "หลัก"
   },
   "actions": {
+    "clear_cart": "ล้างตะกร้า",
     "add_to_cart": "เพิ่มลงในตะกร้าสินค้า",
     "clear_all": "ล้างทั้งหมด",
     "remove": "ลบออก",
@@ -135,6 +136,8 @@
     "cart_quote_error_rate": "คุณขอใบเสนอราคาหลายครั้งแล้ว กรุณาลองใหม่ในอีก 1 ชั่วโมง",
     "cart_quote_login": "เข้าสู่ระบบเพื่อขอใบเสนอราคา",
     "cart_quote_login_html": "<a href=\"{{ link }}\">เข้าสู่ระบบ</a>เพื่อดาวน์โหลดใบเสนอราคาของตะกร้านี้",
+    "cart_clear_confirm": "ลบสินค้าทั้งหมดในตะกร้า?",
+    "cart_quote_price_note": "ราคา ภาษี และค่าขนส่ง ทีมเซลส์จะยืนยันในใบเสนอราคา",
     "cart_quote_preparing": "กำลังจัดทำใบเสนอราคา…",
     "cart_quote_preview_title": "ตัวอย่างใบเสนอราคา",
     "cart_quote_ready": "ใบเสนอราคา {{ number }} พร้อมแล้ว",

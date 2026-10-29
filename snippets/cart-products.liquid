@@ -11,6 +11,11 @@
 
 {% liquid
   assign block_settings = block.settings
+  # Quotation-only stores show placeholder web prices, so prices come from the quotation instead.
+  assign hide_prices = false
+  if settings.cart_quote_enabled and settings.cart_quote_replace_checkout
+    assign hide_prices = true
+  endif
 %}
 
 <script
@@ -59,6 +64,29 @@
     >
       {{- cart.item_count -}}
     </span>
+    <script
+      src="{{ 'cart-clear.js' | asset_url }}"
+      type="module"
+      fetchpriority="low"
+    ></script>
+    <cart-clear
+      class="cart-items__clear"
+      data-confirm="{{ 'content.cart_clear_confirm' | t }}"
+    >
+      <form
+        action="{{ routes.cart_clear_url }}"
+        method="post"
+        on:submit="/clear"
+      >
+        <button
+          type="submit"
+          class="button button-unstyled cart-items__clear-button"
+          ref="button"
+        >
+          {{- 'actions.clear_cart' | t -}}
+        </button>
+      </form>
+    </cart-clear>
     <form
       action="{{ routes.cart_url }}"
       class="cart-form"
@@ -78,7 +106,9 @@
             role="caption"
           >
             {{ 'content.cart_total' | t }}
-            <span>{{ cart.total_price | money_with_currency }}</span>
+            {%- unless hide_prices %}
+              <span>{{ cart.total_price | money_with_currency }}</span>
+            {%- endunless -%}
           </caption>
 
           <thead
@@ -263,6 +293,7 @@
                     {%- endif -%}
                   </div>
 
+                  {%- unless hide_prices -%}
                   <div class="cart-items__unit-price-wrapper">
                     <div>
                       {% if item.original_price != item.final_price %}
@@ -292,6 +323,7 @@
                       {% endif %}
                     </div>
                   </div>
+                  {%- endunless -%}
                 </td>
                 <td
                   class="cart-items__quantity"
@@ -366,8 +398,10 @@
                   role="cell"
                   headers="productTotal"
                 >
+                  {%- unless hide_prices -%}
                   <text-component value="{{ price | strip_html }}">{{ price }}</text-component>
-                  {%- if item.unit_price_measurement -%}
+                  {%- endunless -%}
+                  {%- if item.unit_price_measurement and hide_prices == false -%}
                     <div class="cart-items__price-unit cart-secondary-typography">
                       {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
                     </div>
@@ -383,6 +417,29 @@
 </div>
 
 {% stylesheet %}
+  .cart-items__clear {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cart-items__clear-button {
+    padding: 0;
+    font-size: var(--font-size--xs);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .cart-items__clear-button:hover {
+    color: var(--color-foreground);
+  }
+
+  .cart-items__clear-button:disabled {
+    cursor: progress;
+    opacity: var(--opacity-50);
+  }
+
   .cart-items {
     --cart-item-media-width-min: 2.5rem;
     --cart-item-media-width-max: 7.5rem;

@@ -38,6 +38,9 @@
       >
         {{ 'content.cart_quote_request' | t }}
       </button>
+      {%- if settings.cart_quote_next_steps != blank -%}
+        <p class="cart-quote__note cart-primary-typography">{{ settings.cart_quote_next_steps | escape }}</p>
+      {%- endif -%}
       <p
         class="cart-quote__status cart-primary-typography"
         ref="status"
@@ -133,6 +136,7 @@
   }
 
   .cart-quote__status,
+  .cart-quote__note,
   .cart-quote__login {
     margin: 0;
     font-size: var(--font-size--xs);

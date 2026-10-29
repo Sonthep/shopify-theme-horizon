@@ -5,7 +5,20 @@
   @param {string} [section_id] - The section ID for cart discount component.
 {%- enddoc -%}
 
-<div class="cart-totals">
+{%- liquid
+  # Quotation-only stores hide online payment and make the quotation the primary action.
+  assign quote_replaces_checkout = false
+  if settings.cart_quote_enabled and settings.cart_quote_replace_checkout
+    assign quote_replaces_checkout = true
+  endif
+  # Discount codes only apply at checkout.
+  assign show_discount = settings.show_add_discount_code
+  if quote_replaces_checkout
+    assign show_discount = false
+  endif
+-%}
+
+<div class="cart-totals{% if quote_replaces_checkout %} cart-totals--quote{% endif %}">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart-totals__original-container cart-primary-typography">
     {%- if cart.cart_level_discount_applications.size > 0 -%}
@@ -38,7 +51,7 @@
     {%- endif -%}
   </div>
 
-  {% if settings.show_cart_note or settings.show_add_discount_code %}
+  {% if settings.show_cart_note or show_discount %}
     <div class="cart-actions">
       {% if settings.show_cart_note %}
         <script
@@ -89,10 +102,10 @@
           </accordion-custom>
         </cart-note>
       {% endif %}
-      {% if settings.show_cart_note and settings.show_add_discount_code %}
+      {% if settings.show_cart_note and show_discount %}
         <div class="cart-actions__divider"></div>
       {% endif %}
-      {% if settings.show_add_discount_code %}
+      {% if show_discount %}
         {% liquid
           assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
           for item in cart.items
@@ -224,6 +237,12 @@
   -%}
 
   <div class="cart-totals__container{% if settings.show_installments %} cart-totals__container--has-installments{% endif %}">
+    {%- if quote_replaces_checkout -%}
+      {%- # Web prices are placeholders; sales confirm prices in the quotation. -%}
+      <p class="cart-totals__item cart-totals__quote-note cart-primary-typography">
+        {{ 'content.cart_quote_price_note' | t }}
+      </p>
+    {%- else -%}
     <span
       class="cart-totals__item cart-totals__total"
       role="status"
@@ -248,18 +267,11 @@
       </span>
     {% endif %}
     <div class="cart-totals__item cart-totals__tax-note cart-primary-typography">
-      {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+      {% render 'tax-info', has_discounts_enabled: show_discount %}
     </div>
+    {%- endif -%}
   </div>
 </div>
-
-{%- liquid
-  # Quotation-only stores hide online payment and make the quotation the primary action.
-  assign quote_replaces_checkout = false
-  if settings.cart_quote_enabled and settings.cart_quote_replace_checkout
-    assign quote_replaces_checkout = true
-  endif
--%}
 
 <div class="cart__ctas">
   {% unless quote_replaces_checkout %}
@@ -323,6 +335,12 @@
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
+  .cart-totals__quote-note {
+    margin: 0;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    overflow-wrap: anywhere;
+  }
+
   .cart-totals__tax-note small {
     font-size: var(--font-size--2xs);
   }
@@ -384,6 +402,13 @@
     @media screen and (min-width: 750px) {
       padding-block-start: 0;
     }
+  }
+
+  /* Without the discount row, the quotation note needs no divider above it. */
+  .cart-totals.cart-totals--quote {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: none;
   }
 
   .cart-totals__original-container,

@@ -59,6 +59,7 @@
     "view_pricing_info": "View pricing information"
   },
   "actions": {
+    "clear_cart": "Clear cart",
     // Quick add button on product cards, shortened version of add to cart
     "add": "Add",
     "add_to_cart": "Add to cart",
@@ -166,6 +167,8 @@
     "cart_quote_error_rate": "You've requested many quotations. Please try again in an hour.",
     "cart_quote_login": "Log in to request a quotation",
     "cart_quote_login_html": "<a href=\"{{ link }}\">Log in</a> to download a quotation for this cart.",
+    "cart_clear_confirm": "Remove all items from your cart?",
+    "cart_quote_price_note": "Prices, taxes, and shipping will be confirmed in your quotation.",
     "cart_quote_preparing": "Preparing your quotation…",
     "cart_quote_preview_title": "Quotation preview",
     "cart_quote_ready": "Quotation {{ number }} is ready.",
