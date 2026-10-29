@@ -46,7 +46,7 @@
           {%- else -%}
             <div class="equipment-card">
               <div class="equipment-card__image">
-                 <img src="{{ 'mockup-equip' | append: i | append: '.png' | asset_url }}" alt="Equipment" loading="lazy" width="100" height="100">
+                 <img src="{{ 'mockup-equip' | append: i | append: '.jpg' | asset_url }}" alt="Equipment" loading="lazy" width="100" height="100">
               </div>
               <div class="equipment-card__info">
                 <p class="equipment-card__name">Select a Product</p>
@@ -82,7 +82,7 @@
             </div>
           {%- else -%}
             <div class="block-gallery__item">
-              <img src="{{ 'mockup-gal' | append: mockup_index | append: '.png' | asset_url }}" alt="Gallery" loading="lazy" width="600" height="450">
+              <img src="{{ 'mockup-gal' | append: mockup_index | append: '.jpg' | asset_url }}" alt="Gallery" loading="lazy" width="600" height="450">
             </div>
           {%- endif -%}
         {%- endfor -%}
@@ -299,7 +299,7 @@
         {%- elsif block.settings.map_image != blank -%}
           {{ block.settings.map_image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 800' }}
         {%- else -%}
-          <img src="{{ 'mockup-map.png' | asset_url }}" alt="Map" loading="lazy" width="800" height="400">
+          <img src="{{ 'mockup-map.jpg' | asset_url }}" alt="Map" loading="lazy" width="800" height="400">
         {%- endif -%}
         
         {%- if block.settings.map_iframe == blank -%}

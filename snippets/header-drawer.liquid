@@ -20,6 +20,7 @@
     assign ratio = block_settings.featured_collections_aspect_ratio
   elsif block_settings.menu_style == 'featured_products'
     assign ratio = block_settings.featured_products_aspect_ratio
+    assign featured_brand_handles = 'cambro,sirman,roband'
   endif
 
   ##
@@ -35,6 +36,31 @@
   if section.index == blank
     assign eager_loading = true
   endif
+
+  # Featured products come from brand stock lines that are the same for every menu item, so
+  # collect them once. Each brand scan is capped because every product touched is added to
+  # Shopify's analytics payload.
+  # Featured products menus list brand handles above; heavy content is only built on the eager render.
+  assign brand_pool = "" | split: ","
+  assign brand_handles = "" | split: ","
+  if eager_loading
+    assign brand_handles = featured_brand_handles | split: ','
+  endif
+  assign brand_sku_prefixes = 'CAM1,SIR1,ROB1' | split: ','
+  for brand_handle in brand_handles
+    assign brand_sku_prefix = brand_sku_prefixes[forloop.index0]
+    for p in collections[brand_handle].products limit: 24
+      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
+      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
+      if sku_prefix == brand_sku_prefix
+        assign p_arr = p | sort
+        assign brand_pool = brand_pool | concat: p_arr
+      endif
+    endfor
+  endfor
+  # Start at a different product each second so the featured list rotates; an empty pool keeps index 0.
+  assign brand_pool_divisor = brand_pool.size | at_least: 1
+  assign random_index = 'now' | date: '%S' | plus: 0 | modulo: brand_pool_divisor
 %}
 
 <script
@@ -526,112 +552,25 @@
                                   </li>
                                 {%- endfor -%}
                               {% else %}
-                                {% paginate featured_products_collection.products by 250 %}
+                                {% paginate featured_products_collection.products by max_featured_items %}
                                   {% liquid
-                                    assign filtered_products = "" | split: ","
-                                    
-                                    # Load from Cambro collection
-                                    for p in collections['cambro'].products
-                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                                      if sku_prefix == 'CAM1'
-                                        assign p_arr = p | sort
-                                        assign filtered_products = filtered_products | concat: p_arr
-                                      endif
-                                    endfor
-                                    
-                                    # Load from Sirman collection
-                                    for p in collections['sirman'].products
-                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                                      if sku_prefix == 'SIR1'
-                                        assign p_arr = p | sort
-                                        assign filtered_products = filtered_products | concat: p_arr
-                                      endif
-                                    endfor
-                                    
-                                    # Load from Roband collection
-                                    for p in collections['roband'].products
-                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                                      if sku_prefix == 'ROB1'
-                                        assign p_arr = p | sort
-                                        assign filtered_products = filtered_products | concat: p_arr
-                                      endif
-                                    endfor
-                                    
-                                    # Also search active collection
-                                    for p in featured_products_collection.products
-                                      assign vendor_handle = p.vendor | handleize
-                                      assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                                      assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                                      
-                                      assign matched = false
-                                      if vendor_handle == 'cambro' and sku_prefix == 'CAM1'
-                                        assign matched = true
-                                      elsif vendor_handle == 'sirman' and sku_prefix == 'SIR1'
-                                        assign matched = true
-                                      elsif vendor_handle == 'roband' and sku_prefix == 'ROB1'
-                                        assign matched = true
-                                      endif
-                                      
-                                      if matched
-                                        assign already_added = false
-                                        for fp in filtered_products
-                                          if fp.id == p.id
-                                            assign already_added = true
-                                            break
-                                          endif
-                                        endfor
-                                        
-                                        if already_added == false
-                                          assign p_arr = p | sort
-                                          assign filtered_products = filtered_products | concat: p_arr
-                                        endif
-                                      endif
-                                    endfor
-                                    
+                                    assign filtered_products = brand_pool | default: featured_products_collection.products
                                     assign filtered_size = filtered_products.size
                                     assign max_items = max_featured_items | default: 4 | plus: 0
-                                    
-                                    if filtered_size > 0
-                                      assign random_seed_sec = "now" | date: "%S" | plus: 0
-                                      assign random_index = random_seed_sec | modulo: filtered_size
-                                    endif
                                   %}
-                                  {%- if filtered_size > 0 -%}
-                                    {%- assign rendered_count = 0 -%}
-                                    {%- assign last_index = filtered_size | minus: 1 -%}
-                                    {%- for i in (0..last_index) -%}
-                                      {%- if rendered_count >= max_items -%}
-                                        {%- break -%}
-                                      {%- endif -%}
-                                      {%- assign index = i | plus: random_index | modulo: filtered_size -%}
-                                      {%- assign product = filtered_products[index] -%}
-                                      {%- if product -%}
-                                        <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                                          {% render 'resource-card',
-                                            resource: product,
-                                            resource_type: 'product',
-                                            image_aspect_ratio: ratio,
-                                            image_sizes: 'auto, 400px'
-                                          %}
-                                        </li>
-                                        {%- assign rendered_count = rendered_count | plus: 1 -%}
-                                      {%- endif -%}
-                                    {%- endfor -%}
-                                  {%- else -%}
-                                    {%- for product in featured_products_collection.products limit: max_items -%}
-                                      <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                                        {% render 'resource-card',
-                                          resource: product,
-                                          resource_type: 'product',
-                                          image_aspect_ratio: ratio,
-                                          image_sizes: 'auto, 400px'
-                                        %}
-                                      </li>
-                                    {%- endfor -%}
-                                  {%- endif -%}
+                                  {%- assign last_index = filtered_size | minus: 1 -%}
+                                  {%- for i in (0..last_index) limit: max_items -%}
+                                    {%- assign index = i | plus: random_index | modulo: filtered_size -%}
+                                    {%- assign product = filtered_products[index] -%}
+                                    <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                                      {% render 'resource-card',
+                                        resource: product,
+                                        resource_type: 'product',
+                                        image_aspect_ratio: ratio,
+                                        image_sizes: 'auto, 400px'
+                                      %}
+                                    </li>
+                                  {%- endfor -%}
                                 {% endpaginate %}
                               {% endif %}
                             </ul>
@@ -829,112 +768,25 @@
                 </li>
               {%- endfor -%}
             {% elsif top_level_featured_products_collection.products_count > 0 %}
-              {% paginate top_level_featured_products_collection.products by 250 %}
+              {% paginate top_level_featured_products_collection.products by max_featured_items %}
                 {% liquid
-                  assign filtered_products = "" | split: ","
-                  
-                  # Load from Cambro collection
-                  for p in collections['cambro'].products
-                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                    if sku_prefix == 'CAM1'
-                      assign p_arr = p | sort
-                      assign filtered_products = filtered_products | concat: p_arr
-                    endif
-                  endfor
-                  
-                  # Load from Sirman collection
-                  for p in collections['sirman'].products
-                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                    if sku_prefix == 'SIR1'
-                      assign p_arr = p | sort
-                      assign filtered_products = filtered_products | concat: p_arr
-                    endif
-                  endfor
-                  
-                  # Load from Roband collection
-                  for p in collections['roband'].products
-                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                    if sku_prefix == 'ROB1'
-                      assign p_arr = p | sort
-                      assign filtered_products = filtered_products | concat: p_arr
-                    endif
-                  endfor
-                  
-                  # Also search active collection
-                  for p in top_level_featured_products_collection.products
-                    assign vendor_handle = p.vendor | handleize
-                    assign sku = p.selected_or_first_available_variant.sku | default: "" | upcase
-                    assign sku_prefix = sku | replace: "_", "-" | replace: "/", "-" | replace: " ", "-" | split: "-" | first
-                    
-                    assign matched = false
-                    if vendor_handle == 'cambro' and sku_prefix == 'CAM1'
-                      assign matched = true
-                    elsif vendor_handle == 'sirman' and sku_prefix == 'SIR1'
-                      assign matched = true
-                    elsif vendor_handle == 'roband' and sku_prefix == 'ROB1'
-                      assign matched = true
-                    endif
-                    
-                    if matched
-                      assign already_added = false
-                      for fp in filtered_products
-                        if fp.id == p.id
-                          assign already_added = true
-                          break
-                        endif
-                      endfor
-                      
-                      if already_added == false
-                        assign p_arr = p | sort
-                        assign filtered_products = filtered_products | concat: p_arr
-                      endif
-                    endif
-                  endfor
-                  
+                  assign filtered_products = brand_pool | default: top_level_featured_products_collection.products
                   assign filtered_size = filtered_products.size
                   assign max_items = max_featured_items | default: 4 | plus: 0
-                  
-                  if filtered_size > 0
-                    assign random_seed_sec = "now" | date: "%S" | plus: 0
-                    assign random_index = random_seed_sec | modulo: filtered_size
-                  endif
                 %}
-                {%- if filtered_size > 0 -%}
-                  {%- assign rendered_count = 0 -%}
-                  {%- assign last_index = filtered_size | minus: 1 -%}
-                  {%- for i in (0..last_index) -%}
-                    {%- if rendered_count >= max_items -%}
-                      {%- break -%}
-                    {%- endif -%}
-                    {%- assign index = i | plus: random_index | modulo: filtered_size -%}
-                    {%- assign product = filtered_products[index] -%}
-                    {%- if product -%}
-                      <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                        {% render 'resource-card',
-                          resource: product,
-                          resource_type: 'product',
-                          image_aspect_ratio: ratio,
-                          image_sizes: 'auto, 400px'
-                        %}
-                      </li>
-                      {%- assign rendered_count = rendered_count | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endfor -%}
-                {%- else -%}
-                  {%- for product in top_level_featured_products_collection.products limit: max_items -%}
-                    <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
-                      {% render 'resource-card',
-                        resource: product,
-                        resource_type: 'product',
-                        image_aspect_ratio: ratio,
-                        image_sizes: 'auto, 400px'
-                      %}
-                    </li>
-                  {%- endfor -%}
-                {%- endif -%}
+                {%- assign last_index = filtered_size | minus: 1 -%}
+                {%- for i in (0..last_index) limit: max_items -%}
+                  {%- assign index = i | plus: random_index | modulo: filtered_size -%}
+                  {%- assign product = filtered_products[index] -%}
+                  <li class="menu-drawer__featured-content-list-item menu-drawer__featured-content-list-item--product">
+                    {% render 'resource-card',
+                      resource: product,
+                      resource_type: 'product',
+                      image_aspect_ratio: ratio,
+                      image_sizes: 'auto, 400px'
+                    %}
+                  </li>
+                {%- endfor -%}
               {% endpaginate %}
             {% endif %}
           </ul>

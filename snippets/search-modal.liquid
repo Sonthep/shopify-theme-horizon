@@ -9,6 +9,13 @@
   fetchpriority="low"
 ></script>
 
+{%- # Result cards arrive after page load, so their add-to-cart module loads with the modal. -%}
+<script
+  src="{{ 'search-add-to-cart.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
 <dialog-component
   id="search-modal"
   class="search-modal"

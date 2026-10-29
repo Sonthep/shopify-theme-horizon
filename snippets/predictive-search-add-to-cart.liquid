@@ -1,0 +1,83 @@
+{%- doc -%}
+  Renders an add-to-cart button under a predictive search product card.
+  Only products without options get the button; others need a variant chosen on the
+  product page. The `search-add-to-cart` module is loaded by the search modal because
+  results are inserted after page load.
+
+  @param {object} product - The product shown in the result card
+
+  @example
+  {% render 'predictive-search-add-to-cart', product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+-%}
+
+{%- if product.has_only_default_variant and variant.available -%}
+  <search-add-to-cart
+    class="predictive-search-add"
+    data-variant-id="{{ variant.id }}"
+    data-product-id="{{ product.id }}"
+    data-message-added="{{ 'content.search_add_to_cart_added' | t }}"
+    data-message-error="{{ 'content.search_add_to_cart_error' | t }}"
+  >
+    {%- # The keydown route keeps Enter on this button from reaching the search form's result navigation. -%}
+    <button
+      type="button"
+      class="button button-secondary predictive-search-add__button"
+      ref="button"
+      on:click="/add"
+      on:keydown="/keepKeyboardFocus"
+      aria-label="{{ 'actions.add_to_cart' | t }}: {{ product.title | escape }}"
+    >
+      {{- 'actions.add_to_cart' | t -}}
+    </button>
+    <span
+      class="visually-hidden"
+      role="status"
+      ref="status"
+    ></span>
+  </search-add-to-cart>
+{%- endif -%}
+
+{% stylesheet %}
+  /* The result card fills its cell, so it shares the height with the button instead of pushing it out of view. */
+  .predictive-search-results__card:has(> .predictive-search-add) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .predictive-search-results__card:has(> .predictive-search-add) > :is(.resource-card, product-card-link) {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .predictive-search-results__card:has(> .predictive-search-add) > product-card-link > .resource-card {
+    height: auto;
+  }
+
+  .predictive-search-add {
+    display: block;
+    padding-inline: var(--padding-md);
+    padding-block-end: var(--padding-sm);
+  }
+
+  .predictive-search-add__button {
+    inline-size: 100%;
+    min-block-size: 2.5rem;
+    padding: var(--padding-xs) var(--padding-sm);
+    font-size: var(--font-size--sm);
+  }
+
+  .predictive-search-add__button[aria-busy='true'] {
+    cursor: progress;
+  }
+
+  @media screen and (max-width: 749px) {
+    .predictive-search-add {
+      padding-inline: var(--padding-sm);
+    }
+  }
+{% endstylesheet %}

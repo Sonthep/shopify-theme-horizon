@@ -1,4 +1,7 @@
-
+{%- # The Shop by Category carousel script targets this section by its "collections_browse" ID. -%}
+{%- if section.id contains 'collections_browse' -%}
+  <script src="{{ 'collection-browse-carousel.js' | asset_url }}" defer></script>
+{%- endif -%}
 
 {% liquid
   if section.settings.collection_list != blank

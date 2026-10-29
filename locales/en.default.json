@@ -173,6 +173,8 @@
     "cart_quote_preview_title": "Quotation preview",
     "cart_quote_ready": "Quotation {{ number }} is ready.",
     "cart_quote_request": "Request quotation (PDF)",
+    "search_add_to_cart_added": "Added",
+    "search_add_to_cart_error": "Couldn't add this product. Please try again.",
     "quote_images_another": "Upload another file",
     "quote_images_browse": "or choose a file from your computer",
     "quote_images_choose_button": "Choose PDF file",

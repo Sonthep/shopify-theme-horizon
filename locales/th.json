@@ -142,6 +142,8 @@
     "cart_quote_preview_title": "ตัวอย่างใบเสนอราคา",
     "cart_quote_ready": "ใบเสนอราคา {{ number }} พร้อมแล้ว",
     "cart_quote_request": "ขอใบเสนอราคา (PDF)",
+    "search_add_to_cart_added": "เพิ่มแล้ว",
+    "search_add_to_cart_error": "เพิ่มสินค้าไม่สำเร็จ กรุณาลองใหม่",
     "quote_images_another": "อัปโหลดไฟล์อื่น",
     "quote_images_browse": "หรือเลือกไฟล์จากเครื่องของคุณ",
     "quote_images_choose_button": "เลือกไฟล์ PDF",
