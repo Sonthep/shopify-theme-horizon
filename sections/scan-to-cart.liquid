@@ -1,0 +1,384 @@
+{% comment %}
+  Section contract.
+  Lets customers scan a product label's QR code or barcode, which holds the product SKU, or type
+  the SKU, and add that product to the cart without leaving the page. Lookup uses
+  predictive search on variant SKUs, so it needs no app.
+  @example
+  <!-- Add the "Scan to cart" section to a page template, e.g. page.scan -->
+{% endcomment %}
+
+<script
+  type="module"
+  src="{{ 'scan-to-cart.js' | asset_url }}"
+></script>
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} spacing-style color-{{ section.settings.color_scheme }}"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <scan-to-cart
+    class="scan-to-cart"
+    data-decoder-url="{{ 'zxing.min.js' | asset_url }}"
+    data-label-start="{{ 'content.scan_start_camera' | t }}"
+    data-label-stop="{{ 'content.scan_stop_camera' | t }}"
+    data-message-hint="{{ 'content.scan_hint' | t }}"
+    data-message-searching="{{ 'content.scan_searching' | t }}"
+    data-message-not-found="{{ 'content.scan_not_found' | t }}"
+    data-message-unavailable="{{ 'content.scan_unavailable' | t }}"
+    data-message-added="{{ 'content.scan_added' | t }}"
+    data-message-error="{{ 'content.scan_error' | t }}"
+    data-message-camera-denied="{{ 'content.scan_camera_denied' | t }}"
+    data-message-camera-unavailable="{{ 'content.scan_camera_unavailable' | t }}"
+  >
+    {%- if section.settings.heading != blank -%}
+      <h2 class="scan-to-cart__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <div class="scan-to-cart__text rte">{{ section.settings.text }}</div>
+    {%- endif -%}
+
+    <button
+      type="button"
+      class="button scan-to-cart__camera-button"
+      ref="cameraButton"
+      on:click="/toggleCamera"
+      aria-pressed="false"
+    >
+      {{- 'content.scan_start_camera' | t -}}
+    </button>
+
+    <div
+      class="scan-to-cart__viewfinder"
+      ref="viewfinder"
+      hidden
+    >
+      <video
+        class="scan-to-cart__video"
+        ref="video"
+        muted
+        playsinline
+        aria-label="{{ 'content.scan_hint' | t }}"
+      ></video>
+      <span
+        class="scan-to-cart__target"
+        aria-hidden="true"
+      ></span>
+    </div>
+
+    <form
+      class="scan-to-cart__form"
+      ref="form"
+      on:submit="/find"
+    >
+      <label
+        class="scan-to-cart__label"
+        for="ScanToCartSku-{{ section.id }}"
+      >
+        {{- 'content.scan_sku_label' | t -}}
+      </label>
+      <div class="scan-to-cart__field">
+        <input
+          id="ScanToCartSku-{{ section.id }}"
+          class="field__input scan-to-cart__input"
+          type="text"
+          ref="sku"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          enterkeyhint="search"
+          required
+        >
+        <button
+          type="submit"
+          class="button button-secondary scan-to-cart__find"
+        >
+          {{- 'content.scan_find' | t -}}
+        </button>
+      </div>
+    </form>
+
+    <p
+      class="scan-to-cart__status"
+      ref="status"
+      role="status"
+    ></p>
+
+    <div
+      class="scan-to-cart__result"
+      ref="result"
+      hidden
+    >
+      <img
+        class="scan-to-cart__image"
+        ref="image"
+        alt=""
+        width="160"
+        height="160"
+        hidden
+      >
+      <div class="scan-to-cart__details">
+        <p class="scan-to-cart__title" ref="title"></p>
+        <p class="scan-to-cart__code">SKU: <span ref="code"></span></p>
+        <div class="scan-to-cart__actions">
+          <label
+            class="visually-hidden"
+            for="ScanToCartQuantity-{{ section.id }}"
+          >
+            {{- 'accessibility.quantity' | t -}}
+          </label>
+          <input
+            id="ScanToCartQuantity-{{ section.id }}"
+            class="field__input scan-to-cart__quantity"
+            type="number"
+            ref="quantity"
+            min="1"
+            value="1"
+            inputmode="numeric"
+          >
+          <button
+            type="button"
+            class="button scan-to-cart__add"
+            ref="addButton"
+            on:click="/add"
+          >
+            {{- 'actions.add_to_cart' | t -}}
+          </button>
+        </div>
+        <a
+          class="scan-to-cart__cart-link"
+          href="{{ routes.cart_url }}"
+        >
+          {{- 'content.view_cart' | t -}}
+        </a>
+      </div>
+    </div>
+  </scan-to-cart>
+</div>
+
+{% stylesheet %}
+  .scan-to-cart {
+    display: grid;
+    gap: var(--gap-md);
+    width: 100%;
+    max-width: 36rem;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .scan-to-cart__heading,
+  .scan-to-cart__text {
+    margin: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .scan-to-cart__camera-button {
+    justify-self: center;
+    min-inline-size: min(100%, 16rem);
+  }
+
+  .scan-to-cart__viewfinder {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--style-border-radius-lg, 1.5rem);
+    background: #000;
+  }
+
+  .scan-to-cart__viewfinder[hidden] {
+    display: none;
+  }
+
+  .scan-to-cart__video {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* A wide guide fits both square QR codes and long barcodes; decoding still reads the whole frame. */
+  .scan-to-cart__target {
+    position: absolute;
+    inset: 18% 8%;
+    border: 3px solid rgb(255 255 255 / 0.9);
+    border-radius: var(--style-border-radius-md, 1rem);
+    box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.35);
+    pointer-events: none;
+  }
+
+  .scan-to-cart__form {
+    display: grid;
+    gap: var(--gap-xs);
+    min-width: 0;
+  }
+
+  .scan-to-cart__label {
+    font-size: var(--font-size--sm);
+  }
+
+  .scan-to-cart__field {
+    display: flex;
+    gap: var(--gap-xs);
+    min-width: 0;
+  }
+
+  .scan-to-cart__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-transform: uppercase;
+  }
+
+  .scan-to-cart__status {
+    margin: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .scan-to-cart__status:empty {
+    display: none;
+  }
+
+  .scan-to-cart__result {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--gap-md);
+    align-items: start;
+    padding: var(--padding-md);
+    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--style-border-radius-md, 1rem);
+  }
+
+  .scan-to-cart__result[hidden],
+  .scan-to-cart__image[hidden] {
+    display: none;
+  }
+
+  .scan-to-cart__image {
+    inline-size: 6rem;
+    block-size: 6rem;
+    object-fit: contain;
+    border-radius: var(--style-border-radius-sm, 0.5rem);
+    background: var(--color-background);
+  }
+
+  .scan-to-cart__details {
+    display: grid;
+    gap: var(--gap-xs);
+    min-width: 0;
+  }
+
+  .scan-to-cart__title,
+  .scan-to-cart__code {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .scan-to-cart__title {
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  .scan-to-cart__code {
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .scan-to-cart__actions {
+    display: flex;
+    gap: var(--gap-xs);
+    min-width: 0;
+  }
+
+  .scan-to-cart__quantity {
+    flex: 0 0 4.5rem;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .scan-to-cart__add {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .scan-to-cart__add[aria-busy='true'] {
+    cursor: progress;
+  }
+
+  .scan-to-cart__cart-link {
+    justify-self: start;
+    font-size: var(--font-size--sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.scan_to_cart",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Scan to cart"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:settings.text",
+      "default": "<p>Scan the QR code or barcode on a product label in our showroom, or type its product code, to add it to your cart.</p>"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.scan_to_cart",
+      "category": "t:categories.forms"
+    }
+  ]
+}
+{% endschema %}

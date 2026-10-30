@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "scan-to-cart",
+      "settings": {
+        "heading": "Scan to cart"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
