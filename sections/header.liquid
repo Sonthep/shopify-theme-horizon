@@ -110,6 +110,19 @@
     endcapture
   endif
 
+  # The scan shortcut sits beside the mobile search, where the header still has room on narrow
+  # phones; the right side already holds language, account and cart.
+  if section.settings.scan_link != blank
+    capture scan_action
+      render 'header-scan-action', link: section.settings.scan_link
+    endcapture
+    if drawer_search != blank
+      assign drawer_search = drawer_search | append: scan_action
+    else
+      assign actions = scan_action | append: actions
+    endif
+  endif
+
   assign show_language = section.settings.show_language
   if localization.available_languages.size <= 1
     assign show_language = false
@@ -1211,6 +1224,16 @@
       "id": "customer_account_menu",
       "label": "t:settings.menu",
       "default": "customer-account-main-menu"
+    },
+    {
+      "type": "header",
+      "content": "t:content.scan_to_cart"
+    },
+    {
+      "type": "url",
+      "id": "scan_link",
+      "label": "t:settings.scan_link",
+      "info": "t:info.scan_link"
     },
     {
       "type": "header",

@@ -1,12 +1,11 @@
 import { Component } from '@theme/component';
 import { CartAddEvent } from '@theme/events';
+import { findVariantBySku } from '@theme/product-lookup';
 
 // The same code is ignored for this long so a label held in view is not looked up again.
 const REPEAT_SCAN_MS = 3000;
 // Decoding every frame drains phone batteries; a few reads per second feel instant.
 const SCAN_INTERVAL_MS = 200;
-// Predictive search can rank other products above an exact SKU, so check several.
-const SEARCH_LIMIT = 5;
 // Labels carry the SKU as a QR code or a linear barcode, usually Code 128.
 const DETECTOR_FORMATS = ['qr_code', 'code_128', 'code_39', 'code_93', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'itf'];
 const ZXING_FORMATS = ['QR_CODE', 'CODE_128', 'CODE_39', 'CODE_93', 'EAN_13', 'EAN_8', 'UPC_A', 'UPC_E', 'ITF'];
@@ -16,6 +15,7 @@ const DECODE_WIDTH = 960;
 /**
  * @typedef {object} ScanToCartRefs
  * @property {HTMLButtonElement} cameraButton - Starts or stops the camera.
+ * @property {HTMLElement} cameraLabel - The camera button's text, beside its icon.
  * @property {HTMLElement} viewfinder - Wraps the video while the camera runs.
  * @property {HTMLVideoElement} video - Shows the camera stream.
  * @property {HTMLFormElement} form - Looks up a typed product code.
@@ -35,7 +35,7 @@ const DECODE_WIDTH = 960;
  * @extends {Component<ScanToCartRefs>}
  */
 class ScanToCart extends Component {
-  requiredRefs = ['cameraButton', 'viewfinder', 'video', 'form', 'sku', 'status', 'result', 'image', 'title', 'code', 'quantity', 'addButton'];
+  requiredRefs = ['cameraButton', 'cameraLabel', 'viewfinder', 'video', 'form', 'sku', 'status', 'result', 'image', 'title', 'code', 'quantity', 'addButton'];
 
   /** @type {MediaStream | null} */
   #stream = null;
@@ -90,9 +90,9 @@ class ScanToCart extends Component {
       return;
     }
 
-    const { cameraButton, video, viewfinder } = this.refs;
+    const { cameraButton, cameraLabel, video, viewfinder } = this.refs;
     if (!navigator.mediaDevices?.getUserMedia) {
-      this.#setStatus(this.dataset.messageCameraUnavailable);
+      this.#setStatus(this.dataset.messageCameraUnavailable, 'error');
       return;
     }
 
@@ -107,17 +107,27 @@ class ScanToCart extends Component {
       await video.play();
       viewfinder.hidden = false;
       cameraButton.setAttribute('aria-pressed', 'true');
-      cameraButton.textContent = this.dataset.labelStop ?? '';
+      cameraLabel.textContent = this.dataset.labelStop ?? '';
       this.#setStatus(this.dataset.messageHint);
       this.#scheduleScan();
     } catch (error) {
       this.#stopCamera();
       const denied = error instanceof DOMException && error.name === 'NotAllowedError';
-      this.#setStatus(denied ? this.dataset.messageCameraDenied : this.dataset.messageCameraUnavailable);
+      this.#setStatus(denied ? this.dataset.messageCameraDenied : this.dataset.messageCameraUnavailable, 'error');
     } finally {
       cameraButton.disabled = false;
     }
   };
+
+  decrease = () => this.#stepQuantity(-1);
+
+  increase = () => this.#stepQuantity(1);
+
+  /** @param {number} step */
+  #stepQuantity(step) {
+    const { quantity } = this.refs;
+    quantity.value = String(Math.max(1, (Number(quantity.value) || 1) + step));
+  }
 
   /** @param {SubmitEvent} event */
   find = (event) => {
@@ -152,7 +162,7 @@ class ScanToCart extends Component {
       });
       const result = await response.json();
       if (!response.ok || result.status) {
-        this.#setStatus(result.description || result.message || this.dataset.messageError);
+        this.#setStatus(result.description || result.message || this.dataset.messageError, 'error');
         return;
       }
 
@@ -166,12 +176,12 @@ class ScanToCart extends Component {
           sections: result.sections,
         })
       );
-      this.#setStatus(this.dataset.messageAdded);
+      this.#setStatus(this.dataset.messageAdded, 'success');
       // Ready for the next label without clearing the card the customer just added.
       this.#lastCode = '';
       quantity.value = '1';
     } catch (error) {
-      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageError);
+      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageError, 'error');
     } finally {
       if (this.#adding === controller) this.#adding = null;
       addButton.disabled = false;
@@ -268,11 +278,11 @@ class ScanToCart extends Component {
     for (const track of this.#stream?.getTracks() ?? []) track.stop();
     this.#stream = null;
     if (!this.refs?.video) return;
-    const { cameraButton, video, viewfinder } = this.refs;
+    const { cameraButton, cameraLabel, video, viewfinder } = this.refs;
     video.srcObject = null;
     viewfinder.hidden = true;
     cameraButton.setAttribute('aria-pressed', 'false');
-    cameraButton.textContent = this.dataset.labelStart ?? '';
+    cameraLabel.textContent = this.dataset.labelStart ?? '';
   }
 
   /** @param {string} code */
@@ -284,45 +294,19 @@ class ScanToCart extends Component {
     this.#setStatus(this.dataset.messageSearching);
 
     try {
-      const match = await this.#matchSku(code, controller.signal);
+      const match = await findVariantBySku(code, controller.signal);
       if (controller.signal.aborted) return;
       if (!match) {
-        this.#setStatus(this.dataset.messageNotFound);
+        this.#setStatus(this.dataset.messageNotFound, 'error');
         return;
       }
       this.#showResult(match);
-      this.#setStatus(match.variant.available ? match.product.title : this.dataset.messageUnavailable);
+      this.#setStatus(match.variant.available ? match.product.title : this.dataset.messageUnavailable, match.variant.available ? '' : 'error');
     } catch (error) {
-      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageError);
+      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageError, 'error');
     } finally {
       if (this.#lookup === controller) this.#lookup = null;
     }
-  }
-
-  /**
-   * Predictive search matches variant SKUs, then each candidate's product JSON confirms the exact SKU.
-   * @param {string} code
-   * @param {AbortSignal} signal
-   */
-  async #matchSku(code, signal) {
-    const url = new URL(`${Theme.routes.predictive_search_url}.json`, location.origin);
-    url.searchParams.set('q', code);
-    url.searchParams.set('resources[type]', 'product');
-    url.searchParams.set('resources[limit]', String(SEARCH_LIMIT));
-    url.searchParams.set('resources[options][fields]', 'variants.sku');
-    const response = await fetch(url, { signal });
-    const data = await response.json();
-    const wanted = code.toUpperCase();
-
-    for (const candidate of data.resources?.results?.products ?? []) {
-      const productUrl = new URL(candidate.url, location.origin);
-      const productResponse = await fetch(`${productUrl.pathname}.js`, { signal });
-      if (!productResponse.ok) continue;
-      const product = await productResponse.json();
-      const variant = product.variants.find((/** @type {{sku?: string}} */ item) => item.sku?.toUpperCase() === wanted);
-      if (variant) return { product, variant };
-    }
-    return null;
   }
 
   /** @param {{product: any, variant: any} | null} match */
@@ -356,9 +340,15 @@ class ScanToCart extends Component {
     result.hidden = false;
   }
 
-  /** @param {string | undefined} message */
-  #setStatus(message) {
-    this.refs.status.textContent = message ?? '';
+  /**
+   * @param {string | undefined} message
+   * @param {'' | 'success' | 'error'} [tone] - Colors the message; screen readers hear it either way.
+   */
+  #setStatus(message, tone = '') {
+    const { status } = this.refs;
+    status.textContent = message ?? '';
+    if (tone) status.dataset.tone = tone;
+    else delete status.dataset.tone;
   }
 }
 

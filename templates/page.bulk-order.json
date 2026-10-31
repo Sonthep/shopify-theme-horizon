@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "bulk-order",
+      "settings": {
+        "heading": "Bulk order"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

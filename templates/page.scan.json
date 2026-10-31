@@ -3,7 +3,8 @@
     "main": {
       "type": "scan-to-cart",
       "settings": {
-        "heading": "Scan to cart"
+        "heading": "Scan to cart",
+        "text": ""
       }
     }
   },

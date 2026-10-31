@@ -85,6 +85,7 @@
     "link_padding": "Link padding",
     "localization": "Localization",
     "logo": "Logo",
+    "scan_to_cart": "Scan to cart",
     "manage_customer_accounts": "[Manage visibility](/admin/settings/customer_accounts) in customer account settings. Legacy accounts not supported.",
     "manage_policies": "[Manage policies](/admin/settings/legal)",
     "manage_store_name": "[Manage store name](/admin/settings/general?edit=storeName)",
@@ -213,6 +214,7 @@
   },
   "info": {
     "actions_display_style": "Icons are always used on mobile",
+    "scan_link": "Shows a scan icon on mobile that opens this page. Use a page with the page.scan template.",
     "applies_on_image_only": "Applies to images only",
     "aspect_ratio_adjusted": "Adjusted in some layouts",
     "carousel_hover_behavior_not_supported": "\"Carousel\" hover is not supported when \"Carousel\" type is selected at the section level",
@@ -260,6 +262,7 @@
     "blog_posts": "Blog posts",
     "blog_posts_grid": "Blog posts: Grid",
     "blog_posts_carousel": "Blog posts: Carousel",
+    "bulk_order": "Bulk order",
     "blog_posts_editorial": "Blog posts: Editorial",
     "borders": "Borders",
     "button": "Button",
@@ -1074,6 +1077,7 @@
     "scroll_speed": "Time to next announcement",
     "search": "Search",
     "search_icon": "Search icon",
+    "scan_link": "Scan page",
     // Setting for search bar placement in header
     "search_position": "Position",
     "search_row": "Row",

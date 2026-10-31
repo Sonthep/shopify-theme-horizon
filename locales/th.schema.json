@@ -10,6 +10,7 @@
 {
   "names": {
     "quote_image_upload": "รูปสินค้าในใบเสนอราคา",
+    "bulk_order": "สั่งซื้อจากรายการ",
     "404": "404",
     "borders": "เส้นขอบ",
     "collapsible_row": "แถวที่พับเก็บได้",
@@ -505,6 +506,7 @@
     "right_padding": "การเว้นขอบด้านในฝั่งขวา",
     "search": "ค้นหา",
     "search_icon": "ไอคอนค้นหา",
+    "scan_link": "หน้าสแกน",
     "search_position": "ตำแหน่ง",
     "search_row": "แถว",
     "show_author": "ผู้เขียน",
@@ -949,6 +951,7 @@
     "home_page": "หน้าแรก",
     "images": "รูปภาพ",
     "inverse_logo_info": "ใช้เมื่อพื้นหลังของส่วนหัวแบบโปร่งใสถูกตั้งค่าเป็นสีตรงข้าม",
+    "scan_to_cart": "สแกนเข้าตะกร้า",
     "manage_customer_accounts": "[จัดการการแสดงผล](/admin/settings/customer_accounts)ในการตั้งค่าบัญชีผู้ใช้ของลูกค้า ไม่รองรับบัญชีรุ่นเก่า",
     "manage_policies": "[จัดการนโยบาย](/admin/settings/legal)",
     "product_page": "หน้าสินค้า",
@@ -1086,6 +1089,7 @@
     "new_arrivals": "สินค้ามาใหม่"
   },
   "info": {
+    "scan_link": "แสดงไอคอนสแกนบนมือถือ กดแล้วเปิดหน้านี้ ใช้หน้าที่ตั้ง template เป็น page.scan",
     "video_alt_text": "โปรดอธิบายวิดีโอสำหรับผู้ใช้เทคโนโลยีความช่วยเหลือพิเศษ",
     "video_autoplay": "วิดีโอจะถูกปิดเสียงตามค่าเริ่มต้น",
     "video_external": "ใช้ URL ของ YouTube หรือ Vimeo",

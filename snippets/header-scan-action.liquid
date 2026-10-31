@@ -1,0 +1,42 @@
+{%- doc -%}
+  Renders the mobile header shortcut to the scan-to-cart page.
+  Scanning needs a phone camera, so the shortcut is hidden on desktop.
+
+  @param {string} link - URL of the page using the page.scan template.
+
+  @example
+  {% render 'header-scan-action', link: section.settings.scan_link %}
+{%- enddoc -%}
+
+<a
+  href="{{ link }}"
+  class="header-actions__action header-scan-action desktop:hidden"
+  aria-label="{{ 'content.scan_to_cart' | t }}"
+>
+  <span
+    class="svg-wrapper"
+    aria-hidden="true"
+  >
+    {{- 'icon-scan.svg' | inline_asset_content -}}
+  </span>
+</a>
+
+{% stylesheet %}
+  /* The mobile header grid has one cell each for menu and search on the left; the shortcut takes the
+     start of the logo cell, which stays clear because the logo is centred in it. */
+  @media screen and (max-width: 749px) {
+    .header__columns .header-scan-action {
+      grid-area: center;
+      justify-self: start;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  #header-component[data-menu-style='drawer'] .header__columns .header-scan-action {
+    grid-area: center;
+    justify-self: start;
+    position: relative;
+    z-index: 1;
+  }
+{% endstylesheet %}

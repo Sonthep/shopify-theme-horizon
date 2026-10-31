@@ -12,6 +12,24 @@
   src="{{ 'scan-to-cart.js' | asset_url }}"
 ></script>
 
+{%- capture scan_icon -%}
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="28"
+    height="28"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8"/><path d="M10 8v8"/><path d="M13 8v8"/><path d="M17 8v8"/>
+  </svg>
+{%- endcapture -%}
+
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
   class="section section--{{ section.settings.section_width }} spacing-style color-{{ section.settings.color_scheme }}"
@@ -31,58 +49,92 @@
     data-message-camera-denied="{{ 'content.scan_camera_denied' | t }}"
     data-message-camera-unavailable="{{ 'content.scan_camera_unavailable' | t }}"
   >
-    {%- if section.settings.heading != blank -%}
-      <h2 class="scan-to-cart__heading">{{ section.settings.heading | escape }}</h2>
-    {%- endif -%}
-    {%- if section.settings.text != blank -%}
-      <div class="scan-to-cart__text rte">{{ section.settings.text }}</div>
-    {%- endif -%}
+    <div class="scan-to-cart__card">
+      {%- if section.settings.heading != blank or section.settings.text != blank -%}
+        <div class="scan-to-cart__intro">
+          {%- if section.settings.heading != blank -%}
+            <h2 class="scan-to-cart__heading">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <div class="scan-to-cart__text rte">{{ section.settings.text }}</div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
 
-    <button
-      type="button"
-      class="button scan-to-cart__camera-button"
-      ref="cameraButton"
-      on:click="/toggleCamera"
-      aria-pressed="false"
-    >
-      {{- 'content.scan_start_camera' | t -}}
-    </button>
+      {%- # The idle stage stands in for the camera until it starts; CSS hides it while the viewfinder shows. -%}
+      <div class="scan-to-cart__stage">
+        <div
+          class="scan-to-cart__viewfinder"
+          ref="viewfinder"
+          hidden
+        >
+          <video
+            class="scan-to-cart__video"
+            ref="video"
+            muted
+            playsinline
+            aria-label="{{ 'content.scan_hint' | t }}"
+          ></video>
+          <span
+            class="scan-to-cart__frame"
+            aria-hidden="true"
+          >
+            <span class="scan-to-cart__line"></span>
+          </span>
+        </div>
+        <div class="scan-to-cart__idle">
+          <span class="scan-to-cart__frame scan-to-cart__frame--idle" aria-hidden="true"></span>
+          <span class="scan-to-cart__icon">{{ scan_icon }}</span>
+          <p class="scan-to-cart__hint">{{ 'content.scan_hint' | t }}</p>
+        </div>
+      </div>
 
-    <div
-      class="scan-to-cart__viewfinder"
-      ref="viewfinder"
-      hidden
-    >
-      <video
-        class="scan-to-cart__video"
-        ref="video"
-        muted
-        playsinline
-        aria-label="{{ 'content.scan_hint' | t }}"
-      ></video>
-      <span
-        class="scan-to-cart__target"
-        aria-hidden="true"
-      ></span>
-    </div>
-
-    <form
-      class="scan-to-cart__form"
-      ref="form"
-      on:submit="/find"
-    >
-      <label
-        class="scan-to-cart__label"
-        for="ScanToCartSku-{{ section.id }}"
+      <button
+        type="button"
+        class="button scan-to-cart__camera-button"
+        ref="cameraButton"
+        on:click="/toggleCamera"
+        aria-pressed="false"
       >
-        {{- 'content.scan_sku_label' | t -}}
-      </label>
-      <div class="scan-to-cart__field">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>
+        </svg>
+        <span ref="cameraLabel">{{- 'content.scan_start_camera' | t -}}</span>
+      </button>
+
+      <p class="scan-to-cart__divider">
+        <span>{{ 'content.scan_or_type' | t }}</span>
+      </p>
+
+      <form
+        class="scan-to-cart__form"
+        ref="form"
+        on:submit="/find"
+      >
+        <label
+          class="visually-hidden"
+          for="ScanToCartSku-{{ section.id }}"
+        >
+          {{- 'content.scan_sku_label' | t -}}
+        </label>
         <input
           id="ScanToCartSku-{{ section.id }}"
           class="field__input scan-to-cart__input"
           type="text"
           ref="sku"
+          placeholder="{{ 'content.scan_sku_label' | t }}"
           autocomplete="off"
           autocapitalize="characters"
           spellcheck="false"
@@ -95,32 +147,44 @@
         >
           {{- 'content.scan_find' | t -}}
         </button>
-      </div>
-    </form>
+      </form>
 
-    <p
-      class="scan-to-cart__status"
-      ref="status"
-      role="status"
-    ></p>
+      <p
+        class="scan-to-cart__status"
+        ref="status"
+        role="status"
+      ></p>
+    </div>
 
     <div
       class="scan-to-cart__result"
       ref="result"
       hidden
     >
-      <img
-        class="scan-to-cart__image"
-        ref="image"
-        alt=""
-        width="160"
-        height="160"
-        hidden
-      >
+      <div class="scan-to-cart__media">
+        <img
+          class="scan-to-cart__image"
+          ref="image"
+          alt=""
+          width="320"
+          height="320"
+          hidden
+        >
+      </div>
       <div class="scan-to-cart__details">
         <p class="scan-to-cart__title" ref="title"></p>
-        <p class="scan-to-cart__code">SKU: <span ref="code"></span></p>
-        <div class="scan-to-cart__actions">
+        <p class="scan-to-cart__code">SKU <span ref="code"></span></p>
+      </div>
+      <div class="scan-to-cart__actions">
+        <div class="scan-to-cart__stepper">
+          <button
+            type="button"
+            class="scan-to-cart__step"
+            on:click="/decrease"
+            aria-label="{{ 'accessibility.decrease_quantity' | t }}"
+          >
+            {{- 'icon-minus.svg' | inline_asset_content -}}
+          </button>
           <label
             class="visually-hidden"
             for="ScanToCartQuantity-{{ section.id }}"
@@ -129,7 +193,7 @@
           </label>
           <input
             id="ScanToCartQuantity-{{ section.id }}"
-            class="field__input scan-to-cart__quantity"
+            class="scan-to-cart__quantity"
             type="number"
             ref="quantity"
             min="1"
@@ -138,55 +202,95 @@
           >
           <button
             type="button"
-            class="button scan-to-cart__add"
-            ref="addButton"
-            on:click="/add"
+            class="scan-to-cart__step"
+            on:click="/increase"
+            aria-label="{{ 'accessibility.increase_quantity' | t }}"
           >
-            {{- 'actions.add_to_cart' | t -}}
+            {{- 'icon-plus.svg' | inline_asset_content -}}
           </button>
         </div>
-        <a
-          class="scan-to-cart__cart-link"
-          href="{{ routes.cart_url }}"
+        <button
+          type="button"
+          class="button scan-to-cart__add"
+          ref="addButton"
+          on:click="/add"
         >
-          {{- 'content.view_cart' | t -}}
-        </a>
+          {{- 'actions.add_to_cart' | t -}}
+        </button>
       </div>
+      <a
+        class="button button-secondary scan-to-cart__cart-link"
+        href="{{ routes.cart_url }}"
+      >
+        {{- 'content.view_cart' | t -}}
+      </a>
     </div>
   </scan-to-cart>
 </div>
 
 {% stylesheet %}
   .scan-to-cart {
+    --scan-radius: var(--style-border-radius-lg, 1.25rem);
+    /* Follows the scheme's primary button, so the scanner matches the main call to action. */
+    --scan-accent: var(--color-primary-button-background);
+
     display: grid;
     gap: var(--gap-md);
     width: 100%;
-    max-width: 36rem;
+    max-width: 32rem;
     min-width: 0;
     margin-inline: auto;
+  }
+
+  .scan-to-cart__card,
+  .scan-to-cart__result {
+    display: grid;
+    gap: var(--gap-md);
+    min-width: 0;
+    padding: var(--padding-lg);
+    border: var(--style-border-width, 1px) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--scan-radius);
+    background: var(--color-background);
+    box-shadow: 0 1rem 2.5rem rgb(var(--color-shadow-rgb) / var(--opacity-5));
+  }
+
+  .scan-to-cart__intro {
+    display: grid;
+    gap: var(--gap-2xs, 0.25rem);
+    text-align: center;
   }
 
   .scan-to-cart__heading,
   .scan-to-cart__text {
     margin: 0;
-    text-align: center;
     overflow-wrap: anywhere;
   }
 
-  .scan-to-cart__camera-button {
-    justify-self: center;
-    min-inline-size: min(100%, 16rem);
+  .scan-to-cart__text {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
-  .scan-to-cart__viewfinder {
+  /* Camera stage: the idle illustration and the live viewfinder share one frame. */
+  .scan-to-cart__stage {
     position: relative;
     overflow: hidden;
     aspect-ratio: 4 / 3;
-    border-radius: var(--style-border-radius-lg, 1.5rem);
+    border-radius: calc(var(--scan-radius) - 0.25rem);
+    background: color-mix(in srgb, var(--scan-accent) 6%, var(--color-background));
+  }
+
+  .scan-to-cart__viewfinder,
+  .scan-to-cart__idle {
+    position: absolute;
+    inset: 0;
+  }
+
+  .scan-to-cart__viewfinder {
     background: #000;
   }
 
-  .scan-to-cart__viewfinder[hidden] {
+  .scan-to-cart__viewfinder[hidden],
+  .scan-to-cart__viewfinder:not([hidden]) + .scan-to-cart__idle {
     display: none;
   }
 
@@ -197,27 +301,124 @@
     object-fit: cover;
   }
 
-  /* A wide guide fits both square QR codes and long barcodes; decoding still reads the whole frame. */
-  .scan-to-cart__target {
+  .scan-to-cart__idle {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--gap-sm);
+    padding: var(--padding-xl);
+    text-align: center;
+  }
+
+  .scan-to-cart__icon {
+    display: grid;
+    place-items: center;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: 50%;
+    color: var(--scan-accent);
+    background: var(--color-background);
+    box-shadow: 0 0.5rem 1.5rem rgb(var(--color-shadow-rgb) / var(--opacity-10));
+  }
+
+  .scan-to-cart__hint {
+    max-inline-size: 16rem;
+    margin: 0;
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    overflow-wrap: anywhere;
+  }
+
+  /* Corner brackets drawn with two gradients per corner, so the guide stays one element. */
+  .scan-to-cart__frame {
+    --scan-corner: 1.75rem;
+    --scan-stroke: 4px;
+    --scan-frame-color: rgb(255 255 255 / 0.95);
+
     position: absolute;
-    inset: 18% 8%;
-    border: 3px solid rgb(255 255 255 / 0.9);
-    border-radius: var(--style-border-radius-md, 1rem);
-    box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.35);
+    inset: 16% 10%;
+    border-radius: var(--style-border-radius-sm, 0.5rem);
+    background:
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) top left / var(--scan-corner) var(--scan-stroke),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) top left / var(--scan-stroke) var(--scan-corner),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) top right / var(--scan-corner) var(--scan-stroke),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) top right / var(--scan-stroke) var(--scan-corner),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) bottom left / var(--scan-corner) var(--scan-stroke),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) bottom left / var(--scan-stroke) var(--scan-corner),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) bottom right / var(--scan-corner) var(--scan-stroke),
+      linear-gradient(var(--scan-frame-color), var(--scan-frame-color)) bottom right / var(--scan-stroke) var(--scan-corner);
+    background-repeat: no-repeat;
+    box-shadow: 0 0 0 100vmax rgb(0 0 0 / 0.4);
     pointer-events: none;
   }
 
-  .scan-to-cart__form {
-    display: grid;
+  .scan-to-cart__frame--idle {
+    --scan-frame-color: color-mix(in srgb, var(--scan-accent) 55%, transparent);
+
+    box-shadow: none;
+  }
+
+  .scan-to-cart__line {
+    position: absolute;
+    inset-inline: 6%;
+    inset-block-start: 0;
+    block-size: 2px;
+    border-radius: 2px;
+    background: var(--scan-accent);
+    box-shadow: 0 0 0.75rem var(--scan-accent);
+    animation: scan-to-cart-sweep 2.2s var(--animation-easing, ease-in-out) infinite alternate;
+  }
+
+  @keyframes scan-to-cart-sweep {
+    to {
+      transform: translateY(calc(var(--scan-sweep, 10rem)));
+    }
+  }
+
+  .scan-to-cart__viewfinder .scan-to-cart__frame {
+    container-type: size;
+  }
+
+  @container (min-height: 1px) {
+    .scan-to-cart__line {
+      --scan-sweep: calc(100cqh - 2px);
+    }
+  }
+
+  .scan-to-cart__camera-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: var(--gap-xs);
-    min-width: 0;
+    inline-size: 100%;
+    min-block-size: 3.25rem;
+    font-size: var(--font-size--md, 1rem);
   }
 
-  .scan-to-cart__label {
-    font-size: var(--font-size--sm);
+  .scan-to-cart__camera-button[aria-pressed='true'] {
+    color: var(--color-foreground);
+    background: transparent;
+    border-color: currentColor;
   }
 
-  .scan-to-cart__field {
+  .scan-to-cart__divider {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+    margin: 0;
+    font-size: var(--font-size--xs);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .scan-to-cart__divider::before,
+  .scan-to-cart__divider::after {
+    content: '';
+    flex: 1 1 0;
+    block-size: 1px;
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+
+  .scan-to-cart__form {
     display: flex;
     gap: var(--gap-xs);
     min-width: 0;
@@ -229,59 +430,105 @@
     text-transform: uppercase;
   }
 
+  .scan-to-cart__input::placeholder {
+    text-transform: none;
+  }
+
+  .scan-to-cart__find {
+    flex: 0 0 auto;
+  }
+
   .scan-to-cart__status {
     margin: 0;
+    padding: var(--padding-xs) var(--padding-sm);
+    border-radius: var(--style-border-radius-sm, 0.5rem);
+    font-size: var(--font-size--sm);
     text-align: center;
     overflow-wrap: anywhere;
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
   }
 
   .scan-to-cart__status:empty {
     display: none;
   }
 
-  .scan-to-cart__result {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--gap-md);
-    align-items: start;
-    padding: var(--padding-md);
-    border: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
-    border-radius: var(--style-border-radius-md, 1rem);
+  .scan-to-cart__status[data-tone='success'] {
+    color: var(--color-success, #0a7d4f);
+    background: rgb(10 125 79 / 0.08);
   }
 
-  .scan-to-cart__result[hidden],
+  .scan-to-cart__status[data-tone='error'] {
+    color: var(--color-error, #b42318);
+    background: rgb(180 35 24 / 0.08);
+  }
+
+  /* Result card */
+  .scan-to-cart__result {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: center;
+    border-color: color-mix(in srgb, var(--scan-accent) 40%, transparent);
+    animation: scan-to-cart-rise var(--animation-speed, 0.2s) var(--animation-easing, ease-out);
+  }
+
+  .scan-to-cart__result[hidden] {
+    display: none;
+  }
+
+  @keyframes scan-to-cart-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+
+  .scan-to-cart__media {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--style-border-radius-md, 0.75rem);
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+  }
+
+  .scan-to-cart__image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+
   .scan-to-cart__image[hidden] {
     display: none;
   }
 
-  .scan-to-cart__image {
-    inline-size: 6rem;
-    block-size: 6rem;
-    object-fit: contain;
-    border-radius: var(--style-border-radius-sm, 0.5rem);
-    background: var(--color-background);
-  }
-
   .scan-to-cart__details {
     display: grid;
-    gap: var(--gap-xs);
+    gap: var(--gap-2xs, 0.25rem);
     min-width: 0;
   }
 
-  .scan-to-cart__title,
-  .scan-to-cart__code {
+  .scan-to-cart__title {
     margin: 0;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1.35;
     overflow-wrap: anywhere;
   }
 
-  .scan-to-cart__title {
-    font-weight: var(--font-weight-bold, 700);
+  .scan-to-cart__code {
+    justify-self: start;
+    margin: 0;
+    padding: 0.125rem var(--padding-xs);
+    border-radius: 999px;
+    font-size: var(--font-size--xs);
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
   }
 
-  .scan-to-cart__code {
-    font-size: var(--font-size--sm);
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  .scan-to-cart__actions,
+  .scan-to-cart__cart-link {
+    grid-column: 1 / -1;
   }
 
   .scan-to-cart__actions {
@@ -290,10 +537,45 @@
     min-width: 0;
   }
 
+  .scan-to-cart__stepper {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    border: var(--style-border-width, 1px) solid rgb(var(--color-foreground-rgb) / var(--opacity-20, 0.2));
+    border-radius: var(--style-border-radius-buttons-primary, 0.5rem);
+  }
+
+  .scan-to-cart__step {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+  }
+
+  .scan-to-cart__step svg {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+  }
+
   .scan-to-cart__quantity {
-    flex: 0 0 4.5rem;
-    min-width: 0;
+    inline-size: 2.5rem;
+    border: 0;
+    font: inherit;
     text-align: center;
+    color: inherit;
+    background: none;
+    appearance: textfield;
+  }
+
+  .scan-to-cart__quantity::-webkit-inner-spin-button,
+  .scan-to-cart__quantity::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
   }
 
   .scan-to-cart__add {
@@ -303,11 +585,18 @@
 
   .scan-to-cart__add[aria-busy='true'] {
     cursor: progress;
+    opacity: var(--opacity-70);
   }
 
   .scan-to-cart__cart-link {
-    justify-self: start;
-    font-size: var(--font-size--sm);
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scan-to-cart__line,
+    .scan-to-cart__result {
+      animation: none;
+    }
   }
 {% endstylesheet %}
 
@@ -324,8 +613,7 @@
     {
       "type": "richtext",
       "id": "text",
-      "label": "t:settings.text",
-      "default": "<p>Scan the QR code or barcode on a product label in our showroom, or type its product code, to add it to your cart.</p>"
+      "label": "t:settings.text"
     },
     {
       "type": "color_scheme",

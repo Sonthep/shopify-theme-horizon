@@ -719,7 +719,8 @@
       justify-self: flex-end;
       display: flex;
       align-items: center;
-      gap: 12px;
+      /* Each icon already has a 44px tap area; extra gaps pushed the language picker over the logo. */
+      gap: 0;
     }
 
     .mobile-language-form {
@@ -728,20 +729,17 @@
       justify-content: center;
     }
 
+    /* Plain "EN ▾" text rather than a boxed pill, so it fits beside account and cart without covering the logo. */
     .mobile-language-dropdown-wrapper {
       position: relative;
       display: inline-flex;
       align-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 6px;
-      padding: 4px 28px 4px 10px;
-      transition: all var(--animation-speed) ease;
     }
 
-    .mobile-language-dropdown-wrapper:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
+    .mobile-language-dropdown-wrapper:has(:focus-visible) {
+      outline: var(--focus-outline-width, 2px) solid currentColor;
+      outline-offset: -2px;
     }
 
     .mobile-language-select {
@@ -756,7 +754,8 @@
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
-      padding: 0;
+      min-block-size: 44px;
+      padding: 0 16px 0 6px;
       margin: 0;
       outline: none;
       width: auto;
@@ -770,7 +769,7 @@
 
     .mobile-language-dropdown-wrapper .icon-caret--mobile {
       position: absolute;
-      right: 8px;
+      right: 4px;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
