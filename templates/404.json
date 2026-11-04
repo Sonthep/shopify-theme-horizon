@@ -88,6 +88,7 @@
         "content_direction": "column",
         "section_width": "page-width",
         "section_height": "small",
+        "scan_link": "shopify://pages/scan-to-shop",
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 20,

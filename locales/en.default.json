@@ -161,12 +161,16 @@
     "scan_error": "We couldn't add this product. Please try again.",
     "scan_find": "Find",
     "scan_hint": "Point your camera at the product's QR code or barcode.",
+    "scan_next": "Scan another product",
     "scan_not_found": "No product matches this code.",
     "scan_searching": "Looking up the product…",
     "scan_or_type": "or type the product code",
+    "scan_photo": "Read from a photo",
+    "scan_photo_failed": "No code found in this photo. Take it closer and in focus, or type the code below.",
     "scan_sku_label": "Product code (SKU)",
     "scan_start_camera": "Scan QR code or barcode",
     "scan_stop_camera": "Stop camera",
+    "scan_torch": "Camera light",
     "scan_unavailable": "This product can't be added to the cart right now.",
     "scan_to_cart": "Scan to cart",
     "bulk_add": "Add {{ count }} items to cart",
@@ -335,6 +339,10 @@
     // Button to go from search preview to full search results page
     "search_results_view_all": "View all",
     "search_results_view_all_button": "View all",
+    // Toggle between list rows and a grid for predictive search products
+    "search_results_layout_label": "Results layout",
+    "search_results_layout_list": "List",
+    "search_results_layout_grid": "Grid",
     // Label for customer's note to seller during checkout
     "seller_note": "Special instructions",
     "shipping_policy": "Shipping calculated at checkout.",

@@ -1,5 +1,36 @@
 // Predictive search can rank other products above an exact SKU, so check several.
 const SEARCH_LIMIT = 5;
+// QR short links hide their target from scripts, so the browser has to open them.
+const SHORT_LINK_HOSTS = ['me-qr.com'];
+// The previous website's product URLs end in the SKU: /en/product/<slug>/<sku>. Also read in main-404.liquid.
+const LEGACY_PRODUCT_PATH = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/product\/[^/]+\/([^/]+)\/?$/i;
+
+/**
+ * Works out what a scanned or typed code refers to.
+ * @param {string} text
+ * @param {string[]} storeHosts - This store's domains, without `www.`.
+ * @returns {{ type: 'sku' | 'product' | 'short-link', value: string } | { type: 'unknown' }}
+ */
+export function parseScannedCode(text, storeHosts) {
+  const value = text.trim();
+  if (!/^https?:\/\//i.test(value)) return { type: 'sku', value };
+
+  let url;
+  try {
+    url = new URL(value);
+  } catch {
+    return { type: 'unknown' };
+  }
+
+  const host = url.hostname.replace(/^www\./i, '').toLowerCase();
+  if (SHORT_LINK_HOSTS.includes(host)) return { type: 'short-link', value: url.href };
+  if (!storeHosts.includes(host)) return { type: 'unknown' };
+
+  const legacy = url.pathname.match(LEGACY_PRODUCT_PATH);
+  if (legacy?.[1]) return { type: 'sku', value: decodeURIComponent(legacy[1]) };
+  if (/\/products\/[^/]+/.test(url.pathname)) return { type: 'product', value: url.href };
+  return { type: 'unknown' };
+}
 
 /**
  * Searches products with predictive search.
@@ -53,4 +84,23 @@ export async function findVariantBySku(code, signal) {
     if (variant) return { product, variant };
   }
   return null;
+}
+
+/**
+ * Finds the variant a product URL points at, or the first one that can be bought.
+ * @param {string} productUrl
+ * @param {AbortSignal} signal
+ * @returns {Promise<{ product: any, variant: any } | null>}
+ */
+export async function findVariantByUrl(productUrl, signal) {
+  const product = await fetchProduct(productUrl, signal);
+  if (!product) return null;
+
+  const wanted = new URL(productUrl, location.origin).searchParams.get('variant');
+  const variants = product.variants;
+  const variant =
+    variants.find((/** @type {{id: number}} */ item) => String(item.id) === wanted) ??
+    variants.find((/** @type {{available: boolean}} */ item) => item.available) ??
+    variants[0];
+  return variant ? { product, variant } : null;
 }

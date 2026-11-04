@@ -1,8 +1,9 @@
 {% comment %}
   Section contract.
-  Lets customers scan a product label's QR code or barcode, which holds the product SKU, or type
-  the SKU, and add that product to the cart without leaving the page. Lookup uses
-  predictive search on variant SKUs, so it needs no app.
+  Lets customers scan a product label's QR code or barcode, read one from a photo, or type the SKU,
+  and add that product to the cart without leaving the page. A code may hold the SKU, a product URL,
+  or a QR short link, which main-404.liquid turns back into `?sku=`. Lookup uses predictive search
+  on variant SKUs, so it needs no app.
   @example
   <!-- Add the "Scan to cart" section to a page template, e.g. page.scan -->
 {% endcomment %}
@@ -38,6 +39,7 @@
   <scan-to-cart
     class="scan-to-cart"
     data-decoder-url="{{ 'zxing.min.js' | asset_url }}"
+    data-store-hosts="{{ shop.domain | escape }},{{ shop.permanent_domain | escape }}"
     data-label-start="{{ 'content.scan_start_camera' | t }}"
     data-label-stop="{{ 'content.scan_stop_camera' | t }}"
     data-message-hint="{{ 'content.scan_hint' | t }}"
@@ -48,6 +50,7 @@
     data-message-error="{{ 'content.scan_error' | t }}"
     data-message-camera-denied="{{ 'content.scan_camera_denied' | t }}"
     data-message-camera-unavailable="{{ 'content.scan_camera_unavailable' | t }}"
+    data-message-photo-failed="{{ 'content.scan_photo_failed' | t }}"
   >
     <div class="scan-to-cart__card">
       {%- if section.settings.heading != blank or section.settings.text != blank -%}
@@ -77,10 +80,36 @@
           ></video>
           <span
             class="scan-to-cart__frame"
+            ref="frame"
             aria-hidden="true"
           >
             <span class="scan-to-cart__line"></span>
           </span>
+          <button
+            type="button"
+            class="scan-to-cart__torch"
+            ref="torchButton"
+            on:click="/toggleTorch"
+            aria-label="{{ 'content.scan_torch' | t }}"
+            aria-pressed="false"
+            hidden
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M13 2 4 14h7l-1 8 9-12h-7z"/>
+            </svg>
+          </button>
         </div>
         <div class="scan-to-cart__idle">
           <span class="scan-to-cart__frame scan-to-cart__frame--idle" aria-hidden="true"></span>
@@ -113,6 +142,21 @@
         </svg>
         <span ref="cameraLabel">{{- 'content.scan_start_camera' | t -}}</span>
       </button>
+
+      <button
+        type="button"
+        class="button button-secondary scan-to-cart__photo"
+        on:click="/choosePhoto"
+      >
+        {{- 'content.scan_photo' | t -}}
+      </button>
+      <input
+        type="file"
+        accept="image/*"
+        ref="photo"
+        on:change="/readPhoto"
+        hidden
+      >
 
       <p class="scan-to-cart__divider">
         <span>{{ 'content.scan_or_type' | t }}</span>
@@ -218,6 +262,15 @@
           {{- 'actions.add_to_cart' | t -}}
         </button>
       </div>
+      <button
+        type="button"
+        class="button button-secondary scan-to-cart__next"
+        ref="nextButton"
+        on:click="/scanNext"
+        hidden
+      >
+        {{- 'content.scan_next' | t -}}
+      </button>
       <a
         class="button button-secondary scan-to-cart__cart-link"
         href="{{ routes.cart_url }}"
@@ -358,6 +411,14 @@
     box-shadow: none;
   }
 
+  .scan-to-cart__viewfinder[data-paused] .scan-to-cart__line {
+    display: none;
+  }
+
+  .scan-to-cart__viewfinder[data-paused] .scan-to-cart__video {
+    opacity: var(--opacity-70);
+  }
+
   .scan-to-cart__line {
     position: absolute;
     inset-inline: 6%;
@@ -383,6 +444,36 @@
     .scan-to-cart__line {
       --scan-sweep: calc(100cqh - 2px);
     }
+  }
+
+  .scan-to-cart__torch {
+    position: absolute;
+    inset-block-start: var(--padding-sm);
+    inset-inline-end: var(--padding-sm);
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: rgb(0 0 0 / 0.55);
+    cursor: pointer;
+  }
+
+  .scan-to-cart__torch[aria-pressed='true'] {
+    color: #000;
+    background: #fff;
+  }
+
+  .scan-to-cart__torch[hidden] {
+    display: none;
+  }
+
+  .scan-to-cart__photo {
+    justify-content: center;
+    inline-size: 100%;
   }
 
   .scan-to-cart__camera-button {
@@ -527,8 +618,13 @@
   }
 
   .scan-to-cart__actions,
+  .scan-to-cart__next,
   .scan-to-cart__cart-link {
     grid-column: 1 / -1;
+  }
+
+  .scan-to-cart__next[hidden] {
+    display: none;
   }
 
   .scan-to-cart__actions {
@@ -588,6 +684,7 @@
     opacity: var(--opacity-70);
   }
 
+  .scan-to-cart__next,
   .scan-to-cart__cart-link {
     justify-content: center;
   }

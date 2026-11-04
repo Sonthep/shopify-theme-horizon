@@ -1,4 +1,17 @@
-
+{%- comment -%} Old product labels link to /en/product/<slug>/<sku>; send them to the scan page. {%- endcomment -%}
+{%- if section.settings.scan_link != blank -%}
+  <script>
+    (() => {
+      // Keep in step with LEGACY_PRODUCT_PATH in product-lookup.js.
+      const match = location.pathname.match(/^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/product\/[^/]+\/([^/]+)\/?$/i);
+      if (!match) return;
+      const target = new URL({{ section.settings.scan_link | json }}, location.origin);
+      target.searchParams.set('sku', decodeURIComponent(match[1]));
+      // Replaces the 404 in history, so Back does not bounce through it again.
+      location.replace(target);
+    })();
+  </script>
+{%- endif -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
@@ -182,6 +195,16 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.scan_to_cart"
+    },
+    {
+      "type": "url",
+      "id": "scan_link",
+      "label": "t:settings.scan_link",
+      "info": "t:info.scan_legacy_link"
     }
   ]
 }
