@@ -14,19 +14,41 @@ const NAME_SEARCH_LIMIT = 10;
 const CHOICES_SHOWN = 5;
 // Same threshold as product-finder's bulk match: a confident name match is picked for the customer.
 const AUTO_MATCH_SCORE = 72;
+// Near-equal results are different sizes of one product, so the customer has to choose between them.
+const AUTO_MATCH_LEAD = 8;
 const STOP_WORDS = new Set([
   'the', 'and', 'for', 'with', 'from', 'product', 'products', 'item', 'items', 'st', 'ss',
   'เครื่อง', 'สินค้า', 'รุ่น', 'แบบ', 'พร้อม', 'จำนวน', 'ขนาด', 'ใช้กับ',
 ]);
 // Spec values compared between the request and a product; another value of the same kind is a conflict.
 const SPEC_PATTERNS = /** @type {Array<[string, RegExp]>} */ ([
-  ['power', /(?<![\d.])(\d+(?:\.\d+)?)\s*(kw|w)\b/g],
-  ['voltage', /(?<![\d.])(\d+(?:\.\d+)?)\s*(v)\b/g],
+  ['power', /(?<![\d.])(\d+(?:\.\d+)?)\s*(kw|kilowatts?|w|watts?)\b/g],
+  ['voltage', /(?<![\d.])(\d+(?:\.\d+)?)\s*(v|volts?)\b/g],
   ['capacity', /(?<![\d.])(\d+(?:\.\d+)?)\s*(l|ltr|litres?|liters?|ml)\b/g],
   ['length', /(?<![\d.])(\d+(?:\.\d+)?)\s*(mm|cm|inch|in|")(?![a-z])/g],
   ['weight', /(?<![\d.])(\d+(?:\.\d+)?)\s*(kg|g)\b/g],
   ['fraction', /(?<![\d.])(\d+)\s*\/\s*(\d+)(?![\d.])/g],
+  ['tanks', /(?<![\d.])(\d+)\s*(?:x\s*)?(tanks?)\b/g],
+  ['baskets', /(?<![\d.])(\d+)\s*(?:x\s*)?(baskets?)\b/g],
 ]);
+// Thai units and quote marks, rewritten so the patterns above read them. \b doesn't work beside Thai letters.
+const SPEC_SPELLINGS = /** @type {Array<[RegExp, string]>} */ ([
+  [/มล\.?/g, 'ml '],
+  [/ลิตร/g, 'l '],
+  [/ซม\.?/g, 'cm '],
+  [/กก\.?|กิโลกรัม/g, 'kg '],
+  [/ถัง/g, 'tanks '],
+  [/ตะกร้า/g, 'baskets '],
+  [/[”″]/g, '"'],
+]);
+const MATERIALS = /** @type {Array<[string, RegExp]>} */ ([
+  ['stainless', /\bst\/st\b|\bs\/s\b|\bstainless\b|\bss ?(?:304|316|201|430)\b|สแตนเลส|สเตนเลส/],
+  ['polycarbonate', /\bpolycarbonated?\b|โพลีคาร์บอเนต/],
+  ['aluminium', /\balu(?:minium|minum)?\b|อลูมิเนียม|อะลูมิเนียม/],
+]);
+// Shorthand that product titles spell out, so searching for it finds nothing. Materials are still compared.
+const SEARCH_NOISE = /\b(?:st\/st|s\/s)(?=\s|$)/gi;
+const THAI = /[\u0E00-\u0E7F]/;
 const MEASUREMENT =
   /^\d+(?:\.\d+)?(?:mm|cm|m|kg|g|mg|l|ltr|ml|oz|w|kw|v|inch|in)(?:x\d+(?:\.\d+)?(?:mm|cm|m|kg|g|mg|l|ltr|ml|oz|w|kw|v|inch|in))*$/i;
 
@@ -43,6 +65,7 @@ const MEASUREMENT =
  * @property {HTMLElement} results - Wraps the matched list.
  * @property {HTMLOListElement} list - One row per uploaded line.
  * @property {HTMLElement} summary - How many rows are ready to add.
+ * @property {HTMLButtonElement} retryAll - Searches every failed row again.
  * @property {HTMLButtonElement} addButton - Adds every ready row to the cart.
  * @property {HTMLElement} addLabel - The add button's text.
  * @property {HTMLElement} cartLink - Shown after the list is added.
@@ -55,12 +78,18 @@ const MEASUREMENT =
  * @extends {Component<BulkOrderRefs>}
  */
 class BulkOrder extends Component {
-  requiredRefs = ['file', 'text', 'sheetPicker', 'sheet', 'status', 'results', 'list', 'summary', 'addButton', 'addLabel', 'cartLink', 'rowTemplate'];
+  requiredRefs = ['file', 'text', 'sheetPicker', 'sheet', 'status', 'results', 'list', 'summary', 'retryAll', 'addButton', 'addLabel', 'cartLink', 'rowTemplate'];
 
   /** @type {Map<HTMLElement, { product: any, variant: any } | null>} */
   #rows = new Map();
 
-  /** @type {AbortController | null} */
+  /** @type {WeakMap<Element, BulkItem>} */
+  #items = new WeakMap();
+
+  /** @type {Map<string, Promise<{ product: any, variant: any } | null>>} */
+  #skuLookups = new Map();
+
+  /** @type {AbortController | null} - Stays set after matching, because retries belong to the same list. */
   #matching = null;
 
   /** @type {BulkSheet[]} */
@@ -154,6 +183,21 @@ class BulkOrder extends Component {
     const variant = match.product.variants.find((/** @type {any} */ item) => String(item.id) === select.value);
     if (variant) this.#showMatch(row, match.product, variant);
     this.#updateSummary();
+  };
+
+  /** @param {Event} event */
+  retryRow = (event) => {
+    const button = event.target;
+    const row = button instanceof Element ? button.closest('li') : null;
+    if (!row) return;
+
+    this.#retry([row]);
+    // The button hides while the row searches, so keep focus in the row.
+    field(row, 'remove')?.focus();
+  };
+
+  retryFailed = () => {
+    this.#retry([...this.#rows.keys()].filter((row) => row.dataset.state === 'failed'));
   };
 
   /** @param {Event} event */
@@ -263,63 +307,100 @@ class BulkOrder extends Component {
 
     const { list, results, cartLink, rowTemplate } = this.refs;
     this.#rows.clear();
+    this.#skuLookups.clear();
     list.replaceChildren();
     cartLink.hidden = true;
-    /** @type {Array<[HTMLElement, BulkItem]>} */
+    /** @type {HTMLElement[]} */
     const work = [];
     for (const item of items) {
       const fragment = /** @type {DocumentFragment} */ (rowTemplate.content.cloneNode(true));
       const row = fragment.querySelector('li');
       if (!row) continue;
       const source = row.querySelector('[data-field="source"]');
-      if (source) source.textContent = [item.code, item.text].filter(Boolean).join(' · ');
+      if (source) source.textContent = [item.code, item.text, item.spec].filter(Boolean).join(' · ');
       const quantity = row.querySelector('[data-field="quantity"]');
       if (quantity instanceof HTMLInputElement) quantity.value = String(item.quantity);
       this.#rows.set(row, null);
+      this.#items.set(row, item);
       list.append(row);
-      work.push([row, item]);
+      work.push(row);
     }
     results.hidden = false;
     this.#setStatus(fill(this.dataset.messageMatching, { total: items.length }));
     this.#updateSummary();
 
-    /** @type {Map<string, Promise<{ product: any, variant: any } | null>>} */
-    const skuLookups = new Map();
-    const lookupSku = (/** @type {string} */ code) => {
-      const key = code.toUpperCase();
-      let lookup = skuLookups.get(key);
-      if (!lookup) {
-        lookup = findVariantBySku(code, controller.signal);
-        skuLookups.set(key, lookup);
-      }
-      return lookup;
-    };
+    await this.#resolveRows(work, controller.signal);
+  }
 
-    const next = work.values();
+  /** @param {Element[]} rows */
+  async #retry(rows) {
+    const signal = this.#matching?.signal;
+    if (!signal || signal.aborted) return;
+
+    const retrying = rows.filter((row) => row instanceof HTMLElement);
+    for (const row of retrying) this.#setRowState(row, 'loading');
+    this.#updateSummary();
+    this.#setStatus(fill(this.dataset.messageMatching, { total: retrying.length }));
+    await this.#resolveRows(retrying, signal);
+  }
+
+  /**
+   * @param {HTMLElement[]} rows
+   * @param {AbortSignal} signal
+   */
+  async #resolveRows(rows, signal) {
+    const next = rows.values();
     const worker = async () => {
-      for (const [row, item] of next) {
-        if (controller.signal.aborted) return;
-        await this.#resolveRow(row, item, lookupSku, controller.signal);
+      for (const row of next) {
+        if (signal.aborted) return;
+        await this.#resolveRow(row, signal);
       }
     };
     await Promise.all(Array.from({ length: CONCURRENCY }, worker));
-    if (controller.signal.aborted) return;
+    if (signal.aborted) return;
 
-    this.#matching = null;
-    const { ready, choose, missing, guess } = this.#counts();
-    this.#setStatus(fill(this.dataset.messageMatched, { ready, choose, missing, guess, total: this.#rows.size }));
+    const { ready, choose, missing, guess, failed } = this.#counts();
+    const matched = fill(this.dataset.messageMatched, { ready, choose, missing, guess, total: this.#rows.size });
+    this.#setStatus(failed ? `${matched} ${fill(this.dataset.messageFailed, { failed })}` : matched);
+  }
+
+  /**
+   * Shares lookups between rows with the same code. Failures are dropped so a retry searches again.
+   * @param {string} code
+   * @param {boolean} tolerant
+   * @param {AbortSignal} signal
+   */
+  #lookupSku(code, tolerant, signal) {
+    const key = `${tolerant}:${code.toUpperCase()}`;
+    let lookup = this.#skuLookups.get(key);
+    if (!lookup) {
+      lookup = findVariantBySku(code, signal, { tolerant });
+      this.#skuLookups.set(key, lookup);
+      lookup.catch(() => this.#skuLookups.delete(key));
+    }
+    return lookup;
+  }
+
+  /** @param {HTMLElement} row */
+  #clearRow(row) {
+    const select = field(row, 'options');
+    if (select instanceof HTMLSelectElement) select.length = 1;
+    field(row, 'choose')?.setAttribute('hidden', '');
+    delete row.dataset.guess;
   }
 
   /**
    * @param {HTMLElement} row
-   * @param {BulkItem} item
-   * @param {(code: string) => Promise<{ product: any, variant: any } | null>} lookupSku
    * @param {AbortSignal} signal
    */
-  async #resolveRow(row, item, lookupSku, signal) {
+  async #resolveRow(row, signal) {
+    const item = this.#items.get(row);
+    if (!item || !row.isConnected) return;
+
+    this.#clearRow(row);
     try {
-      for (const code of skuCandidates(item)) {
-        const match = await lookupSku(code);
+      for (const { code, tolerant } of skuCandidates(item)) {
+        const match = await this.#lookupSku(code, tolerant, signal);
         if (signal.aborted) return;
         if (match) {
           this.#showMatch(row, match.product, match.variant);
@@ -327,8 +408,9 @@ class BulkOrder extends Component {
         }
       }
 
+      const value = item.text || item.code;
       let products = [];
-      for (const query of nameQueries(item.text || item.code)) {
+      for (const query of nameQueries(value)) {
         products = await searchProducts(query, signal, { limit: NAME_SEARCH_LIMIT });
         if (signal.aborted) return;
         if (products.length) break;
@@ -338,11 +420,11 @@ class BulkOrder extends Component {
         return;
       }
 
-      const ranked = rankProducts(item.text || item.code, products);
+      const ranked = rankProducts(storeLanguage(value), products, `${value} ${item.spec}`);
       this.#showChoices(row, ranked.slice(0, CHOICES_SHOWN).map(({ product }) => product));
       const [best] = ranked;
       if (best?.confident) {
-        const product = await fetchProduct(best.product.url, signal);
+        const product = await fetchProduct(best.product.url, signal, { strict: true });
         if (signal.aborted || !product) return;
         const variant = product.variants.find((/** @type {any} */ option) => option.available) ?? product.variants[0];
         const select = field(row, 'options');
@@ -351,7 +433,7 @@ class BulkOrder extends Component {
         row.dataset.guess = 'true';
       }
     } catch {
-      if (!signal.aborted) this.#setRowState(row, 'missing', this.dataset.messageRowError);
+      if (!signal.aborted) this.#setRowState(row, 'failed', this.dataset.messageRowError);
     } finally {
       if (!signal.aborted) this.#updateSummary();
     }
@@ -376,6 +458,9 @@ class BulkOrder extends Component {
    * @param {string} [note] - Shown under an available match, e.g. that it was matched by name.
    */
   #showMatch(row, product, variant, note = '') {
+    // A row removed while it searched must not come back into the cart list.
+    if (!row.isConnected) return;
+
     this.#rows.set(row, { product, variant });
     delete row.dataset.guess;
 
@@ -420,7 +505,7 @@ class BulkOrder extends Component {
 
   /**
    * @param {HTMLElement} row
-   * @param {'loading' | 'matched' | 'choose' | 'missing' | 'unavailable'} state
+   * @param {'loading' | 'matched' | 'choose' | 'missing' | 'unavailable' | 'failed'} state
    * @param {string} [note]
    */
   #setRowState(row, state, note = '') {
@@ -435,7 +520,9 @@ class BulkOrder extends Component {
       noteElement.textContent = note;
       noteElement.hidden = !note;
     }
-    if (state === 'choose' || state === 'missing') this.#rows.set(row, null);
+    const retry = field(row, 'retry');
+    if (retry) retry.hidden = state !== 'failed';
+    if (!resolved && row.isConnected) this.#rows.set(row, null);
   }
 
   #counts() {
@@ -443,21 +530,27 @@ class BulkOrder extends Component {
     let choose = 0;
     let missing = 0;
     let guess = 0;
+    let failed = 0;
     for (const [row, match] of this.#rows) {
       if (match?.variant.available && row.dataset.guess) guess += 1;
       if (match?.variant.available) ready += 1;
       else if (row.dataset.state === 'choose') choose += 1;
+      else if (row.dataset.state === 'failed') failed += 1;
       else if (row.dataset.state !== 'loading') missing += 1;
     }
-    return { ready, choose, missing, guess };
+    return { ready, choose, missing, guess, failed };
   }
 
   #updateSummary() {
-    const { summary, addButton, addLabel, results } = this.refs;
-    const { ready } = this.#counts();
+    const { summary, addButton, addLabel, results, retryAll } = this.refs;
+    const { ready, failed } = this.#counts();
     summary.textContent = fill(this.dataset.labelSummary, { ready, total: this.#rows.size });
     addLabel.textContent = fill(this.dataset.labelAdd, { count: ready });
     addButton.disabled = ready === 0 || Boolean(this.#adding);
+    retryAll.textContent = fill(this.dataset.labelRetryAll, { count: failed });
+    // Hiding the focused button would drop keyboard users back to the top of the page.
+    if (!failed && document.activeElement === retryAll) (addButton.disabled ? this.refs.text : addButton).focus();
+    retryAll.hidden = !failed;
     if (!this.#rows.size) results.hidden = true;
   }
 
@@ -491,7 +584,10 @@ function fill(template, values) {
   return (template ?? '').replace(/\[(\w+)\]/g, (token, name) => (name in values ? String(values[name]) : token));
 }
 
-/** @param {BulkItem} item */
+/**
+ * Lists the codes to try for a line. Only cells that are clearly a code may match a SKU loosely.
+ * @param {BulkItem} item
+ */
 function skuCandidates(item) {
   const tokens = item.text.match(/[A-Za-z0-9]+(?:[-/.][A-Za-z0-9]+)*/g) ?? [];
   const fromText = tokens.filter(
@@ -500,21 +596,36 @@ function skuCandidates(item) {
   const whole = looksLikeCode(item.text) ? [item.text] : [];
   const unique = new Map();
   for (const code of [item.code, ...whole, ...fromText]) {
-    if (code && !unique.has(code.toUpperCase())) unique.set(code.toUpperCase(), code);
+    if (!code || unique.has(code.toUpperCase())) continue;
+    unique.set(code.toUpperCase(), { code, tolerant: code === item.code || whole.includes(code) });
   }
   return [...unique.values()].slice(0, MAX_SKU_CANDIDATES);
 }
 
 /**
+ * Keeps the English part of a line like "เครื่องปั่นมือถือ — Immersion Blender", because product titles are
+ * in the store's primary language. A line with no English stays whole; search can still match its Thai.
+ * @param {string} value
+ */
+function storeLanguage(value) {
+  const words = value.split(/\s+/).filter((word) => !THAI.test(word) && /[A-Za-z0-9]/.test(word));
+  return words.some((word) => /[A-Za-z]{3}/.test(word)) ? words.join(' ') : value;
+}
+
+/**
  * Predictive search needs every term to match, so long descriptions are cut to their leading words,
- * then cut again when the longer query finds nothing.
+ * then cut again when the longer query finds nothing. Fractions stay because they name the product,
+ * like GN 1/1, but measurements go: titles write them differently, and ranking compares them instead.
  * @param {string} value
  */
 function nameQueries(value) {
-  const words = value
-    .replace(/[()[\],;:"'®™~*]/g, ' ')
+  const words = storeLanguage(value)
+    .replace(SEARCH_NOISE, ' ')
+    .replace(/[()[\],;:"'®™~*”″“—–]/g, ' ')
     .split(/\s+/)
-    .filter((word) => word.length > 1 && !/^[\d.,/-]+$/.test(word) && !MEASUREMENT.test(word));
+    .filter(
+      (word) => /^\d+\/\d+$/.test(word) || (word.length > 1 && !/^[\d.,/-]+$/.test(word) && !MEASUREMENT.test(word))
+    );
   return [...new Set([words.slice(0, 4).join(' '), words.slice(0, 2).join(' ')])].filter(Boolean);
 }
 
@@ -536,8 +647,13 @@ function keywords(value) {
 
 /** @param {string} value */
 function specs(value) {
-  const text = value.toLowerCase();
+  let text = value.toLowerCase();
+  for (const [pattern, spelling] of SPEC_SPELLINGS) text = text.replace(pattern, spelling);
+
   const found = new Set();
+  for (const [material, pattern] of MATERIALS) {
+    if (pattern.test(text)) found.add(`material:${material}`);
+  }
   for (const [kind, pattern] of SPEC_PATTERNS) {
     for (const match of text.matchAll(pattern)) {
       if (kind === 'fraction') {
@@ -549,7 +665,9 @@ function specs(value) {
       // Compare lengths in mm, capacity in ml, power in W and weight in g.
       if (unit === 'cm') number *= 10;
       else if (unit === 'inch' || unit === 'in' || unit === '"') number *= 25.4;
-      else if (unit === 'kw' || unit === 'kg' || (kind === 'capacity' && unit !== 'ml')) number *= 1000;
+      else if (unit === 'kw' || unit.startsWith('kilowatt') || unit === 'kg' || (kind === 'capacity' && unit !== 'ml')) {
+        number *= 1000;
+      }
       found.add(`${kind}:${Math.round(number)}`);
     }
   }
@@ -561,13 +679,14 @@ function specs(value) {
  * bulk match: keyword coverage in the title and text, plus agreeing or conflicting specs.
  * @param {string} query
  * @param {Array<{ title: string, url: string, vendor?: string, type?: string, tags?: string[], body?: string }>} products
+ * @param {string} [specText] - Extra text to read specs from, which adds no required keywords.
  */
-function rankProducts(query, products) {
+function rankProducts(query, products, specText = '') {
   const queryWords = keywords(query);
   const queryText = normalizeKeyword(query);
-  const querySpecs = specs(query);
+  const querySpecs = specs(`${query} ${specText}`);
 
-  return products
+  const ranked = products
     .map((product, position) => {
       const name = normalizeKeyword(`${product.title} ${product.vendor ?? ''} ${product.type ?? ''}`);
       const body = (product.body ?? '').replace(/<[^>]*>/g, ' ');
@@ -586,9 +705,22 @@ function rankProducts(query, products) {
       if (querySpecs.length) score += (matchedSpecs.length / querySpecs.length) * 24;
       score -= conflicts.length * 18;
       score = Math.max(0, Math.min(100, Math.round(score)));
-      return { product, score, position, confident: score >= AUTO_MATCH_SCORE && conflicts.length === 0 };
+      // On equal scores, fewer unrequested words is closer: "GN pan" before "Perforated GN pan".
+      const extraWords = keywords(product.title).filter((word) => !queryWords.includes(word)).length;
+      return { product, score, position, extraWords, conflicts: conflicts.length, confident: false };
     })
-    .sort((a, b) => b.score - a.score || a.position - b.position);
+    .sort((a, b) => b.score - a.score || a.extraWords - b.extraWords || a.position - b.position);
+
+  const [best, next] = ranked;
+  if (best) {
+    best.confident =
+      // One word, like "Wrap" or "Tweezer", is too broad to pick for the customer however well it scores.
+      queryWords.length > 1 &&
+      best.score >= AUTO_MATCH_SCORE &&
+      !best.conflicts &&
+      (!next || best.score - next.score >= AUTO_MATCH_LEAD);
+  }
+  return ranked;
 }
 
 /**

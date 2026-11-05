@@ -2,10 +2,17 @@
 const SEARCH_LIMIT = 5;
 // Each spelling costs a search, and they only run when the printed code found nothing.
 const MAX_SKU_RESPELLINGS = 3;
+// Storefront rate limits clear within seconds, so requests wait them out before reporting a failure.
+const MAX_RATE_LIMIT_RETRIES = 3;
+const RATE_LIMIT_WAIT_MS = 2000;
+const MAX_RATE_LIMIT_WAIT_MS = 15000;
 // QR short links hide their target from scripts, so the browser has to open them.
 const SHORT_LINK_HOSTS = ['me-qr.com'];
 // The previous website's product URLs end in the SKU: /en/product/<slug>/<sku>. Also read in main-404.liquid.
 const LEGACY_PRODUCT_PATH = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/product\/[^/]+\/([^/]+)\/?$/i;
+
+// Shared so parallel lookups all pause together instead of each extending the limit.
+let rateLimitedUntil = 0;
 
 /**
  * Works out what a scanned or typed code refers to.
@@ -35,6 +42,47 @@ export function parseScannedCode(text, storeHosts) {
 }
 
 /**
+ * @param {number} milliseconds
+ * @param {AbortSignal} signal
+ * @returns {Promise<void>}
+ */
+function wait(milliseconds, signal) {
+  return new Promise((resolve, reject) => {
+    signal.throwIfAborted();
+    const finish = () => {
+      signal.removeEventListener('abort', cancel);
+      resolve();
+    };
+    const timer = setTimeout(finish, milliseconds);
+    const cancel = () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    };
+    signal.addEventListener('abort', cancel, { once: true });
+  });
+}
+
+/**
+ * Fetches a storefront URL, waiting out rate limits. The last 429 is returned for the caller to handle.
+ * @param {string | URL} url
+ * @param {AbortSignal} signal
+ * @returns {Promise<Response>}
+ */
+async function fetchStorefront(url, signal) {
+  for (let attempt = 0; ; attempt += 1) {
+    const remaining = rateLimitedUntil - Date.now();
+    if (remaining > 0) await wait(remaining, signal);
+
+    const response = await fetch(url, { signal });
+    if (response.status !== 429 || attempt === MAX_RATE_LIMIT_RETRIES) return response;
+
+    const retryAfter = Number(response.headers.get('Retry-After')) * 1000;
+    const delay = Math.min(retryAfter || RATE_LIMIT_WAIT_MS * 2 ** attempt, MAX_RATE_LIMIT_WAIT_MS);
+    rateLimitedUntil = Math.max(rateLimitedUntil, Date.now() + delay);
+  }
+}
+
+/**
  * Searches products with predictive search.
  * @param {string} query
  * @param {AbortSignal} signal
@@ -47,11 +95,11 @@ export async function searchProducts(query, signal, { skuOnly = false, limit = S
   url.searchParams.set('resources[type]', 'product');
   url.searchParams.set('resources[limit]', String(limit));
   if (skuOnly) url.searchParams.set('resources[options][fields]', 'variants.sku');
-  let response = await fetch(url, { signal });
+  let response = await fetchStorefront(url, signal);
   // Predictive search rejects some languages, Thai included, with 417; the primary locale still answers.
   if (response.status === 417 && url.pathname !== '/search/suggest.json') {
     url.pathname = '/search/suggest.json';
-    response = await fetch(url, { signal });
+    response = await fetchStorefront(url, signal);
   }
   if (!response.ok) throw new Error(`Predictive search failed with ${response.status}`);
   const data = await response.json();
@@ -66,7 +114,7 @@ export async function searchProducts(query, signal, { skuOnly = false, limit = S
  */
 export async function fetchProduct(productUrl, signal, { strict = false } = {}) {
   const { pathname } = new URL(productUrl, location.origin);
-  const response = await fetch(`${pathname}.js`, { signal });
+  const response = await fetchStorefront(`${pathname}.js`, signal);
   if (strict && !response.ok && response.status !== 404) {
     throw new Error(`Product request failed with ${response.status}`);
   }
@@ -111,7 +159,7 @@ async function matchSku(query, signal, tolerant) {
   let similar = null;
 
   for (const candidate of await searchProducts(query, signal, { skuOnly: true })) {
-    const product = await fetchProduct(candidate.url, signal, { strict: tolerant });
+    const product = await fetchProduct(candidate.url, signal, { strict: true });
     /** @type {Array<{sku?: string}>} */
     const variants = product?.variants ?? [];
     const variant = variants.find((item) => item.sku?.toUpperCase() === query);
@@ -126,10 +174,11 @@ async function matchSku(query, signal, tolerant) {
 /**
  * Finds the variant whose SKU is exactly `code`, ignoring case.
  * Predictive search matches variant SKUs, then each candidate's product JSON confirms the exact SKU.
+ * Failed requests throw, so a rate limit is never mistaken for a code that doesn't exist.
  * @param {string} code
  * @param {AbortSignal} signal
- * @param {{ tolerant?: boolean }} [options] - `tolerant` accepts printed labels whose code differs from the SKU
- *   by separators or 0 and O, and reports failed requests instead of treating them as no match.
+ * @param {{ tolerant?: boolean }} [options] - `tolerant` accepts codes that differ from the SKU by separators or
+ *   0 and O. Use it for text known to be a code, because a loose match in free text can pick the wrong product.
  * @returns {Promise<{ product: any, variant: any } | null>}
  */
 export async function findVariantBySku(code, signal, { tolerant = false } = {}) {

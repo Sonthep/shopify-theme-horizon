@@ -38,6 +38,8 @@
     data-message-row-not-found="{{ 'content.bulk_row_not_found' | t }}"
     data-message-row-unavailable="{{ 'content.scan_unavailable' | t }}"
     data-message-row-error="{{ 'content.bulk_row_error' | t }}"
+    data-message-failed="{{ 'content.bulk_failed' | t: failed: '[failed]' }}"
+    data-label-retry-all="{{ 'content.bulk_retry_all' | t: count: '[count]' }}"
   >
     <div class="bulk-order__card">
       {%- if section.settings.heading != blank or section.settings.text != blank -%}
@@ -166,6 +168,13 @@
           ref="summary"
         ></p>
         <div class="bulk-order__footer-actions">
+          <button
+            type="button"
+            class="button button-secondary"
+            ref="retryAll"
+            on:click="/retryFailed"
+            hidden
+          ></button>
           <a
             class="button button-secondary"
             href="{{ routes.cart_url }}"
@@ -256,6 +265,15 @@
             data-field="note"
             hidden
           ></p>
+          <button
+            type="button"
+            class="bulk-order__retry"
+            data-field="retry"
+            on:click="/retryRow"
+            hidden
+          >
+            {{- 'content.bulk_retry' | t -}}
+          </button>
         </div>
         <label class="bulk-order__quantity">
           <span class="visually-hidden">{{ 'accessibility.quantity' | t }}</span>
@@ -590,11 +608,27 @@
     margin: 0;
   }
 
+  .bulk-order__retry {
+    justify-self: start;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .bulk-order__retry[hidden] {
+    display: none;
+  }
+
   .bulk-order__row[data-guess] .bulk-order__note {
     color: var(--color-foreground);
   }
 
   .bulk-order__row[data-state='missing'] .bulk-order__note,
+  .bulk-order__row[data-state='failed'] .bulk-order__note,
   .bulk-order__row[data-state='unavailable'] .bulk-order__note {
     color: var(--color-error, #b42318);
   }

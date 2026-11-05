@@ -2,7 +2,7 @@
 // workbooks (hotel OSE lists, two-row headers, supplier quotation templates). Keep them in step.
 
 /** @typedef {string | number | boolean | Date | null | undefined} CellValue */
-/** @typedef {{ code: string, text: string, quantity: number }} BulkItem */
+/** @typedef {{ code: string, text: string, spec: string, quantity: number }} BulkItem */
 /** @typedef {{ name: string, items: BulkItem[] }} BulkSheet */
 
 // Header rows are looked for this far down; RFQs often open with a title and customer block.
@@ -162,7 +162,8 @@ export function parseSheetRows(rows) {
     const billName = header.billName >= 0 ? cleanCell(row[header.billName]) : '';
     const rawSku = header.sku >= 0 ? cleanCell(row[header.sku]) : '';
     const sku = rawSku === '-' || rawSku === '#N/A' ? '' : rawSku;
-    const spec = header.spec >= 0 ? cleanCell(row[header.spec]) : '';
+    const rawSpec = header.spec >= 0 ? cleanCell(row[header.spec]) : '';
+    const spec = rawSpec === '-' || rawSpec === '#N/A' ? '' : rawSpec;
     const sourceName = name || billName || sku || spec;
     if (!sourceName || /^\d+(?:\.\d+)?$/.test(sourceName)) return;
 
@@ -170,6 +171,7 @@ export function parseSheetRows(rows) {
     items.push({
       code: sku,
       text: [billName, sourceName === sku ? '' : sourceName].filter(Boolean).join(' '),
+      spec: spec === sourceName ? '' : spec,
       quantity: Number.isFinite(rawQuantity) && rawQuantity > 0 ? Math.max(1, Math.round(rawQuantity)) : 1,
     });
   });
@@ -214,7 +216,7 @@ export function parseList(rows) {
       quantity = Math.max(1, Math.round(Number((cells.pop() ?? '').replace(/,/g, ''))) || 1);
     }
     const code = cells.length > 1 && looksLikeCode(cells[0]) ? cells.shift() ?? '' : '';
-    items.push({ code, text: cells.join(' '), quantity });
+    items.push({ code, text: cells.join(' '), spec: '', quantity });
   }
   return items;
 }
