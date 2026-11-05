@@ -161,6 +161,7 @@
     "scan_error": "We couldn't add this product. Please try again.",
     "scan_find": "Find",
     "scan_hint": "Point your camera at the product's QR code or barcode.",
+    "scan_lookup_failed": "We couldn't check this code. Please press Find to try again.",
     "scan_next": "Scan another product",
     "scan_not_found": "No product matches this code.",
     "scan_searching": "Looking up the product…",

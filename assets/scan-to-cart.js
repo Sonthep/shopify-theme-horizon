@@ -509,7 +509,7 @@ class ScanToCart extends Component {
 
     try {
       let match = null;
-      if (target.type === 'sku') match = await findVariantBySku(target.value, controller.signal);
+      if (target.type === 'sku') match = await findVariantBySku(target.value, controller.signal, { tolerant: true });
       if (target.type === 'product') match = await findVariantByUrl(target.value, controller.signal);
       if (controller.signal.aborted) return;
       // The previous card stays up during the lookup, so it only changes once there is an answer.
@@ -520,7 +520,7 @@ class ScanToCart extends Component {
       }
       this.#setStatus(match.variant.available ? match.product.title : this.dataset.messageUnavailable, match.variant.available ? '' : 'error');
     } catch (error) {
-      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageError, 'error');
+      if (!controller.signal.aborted) this.#setStatus(this.dataset.messageLookupFailed, 'error');
     } finally {
       if (this.#lookup === controller) this.#lookup = null;
     }
