@@ -118,8 +118,7 @@ product-card.product-card {
 .product-grid__card product-title a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
 .product-grid__card .product-card__title,
 .product-card :is(h3, h4, .product-card__title),
-.product-recommendations product-card a.contents .text-block :is(h1, h2, h3, h4, h5, h6, p),
-.product-recommendations product-card .text-block :is(h1, h2, h3, h4, h5, h6, p),
+.product-recommendations product-card div.text-block + div.text-block :is(h1, h2, h3, h4, h5, h6, p),
 .product-recommendations product-card .product-card__title,
 .product-recommendations product-card :is(h3, h4, .product-card__title) {
   display: -webkit-box !important;
@@ -135,7 +134,8 @@ product-card.product-card {
   overflow-wrap: anywhere !important;
 }
 
-.product-recommendations product-card .text-block {
+/* Only the title (the text block after the vendor) reserves three lines. */
+.product-recommendations product-card div.text-block + div.text-block {
   min-height: calc(1.5em * 3) !important;
   display: block !important;
 }
@@ -187,6 +187,7 @@ product-card.product-card {
 /* ---- SKU ---- */
 .product-grid__card product-sku-component {
   padding-inline: var(--_card-pad);
+  overflow-wrap: anywhere;
 }
 
 .product-grid__card product-sku-component .text-block {

@@ -15,11 +15,11 @@
 
   capture styles
     echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
-    echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
+    echo '--resource-list-column-gap-desktop: min(' | append: section.settings.columns_gap | append: 'px, max(3vw, 12px));'
+    echo '--slide-width-min: 160px;'
     echo '--resource-list-row-gap-desktop: ' | append: section.settings.rows_gap | append: 'px;'
     echo '--resource-list-columns: repeat(' | append: section.settings.columns | append: ', 1fr);'
     echo '--resource-list-columns-mobile: repeat(' | append: section.settings.mobile_columns | append: ', 1fr);'
-    echo '--resource-list-column-gap-desktop: ' | append: section.settings.columns_gap | append: 'px;'
     echo '--column-count: ' | append: section.settings.columns | append: ';'
     echo '--column-count-mobile: ' | append: section.settings.mobile_columns | append: ';'
   endcapture

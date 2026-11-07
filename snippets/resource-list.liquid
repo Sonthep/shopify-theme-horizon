@@ -78,7 +78,16 @@
     when 'carousel'
       assign resource_list_classes = 'resource-list__carousel'
       capture resource_list_styles
-        echo '--resource-list-column-gap-desktop: ' | append: columns_gap | append: 'px;'
+        if content_type == 'products'
+          # Keep product cards readable: scroll instead of squeezing at narrow widths
+          echo '--resource-list-column-gap-desktop: min(' | append: columns_gap | append: 'px, max(3vw, 12px));'
+          echo '--slide-width-min: 160px;'
+        else
+          echo '--resource-list-column-gap-desktop: ' | append: columns_gap | append: 'px;'
+          if content_type == 'collections'
+            echo '--slide-width-min: 110px;'
+          endif
+        endif
         echo '--column-count: ' | append: columns | append: ';'
         echo '--column-count-mobile: 1;'
         echo '--mobile-card-size: ' | append: mobile_card_size | append: ';'

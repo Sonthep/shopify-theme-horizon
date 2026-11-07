@@ -65,6 +65,35 @@
   padding-inline: calc(var(--custom-menu-item-gap, 8px) / 2);
 }
 
+/* Tablet: keep every top-level item visible; wrap long menus instead of clipping them. */
+@media screen and (min-width: 750px) and (max-width: 1023px) {
+  #header-component.header .header__row--bottom .header__columns {
+    --header-template-columns: 0 minmax(0, 1fr) 0;
+
+    column-gap: 0;
+  }
+
+  #header-component.header .header__row--bottom :is(.header__column--center, header-menu, .header-menu__inner, .menu-list) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #header-component.header .header-menu .menu-list__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 !important;
+  }
+
+  #header-component.header header-menu .menu-list__link {
+    padding-inline: 0.25rem;
+    font-size: 0.875rem !important;
+  }
+
+  #header-component.header .header-menu .menu-list__link-title {
+    padding-inline: 0.25rem !important;
+  }
+}
+
 /* Remove box (background) from language selector */
 #header-component .localization-form__select {
   background-color: transparent;
@@ -83,7 +112,7 @@
     display: grid !important;
     grid-template-rows: repeat(2, auto) !important;
     grid-auto-flow: column !important;
-    grid-auto-columns: calc(100% / 4) !important;
+    grid-auto-columns: calc(100% / 4);
     overflow-x: auto !important;
     overflow-y: hidden !important;
     scrollbar-width: none !important;
@@ -108,6 +137,7 @@
 
   [id$='_collections_browse'] .resource-list__item {
     width: fit-content;
+    max-width: 100%;
     margin-inline: auto;
   }
 
