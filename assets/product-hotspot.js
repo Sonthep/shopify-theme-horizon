@@ -1,6 +1,6 @@
 import { Component } from '@theme/component';
 import { QuickAddComponent } from '@theme/quick-add';
-import { isClickedOutside, isMobileBreakpoint, isTouchDevice, mediaQueryLarge } from '@theme/utilities';
+import { isMobileBreakpoint, isTouchDevice, mediaQueryLarge } from '@theme/utilities';
 
 /**
  * A custom element that manages a dialog.
@@ -13,11 +13,18 @@ import { isClickedOutside, isMobileBreakpoint, isTouchDevice, mediaQueryLarge } 
  * @extends Component<Refs>
  */
 
+/** Hover delays in ms: avoid opening on fly-by, and forgive brief exits while moving to the dialog. */
+const OPEN_DELAY = 120;
+const CLOSE_DELAY = 200;
+
 export class ProductHotspotComponent extends Component {
   requiredRefs = ['trigger', 'dialog'];
-  /** @type {(() => void) | null} */
-  #pointerenterHandler = null;
   timer = /** @type {number | null} */ (null);
+  #closeTimer = /** @type {number | null} */ (null);
+  /** Incremented to invalidate a showDialog call that is still measuring placement. */
+  #openRequest = 0;
+  /** Escape closed the dialog: ignore the dot until the pointer leaves and comes back. */
+  #hoverSuppressed = false;
   /** @type {(() => void) | null} */
   #dragCleanup = null;
   #isDragging = false;
@@ -47,6 +54,9 @@ export class ProductHotspotComponent extends Component {
     // Clean up listeners
     this.#removeDesktopListeners();
     mediaQueryLarge.removeEventListener('change', this.#handleBreakpointChange);
+    document.body.removeEventListener('click', this.lightDismissMouse);
+    document.body.removeEventListener('keydown', this.lightDismissKeyboard);
+    document.body.removeEventListener('keyup', this.lightDismissKeyboard);
 
     if (this.#dragCleanup) {
       this.#dragCleanup();
@@ -232,45 +242,26 @@ export class ProductHotspotComponent extends Component {
   }
 
   /**
-   * Set up desktop event listeners (hover)
+   * Set up desktop hover listeners. The dot opens the dialog; the component as a whole
+   * (dot, its hit area, and the dialog) keeps it open, so moving between them never closes it.
    * @returns {void}
    */
   #setupDesktopListeners() {
-    const { trigger, dialog } = this.refs;
-
-    /** @type {() => void} */
-    const pointerenterHandler = () => {
-      if (dialog.open) return;
-
-      this.timer = setTimeout(() => {
-        this.showDialog();
-      }, 120);
-      // Add pointerleave listener when entering trigger
-      trigger.addEventListener('pointerleave', this.#handlePointerLeave);
-    };
-
-    this.#pointerenterHandler = pointerenterHandler;
-    trigger.addEventListener('pointerenter', pointerenterHandler);
+    this.refs.trigger.addEventListener('pointerenter', this.#handleTriggerEnter);
+    this.addEventListener('pointerenter', this.#handlePointerEnter);
+    this.addEventListener('pointerleave', this.#handlePointerLeave);
   }
 
   /**
-   * Remove desktop event listeners from trigger
+   * Remove desktop hover listeners and pending timers
    * @returns {void}
    */
   #removeDesktopListeners() {
-    const { trigger } = this.refs;
-
-    if (this.#pointerenterHandler) {
-      trigger.removeEventListener('pointerenter', this.#pointerenterHandler);
-      trigger.removeEventListener('pointerleave', this.#handlePointerLeave);
-      this.#pointerenterHandler = null;
-    }
-
-    // Clear any pending timer
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
-    }
+    this.refs.trigger.removeEventListener('pointerenter', this.#handleTriggerEnter);
+    this.removeEventListener('pointerenter', this.#handlePointerEnter);
+    this.removeEventListener('pointerleave', this.#handlePointerLeave);
+    this.#cancelOpen();
+    this.#cancelClose();
   }
 
   /**
@@ -402,30 +393,62 @@ export class ProductHotspotComponent extends Component {
   }
 
   /**
-   * Handle pointer leave.
-   * @param {PointerEvent} e - The event.
+   * Schedule the dialog when the pointer reaches the dot.
    * @returns {void}
    */
-  #handlePointerLeave = (e) => {
-    const { dialog, trigger } = this.refs;
+  #handleTriggerEnter = () => {
+    if (this.refs.dialog.open || this.timer || this.#hoverSuppressed) return;
 
-    // Clear open timer if leaving trigger before dialog opens
+    this.timer = setTimeout(() => {
+      this.timer = null;
+      this.showDialog();
+    }, OPEN_DELAY);
+  };
+
+  /**
+   * Handle the pointer entering the component, including its dialog.
+   * @returns {void}
+   */
+  #handlePointerEnter = () => {
+    this.#hoverSuppressed = false;
+    this.#cancelClose();
+  };
+
+  /**
+   * Handle the pointer leaving the component, including its dialog.
+   * @returns {void}
+   */
+  #handlePointerLeave = () => {
+    this.#cancelOpen();
+    if (!this.refs.dialog.open) return;
+
+    this.#cancelClose();
+    this.#closeTimer = setTimeout(() => {
+      this.#closeTimer = null;
+      this.closeDialog();
+    }, CLOSE_DELAY);
+  };
+
+  /**
+   * Cancel a scheduled or in-progress open.
+   * @returns {void}
+   */
+  #cancelOpen() {
+    this.#openRequest += 1;
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
     }
+  }
 
-    if (!dialog.open) return;
-
-    const isLeavingTrigger = e.target === trigger;
-    const isLeavingDialog = e.target === dialog;
-    const isGoingToDialog =
-      e.relatedTarget === dialog ||
-      (e.relatedTarget instanceof Element && e.relatedTarget.closest('dialog') === dialog);
-    const isGoingToTrigger = e.relatedTarget === trigger;
-
-    if ((isLeavingTrigger && !isGoingToDialog) || (isLeavingDialog && !isGoingToTrigger)) {
-      this.closeDialog();
+  /**
+   * Cancel a scheduled close.
+   * @returns {void}
+   */
+  #cancelClose = () => {
+    if (this.#closeTimer) {
+      clearTimeout(this.#closeTimer);
+      this.#closeTimer = null;
     }
   };
 
@@ -455,14 +478,19 @@ export class ProductHotspotComponent extends Component {
 
   showDialog = async () => {
     const { dialog } = this.refs;
+    if (dialog.open) return;
+
+    this.#openRequest += 1;
+    const request = this.#openRequest;
     await this.#calculateDialogPlacement();
+    if (request !== this.#openRequest) return;
+
+    delete dialog.dataset.closing;
     dialog.dataset.showing = 'true';
     dialog.show();
     document.body.addEventListener('click', this.lightDismissMouse);
     document.body.addEventListener('keydown', this.lightDismissKeyboard);
     document.body.addEventListener('keyup', this.lightDismissKeyboard);
-    // Add pointerleave listener to dialog when it opens
-    dialog.addEventListener('pointerleave', this.#handlePointerLeave);
   };
 
   /**
@@ -470,15 +498,14 @@ export class ProductHotspotComponent extends Component {
    * @returns {Promise<void>}
    */
   closeDialog = async () => {
-    const { dialog, trigger } = this.refs;
+    const { dialog } = this.refs;
+    this.#cancelOpen();
+    this.#cancelClose();
     dialog.dataset.closing = 'true';
     dialog.close();
     document.body.removeEventListener('click', this.lightDismissMouse);
     document.body.removeEventListener('keydown', this.lightDismissKeyboard);
     document.body.removeEventListener('keyup', this.lightDismissKeyboard);
-    // Remove pointerleave listeners when closing
-    dialog.removeEventListener('pointerleave', this.#handlePointerLeave);
-    trigger.removeEventListener('pointerleave', this.#handlePointerLeave);
     // we need to use a data-attribute to keep transition-behavior working only when open
     const animations = dialog.getAnimations({ subtree: true });
     await Promise.allSettled(animations.map((a) => a.finished));
@@ -495,10 +522,10 @@ export class ProductHotspotComponent extends Component {
    * @returns {void}
    */
   lightDismissMouse = (event) => {
-    const { dialog } = this.refs;
-    if (isClickedOutside(event, dialog)) {
-      this.closeDialog();
-    }
+    // Clicks on the dot, or the dialog's safety area covering it, are not outside clicks.
+    if (event.target instanceof Node && this.contains(event.target)) return;
+
+    this.closeDialog();
   };
 
   /**
@@ -508,6 +535,8 @@ export class ProductHotspotComponent extends Component {
    */
   lightDismissKeyboard = (event) => {
     const { dialog } = this.refs;
+    if (event.type === 'keydown' && event.key === 'Escape') this.#hoverSuppressed = true;
+
     if (
       (event.type === 'keydown' && event.key === 'Escape') ||
       (event.type === 'keyup' && !dialog.matches(':is(:focus, :focus-visible, :focus-within)'))
