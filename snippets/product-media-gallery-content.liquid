@@ -178,6 +178,10 @@
     src="{{ 'drag-zoom-wrapper.js' | asset_url }}"
     type="module"
   ></script>
+  <script
+    src="{{ 'copy-product-image.js' | asset_url }}"
+    type="module"
+  ></script>
 {%- endif -%}
 
 {% style %}
@@ -415,6 +419,9 @@
           {% else %}
             {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
           {% endif %}
+          {%- if media.media_type == 'image' -%}
+            {%- render 'product-media-copy-button', media: media -%}
+          {%- endif -%}
         {% endcapture %}
         {% capture class %}
           {{ product_media_container_class }} product-media-container--{{ media.media_type }}{% if block_settings.zoom %} product-media-container--zoomable{% endif %}{% if forloop.index0 == lowest_aspect_ratio_index and block_settings.aspect_ratio == 'adapt' %} product-media-container--tallest{% endif %}
@@ -531,6 +538,9 @@
             {% else %}
               {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
             {% endif %}
+            {%- if media.media_type == 'image' -%}
+              {%- render 'product-media-copy-button', media: media -%}
+            {%- endif -%}
           </li>
         {% endfor %}
       </ul>

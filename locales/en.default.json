@@ -102,6 +102,10 @@
     "view_all": "View all",
     "more": "More",
     "zoom": "Zoom",
+    // Copies the product image (white margin trimmed) to the clipboard
+    "copy_image": "Copy image",
+    "copy_image_success": "Image copied",
+    "copy_image_error": "Could not copy image",
     "close_dialog": "Close dialog",
     // Button to clear search filter and restore default view
     "reset": "Reset",

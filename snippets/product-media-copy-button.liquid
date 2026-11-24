@@ -1,0 +1,145 @@
+{%- doc -%}
+  Renders a "copy image" button over a product image. The click copies the full-resolution
+  original to the clipboard as PNG, cropped to the product (plain white margin trimmed).
+  Requires `copy-product-image.js`, loaded once by the gallery that renders this snippet.
+
+  @param {object} media - Product media of type 'image'.
+
+  @example
+  {% render 'product-media-copy-button', media: media %}
+{%- enddoc -%}
+
+{%- liquid
+  assign image = media.preview_image
+  # Ask for the original width (Shopify caps this at its maximum) so no detail is lost.
+  assign full_src = image | image_url: width: image.width
+-%}
+
+<copy-product-image
+  class="product-media-copy"
+  data-src="{{ full_src }}"
+  data-success-text="{{ 'actions.copy_image_success' | t | escape }}"
+  data-error-text="{{ 'actions.copy_image_error' | t | escape }}"
+>
+  <button
+    type="button"
+    class="button button-unstyled product-media-copy__button"
+    ref="button"
+    on:click="/copy"
+    aria-label="{{ 'actions.copy_image' | t | escape }}"
+    title="{{ 'actions.copy_image' | t | escape }}"
+  >
+    <svg
+      class="product-media-copy__icon product-media-copy__icon--copy"
+      aria-hidden="true"
+      focusable="false"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <rect x="6.5" y="6.5" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="var(--icon-stroke-width, 1.5)"/>
+      <path d="M13.5 6.5V4.5C13.5 3.95 13.05 3.5 12.5 3.5H4.5C3.95 3.5 3.5 3.95 3.5 4.5V12.5C3.5 13.05 3.95 13.5 4.5 13.5H6.5" stroke="currentColor" stroke-width="var(--icon-stroke-width, 1.5)" stroke-linecap="round"/>
+    </svg>
+    <span class="product-media-copy__icon product-media-copy__icon--done" aria-hidden="true">
+      {{- 'icon-checkmark.svg' | inline_asset_content -}}
+    </span>
+    <span class="product-media-copy__spinner" aria-hidden="true"></span>
+  </button>
+  <span class="visually-hidden" ref="status" role="status"></span>
+</copy-product-image>
+
+{% stylesheet %}
+  .product-media-container:has(> copy-product-image) {
+    position: relative;
+  }
+
+  .product-media-copy {
+    position: absolute;
+    inset-block-start: var(--padding-sm, 12px);
+    inset-inline-end: var(--padding-sm, 12px);
+    z-index: var(--layer-raised);
+  }
+
+  .product-media-copy:not(:defined),
+  .product-media-copy[hidden] {
+    display: none;
+  }
+
+  .product-media-copy__button {
+    display: grid;
+    place-items: center;
+    inline-size: var(--minimum-touch-target, 44px);
+    block-size: var(--minimum-touch-target, 44px);
+    border-radius: 50%;
+    color: var(--color-foreground);
+    background-color: rgb(var(--color-background-rgb) / var(--opacity-80, 0.8));
+    box-shadow: 0 1px 4px rgb(var(--color-foreground-rgb) / var(--opacity-10, 0.1));
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity var(--animation-speed) var(--animation-easing),
+      transform var(--animation-speed) var(--animation-easing);
+
+    > * {
+      grid-area: 1 / 1;
+    }
+
+    &:hover,
+    &:focus-visible {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+  }
+
+  .product-media-copy__icon {
+    display: grid;
+    inline-size: 20px;
+    block-size: 20px;
+  }
+
+  .product-media-copy__icon--done,
+  .product-media-copy__spinner,
+  .product-media-copy[data-state] .product-media-copy__icon--copy {
+    visibility: hidden;
+  }
+
+  .product-media-copy[data-state='success'] .product-media-copy__icon--done,
+  .product-media-copy[data-state='loading'] .product-media-copy__spinner {
+    visibility: visible;
+  }
+
+  .product-media-copy[data-state='error'] .product-media-copy__icon--copy {
+    visibility: visible;
+    color: var(--color-error, #c00);
+  }
+
+  .product-media-copy__spinner {
+    inline-size: 18px;
+    block-size: 18px;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    animation: product-media-copy-spin 0.8s linear infinite;
+  }
+
+  @keyframes product-media-copy-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-media-copy__button {
+      transition: none;
+
+      &:hover,
+      &:focus-visible {
+        transform: none;
+      }
+    }
+
+    .product-media-copy__spinner {
+      animation-duration: 2.4s;
+    }
+  }
+{% endstylesheet %}
