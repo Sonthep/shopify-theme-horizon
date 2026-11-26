@@ -2,7 +2,8 @@
   Section contract.
   Lets customers upload a spreadsheet (.xlsx or .csv) or paste a list of product codes and
   quantities, matches each line to a store product by SKU, or by name when no SKU matches, and
-  adds every matched line to the cart at once. Matching uses predictive search, so it needs no app.
+  adds every matched line to the cart at once. Customers can review lines by group and search for
+  the right product on any line. Matching uses predictive search, so it needs no app.
   @example
   <!-- Add the "Bulk order" section to a page template, e.g. page.bulk-order -->
 {% endcomment %}
@@ -24,6 +25,31 @@
   <bulk-order
     class="bulk-order"
     data-reader-url="{{ 'xlsx.full.min.js' | asset_url }}"
+    data-money-format="{{ shop.money_format | escape }}"
+    data-currency="{{ cart.currency.iso_code }}"
+    data-label-total="{{ 'content.bulk_total' | t: total: '[total]' }}"
+    data-label-suggested="{{ 'content.bulk_suggested' | t: count: '[count]' }}"
+    data-label-more="{{ 'content.bulk_more' | t: count: '[count]' }}"
+    data-label-exact="{{ 'content.bulk_exact' | t }}"
+    data-label-select="{{ 'content.bulk_select' | t }}"
+    data-label-unselect="{{ 'content.bulk_unselect' | t }}"
+    data-label-select-product="{{ 'content.bulk_select_product' | t: title: '[title]' }}"
+    data-label-unselect-product="{{ 'content.bulk_unselect_product' | t: title: '[title]' }}"
+    data-label-copy-sku="{{ 'content.bulk_copy_sku' | t: sku: '[sku]' }}"
+    data-label-copied="{{ 'content.bulk_copied' | t }}"
+    data-label-stock="{{ 'content.bulk_stock' | t: count: '[count]' }}"
+    data-label-in-stock="{{ 'content.bulk_in_stock' | t }}"
+    data-label-sold-out="{{ 'content.bulk_sold_out' | t }}"
+    data-label-score="{{ 'content.bulk_score' | t: score: '[score]', level: '[level]' }}"
+    data-label-level-high="{{ 'content.bulk_level_high' | t }}"
+    data-label-level-medium="{{ 'content.bulk_level_medium' | t }}"
+    data-label-level-low="{{ 'content.bulk_level_low' | t }}"
+    data-message-partial="{{ 'content.bulk_partial' | t }}"
+    data-message-partly-added="{{ 'content.bulk_partly_added' | t: added: '[added]', total: '[total]', refused: '[refused]' }}"
+    data-message-row-short="{{ 'content.bulk_row_short' | t: added: '[added]', wanted: '[wanted]' }}"
+    data-message-searching="{{ 'content.bulk_searching' | t }}"
+    data-message-search-found="{{ 'content.bulk_search_found' | t: count: '[count]' }}"
+    data-message-no-quantity="{{ 'content.bulk_no_quantity' | t: count: '[count]' }}"
     data-message-reading="{{ 'content.bulk_reading' | t }}"
     data-label-add="{{ 'content.bulk_add' | t: count: '[count]' }}"
     data-label-summary="{{ 'content.bulk_summary' | t: ready: '[ready]', total: '[total]' }}"
@@ -40,6 +66,8 @@
     data-message-row-error="{{ 'content.bulk_row_error' | t }}"
     data-message-failed="{{ 'content.bulk_failed' | t: failed: '[failed]' }}"
     data-label-retry-all="{{ 'content.bulk_retry_all' | t: count: '[count]' }}"
+    data-label-pasted-source="{{ 'content.bulk_pasted_source' | t: count: '[count]' }}"
+    data-label-file-source="{{ 'content.bulk_file_source' | t: name: '[name]', count: '[count]' }}"
   >
     <div class="bulk-order__card">
       {%- if section.settings.heading != blank or section.settings.text != blank -%}
@@ -53,23 +81,79 @@
         </div>
       {%- endif -%}
 
+      <div
+        class="bulk-order__compact"
+        ref="compact"
+        hidden
+      >
+        <div>
+          <p class="bulk-order__compact-label">{{ 'content.bulk_order_source' | t }}</p>
+          <p class="bulk-order__compact-summary" ref="sourceSummary"></p>
+        </div>
+        <button
+          type="button"
+          class="button button-secondary bulk-order__edit-input"
+          on:click="/editInput"
+        >
+          {{- 'content.bulk_edit_input' | t -}}
+        </button>
+      </div>
+
       <div class="bulk-order__inputs">
-        {%- # The file input covers the drop zone, so dropping a file works without script. -%}
-        <div class="bulk-order__drop">
-          <input
-            id="BulkOrderFile-{{ section.id }}"
-            class="bulk-order__file"
-            type="file"
-            ref="file"
-            accept=".xlsx,.xls,.csv,.txt,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            on:change="/readFile"
-            aria-describedby="BulkOrderFileHint-{{ section.id }}"
+        <div class="bulk-order__upload">
+          {%- # The file input covers the drop zone, so dropping a file works without script. -%}
+          <div class="bulk-order__drop">
+            <input
+              id="BulkOrderFile-{{ section.id }}"
+              class="bulk-order__file"
+              type="file"
+              ref="file"
+              accept=".xlsx,.xls,.csv,.txt,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              on:change="/readFile"
+              aria-describedby="BulkOrderFileHint-{{ section.id }}"
+            >
+            <span class="bulk-order__drop-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/>
+              </svg>
+            </span>
+            <span class="bulk-order__drop-copy">
+              <label
+                class="bulk-order__drop-label"
+                for="BulkOrderFile-{{ section.id }}"
+              >
+                {{- 'content.bulk_upload' | t -}}
+              </label>
+              <span
+                class="bulk-order__drop-hint"
+                id="BulkOrderFileHint-{{ section.id }}"
+              >
+                {{- 'content.bulk_upload_hint' | t -}}
+              </span>
+            </span>
+          </div>
+
+          <a
+            class="bulk-order__sample"
+            href="data:text/csv;charset=utf-8,{{ sample_csv }}"
+            download="bulk-order-sample.csv"
           >
-          <span class="bulk-order__drop-icon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="28"
-              height="28"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -79,33 +163,26 @@
               aria-hidden="true"
               focusable="false"
             >
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/>
+              <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>
             </svg>
-          </span>
-          <label
-            class="bulk-order__drop-label"
-            for="BulkOrderFile-{{ section.id }}"
-          >
-            {{- 'content.bulk_upload' | t -}}
-          </label>
-          <span
-            class="bulk-order__drop-hint"
-            id="BulkOrderFileHint-{{ section.id }}"
-          >
-            {{- 'content.bulk_upload_hint' | t -}}
-          </span>
+            {{- 'content.bulk_sample' | t -}}
+          </a>
         </div>
+
+        <div class="bulk-order__choice" aria-hidden="true"></div>
 
         <form
           class="bulk-order__paste"
           on:submit="/matchText"
         >
-          <label
-            class="bulk-order__paste-label"
-            for="BulkOrderText-{{ section.id }}"
-          >
-            {{- 'content.bulk_paste' | t -}}
-          </label>
+          <div class="bulk-order__paste-head">
+            <label
+              class="bulk-order__paste-label"
+              for="BulkOrderText-{{ section.id }}"
+            >
+              {{- 'content.bulk_paste' | t -}}
+            </label>
+          </div>
           <textarea
             id="BulkOrderText-{{ section.id }}"
             class="field__input bulk-order__textarea"
@@ -119,7 +196,22 @@
             type="submit"
             class="button bulk-order__match"
           >
-            {{- 'content.bulk_match' | t -}}
+            <span>{{- 'content.bulk_match' | t -}}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>
+            </svg>
           </button>
         </form>
       </div>
@@ -138,14 +230,6 @@
         ></select>
       </div>
 
-      <a
-        class="bulk-order__sample"
-        href="data:text/csv;charset=utf-8,{{ sample_csv }}"
-        download="bulk-order-sample.csv"
-      >
-        {{- 'content.bulk_sample' | t -}}
-      </a>
-
       <p
         class="bulk-order__status"
         ref="status"
@@ -158,14 +242,67 @@
       ref="results"
       hidden
     >
+      <div class="bulk-order__results-head">
+        <div>
+          <h3 class="bulk-order__results-title">{{ 'content.bulk_review_title' | t }}</h3>
+          <p class="bulk-order__results-text">{{ 'content.bulk_review_text' | t }}</p>
+        </div>
+      </div>
+      <div
+        class="bulk-order__filters"
+        role="group"
+        aria-label="{{ 'content.bulk_filters_label' | t }}"
+      >
+        {%- assign bulk_filters = 'all,action,check,ready' | split: ',' -%}
+        {%- for filter in bulk_filters -%}
+          {%- assign filter_label = 'content.bulk_filter_' | append: filter -%}
+          <button
+            type="button"
+            class="bulk-order__filter"
+            ref="filters[]"
+            data-filter="{{ filter }}"
+            aria-pressed="{% if filter == 'all' %}true{% else %}false{% endif %}"
+            on:click="/filterRows"
+          >
+            {{- filter_label | t }}
+            <span data-count>0</span>
+          </button>
+        {%- endfor -%}
+      </div>
+
+      {%- # Column headings for wide screens; each row names its own parts for assistive tech. -%}
+      <div
+        class="bulk-order__list-head"
+        aria-hidden="true"
+      >
+        <span>{{ 'content.bulk_col_item' | t }}</span>
+        <span>{{ 'content.bulk_col_match' | t }}</span>
+      </div>
       <ol
         class="bulk-order__list"
         ref="list"
       ></ol>
+      <p
+        class="visually-hidden"
+        ref="copyStatus"
+        role="status"
+      ></p>
       <div class="bulk-order__footer">
+        <div class="bulk-order__totals">
+          <p
+            class="bulk-order__summary"
+            ref="summary"
+          ></p>
+          <p
+            class="bulk-order__total"
+            ref="total"
+            hidden
+          ></p>
+        </div>
         <p
-          class="bulk-order__summary"
-          ref="summary"
+          class="bulk-order__status bulk-order__action-status"
+          ref="actionStatus"
+          role="status"
         ></p>
         <div class="bulk-order__footer-actions">
           <button
@@ -201,59 +338,109 @@
         class="bulk-order__row"
         data-state="loading"
       >
-        <p
-          class="bulk-order__source"
-          data-field="source"
-        ></p>
+        <div class="bulk-order__item">
+          <p
+            class="bulk-order__source"
+            data-field="source"
+          ></p>
+          <p
+            class="bulk-order__source-detail"
+            data-field="source-detail"
+            hidden
+          ></p>
+          <label class="bulk-order__quantity">
+            <span class="bulk-order__quantity-label">{{ 'content.bulk_quantity_needed' | t }}</span>
+            <input
+              class="field__input bulk-order__quantity-input"
+              type="number"
+              data-field="quantity"
+              min="1"
+              value="1"
+              inputmode="numeric"
+              placeholder="–"
+              on:input="/changeQuantity"
+              required
+            >
+          </label>
+        </div>
         <div class="bulk-order__match-cell">
+          <form
+            class="bulk-order__search-form"
+            on:submit="/searchRow"
+          >
+            <label class="bulk-order__search-field">
+              <span class="visually-hidden">{{ 'content.bulk_search_label' | t }}</span>
+              <input
+                class="field__input"
+                type="search"
+                data-field="query"
+                placeholder="{{ 'content.bulk_search_placeholder' | t }}"
+                spellcheck="false"
+                required
+              >
+            </label>
+            <button
+              type="submit"
+              class="button bulk-order__search-button"
+              aria-label="{{ 'content.bulk_search_button' | t }}"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+              </svg>
+            </button>
+          </form>
           <span
             class="bulk-order__loading"
             aria-hidden="true"
           ></span>
           <div
-            class="bulk-order__product"
-            data-field="product"
+            class="bulk-order__candidates"
+            data-field="candidates"
             hidden
           >
-            <img
-              class="bulk-order__image"
-              data-field="image"
-              alt=""
-              width="64"
-              height="64"
-              loading="lazy"
-              hidden
-            >
-            <div class="bulk-order__product-text">
-              <a
-                class="bulk-order__title"
-                data-field="title"
-                target="_blank"
-                rel="noopener"
-              ></a>
-              <span class="bulk-order__code">SKU <span data-field="sku"></span></span>
+            <div class="bulk-order__candidates-head">
+              <p
+                class="bulk-order__candidates-count"
+                data-field="candidates-count"
+              ></p>
+              <button
+                type="button"
+                class="bulk-order__link"
+                data-field="clear"
+                on:click="/clearSelection"
+                hidden
+              >
+                {{- 'content.bulk_clear' | t -}}
+              </button>
             </div>
+            <ol
+              class="bulk-order__candidate-list"
+              data-field="candidate-list"
+            ></ol>
+            <p
+              class="bulk-order__more"
+              data-field="more"
+              hidden
+            ></p>
           </div>
-          <label
-            class="bulk-order__choose"
-            data-field="choose"
-            hidden
-          >
-            <span class="visually-hidden">{{ 'content.bulk_choose_label' | t }}</span>
-            <select
-              class="bulk-order__select"
-              data-field="options"
-              on:change="/chooseProduct"
-            >
-              <option value="">{{ 'content.bulk_choose' | t }}</option>
-            </select>
-          </label>
           <label
             class="bulk-order__choose"
             data-field="variant-choose"
             hidden
           >
-            <span class="visually-hidden">{{ 'content.bulk_variant_label' | t }}</span>
+            <span class="bulk-order__choose-label">{{ 'content.bulk_variant_label' | t }}</span>
             <select
               class="bulk-order__select"
               data-field="variants"
@@ -261,54 +448,160 @@
             ></select>
           </label>
           <p
+            class="bulk-order__picked"
+            data-field="picked"
+            hidden
+          ></p>
+          <p
             class="bulk-order__note"
             data-field="note"
             hidden
           ></p>
           <button
             type="button"
-            class="bulk-order__retry"
+            class="button bulk-order__confirm"
+            data-field="confirm"
+            on:click="/confirmMatch"
+            hidden
+          >
+            {{- 'content.bulk_confirm_match' | t -}}
+          </button>
+          <button
+            type="button"
+            class="bulk-order__link"
             data-field="retry"
             on:click="/retryRow"
             hidden
           >
             {{- 'content.bulk_retry' | t -}}
           </button>
+          <button
+            type="button"
+            class="bulk-order__link"
+            data-field="remove"
+            on:click="/removeRow"
+          >
+            {{- 'content.bulk_remove_line' | t -}}
+          </button>
         </div>
-        <label class="bulk-order__quantity">
-          <span class="visually-hidden">{{ 'accessibility.quantity' | t }}</span>
-          <input
-            class="field__input bulk-order__quantity-input"
-            type="number"
-            data-field="quantity"
-            min="1"
-            value="1"
-            inputmode="numeric"
-          >
-        </label>
-        <button
-          type="button"
-          class="bulk-order__remove"
-          data-field="remove"
-          on:click="/removeRow"
-          aria-label="{{ 'content.bulk_remove' | t }}"
+      </li>
+    </template>
+
+    <template ref="candidateTemplate">
+      <li class="bulk-order__candidate">
+        <img
+          class="bulk-order__candidate-image"
+          data-field="image"
+          alt=""
+          width="96"
+          height="96"
+          loading="lazy"
+          hidden
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            focusable="false"
+        <div class="bulk-order__candidate-main">
+          <div class="bulk-order__candidate-line">
+            <span
+              class="bulk-order__candidate-sku"
+              data-field="sku"
+            ></span>
+            <button
+              type="button"
+              class="bulk-order__copy"
+              data-field="copy-sku"
+              on:click="/copy"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+            <span
+              class="bulk-order__badge bulk-order__badge--best"
+              data-field="best"
+              hidden
+            >
+              {{- 'content.bulk_best' | t -}}
+            </span>
+            <span
+              class="bulk-order__badge"
+              data-field="score"
+            ></span>
+            <span
+              class="bulk-order__badge bulk-order__badge--warning"
+              data-field="conflict"
+              hidden
+            >
+              {{- 'content.bulk_spec_differs' | t -}}
+            </span>
+          </div>
+          <div class="bulk-order__candidate-line">
+            <a
+              class="bulk-order__candidate-title"
+              data-field="title"
+              target="_blank"
+              rel="noopener"
+            ></a>
+            <button
+              type="button"
+              class="bulk-order__copy"
+              data-field="copy-title"
+              on:click="/copy"
+              aria-label="{{ 'content.bulk_copy_title' | t }}"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+          <p
+            class="bulk-order__candidate-meta"
+            data-field="meta"
+            hidden
+          ></p>
+        </div>
+        <div class="bulk-order__candidate-side">
+          <span
+            class="bulk-order__candidate-price"
+            data-field="price"
+            hidden
+          ></span>
+          <span
+            class="bulk-order__candidate-stock"
+            data-field="stock"
+          ></span>
+          <button
+            type="button"
+            class="bulk-order__small-button bulk-order__pick"
+            data-field="pick"
+            on:click="/selectCandidate"
+            aria-pressed="false"
           >
-            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-          </svg>
-        </button>
+            {{- 'content.bulk_select' | t -}}
+          </button>
+        </div>
       </li>
     </template>
   </bulk-order>
@@ -321,9 +614,9 @@
     --bulk-accent: var(--color-primary-button-background);
 
     display: grid;
-    gap: var(--gap-md);
+    gap: var(--gap-lg, 1.5rem);
     width: 100%;
-    max-width: 56rem;
+    max-width: 76rem;
     min-width: 0;
     margin-inline: auto;
     container-type: inline-size;
@@ -332,22 +625,106 @@
   .bulk-order__card,
   .bulk-order__results {
     display: grid;
-    gap: var(--gap-md);
+    gap: clamp(1.25rem, 3cqi, 2rem);
     min-width: 0;
-    padding: var(--padding-lg);
+    padding: clamp(1.25rem, 4cqi, 3rem);
     border: var(--style-border-width, 1px) solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
     border-radius: var(--bulk-radius);
     background: var(--color-background);
-    box-shadow: 0 1rem 2.5rem rgb(var(--color-shadow-rgb) / var(--opacity-5));
+    box-shadow: 0 1rem 3rem rgb(var(--color-shadow-rgb) / var(--opacity-5));
+  }
+
+  .bulk-order__card {
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        color-mix(in srgb, var(--bulk-accent) 8%, transparent),
+        transparent 24rem
+      ),
+      var(--color-background);
+  }
+
+  .bulk-order__card[data-collapsed] {
+    gap: var(--gap-sm, 1rem);
+    padding: clamp(1rem, 2cqi, 1.5rem);
+    background: var(--color-background);
+  }
+
+  .bulk-order__card[data-collapsed] .bulk-order__intro,
+  .bulk-order__card[data-collapsed] .bulk-order__inputs,
+  .bulk-order__card[data-collapsed] .bulk-order__sheet {
+    display: none;
+  }
+
+  .bulk-order__compact {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-sm, 1rem);
+    min-width: 0;
+  }
+
+  .bulk-order__compact[hidden] {
+    display: none;
+  }
+
+  .bulk-order__compact-label,
+  .bulk-order__compact-summary {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__compact-label {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    font-size: var(--font-size--xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .bulk-order__compact-summary {
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  .bulk-order__edit-input {
+    flex: none;
+    min-block-size: 2.75rem;
   }
 
   .bulk-order__results[hidden] {
     display: none;
   }
 
+  .bulk-order__results-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--gap-sm, 1rem);
+    min-width: 0;
+  }
+
+  .bulk-order__results-title,
+  .bulk-order__results-text {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__results-title {
+    font-size: clamp(1.35rem, 3cqi, 2rem);
+  }
+
+  .bulk-order__results-text {
+    margin-block-start: var(--gap-2xs, 0.25rem);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
   .bulk-order__intro {
     display: grid;
-    gap: var(--gap-2xs, 0.25rem);
+    justify-self: center;
+    gap: var(--gap-xs, 0.5rem);
+    max-width: 46rem;
     text-align: center;
   }
 
@@ -357,19 +734,52 @@
     overflow-wrap: anywhere;
   }
 
+  .bulk-order__heading {
+    font-size: clamp(2rem, 4.5cqi, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+  }
+
   .bulk-order__text {
+    max-width: 38rem;
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
   .bulk-order__inputs {
     display: grid;
-    gap: var(--gap-md);
+    align-items: stretch;
+    gap: var(--gap-md, 1.25rem);
+    min-width: 0;
   }
 
-  @container (min-width: 40rem) {
+  @container (min-width: 46rem) {
     .bulk-order__inputs {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: var(--gap-sm, 1rem);
     }
+  }
+
+  .bulk-order__upload,
+  .bulk-order__paste {
+    min-width: 0;
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: calc(var(--bulk-radius) - 0.2rem);
+    background: var(--color-background);
+    transition:
+      border-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
+      box-shadow var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .bulk-order__upload:focus-within,
+  .bulk-order__paste:focus-within {
+    border-color: color-mix(in srgb, var(--bulk-accent) 55%, transparent);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--bulk-accent) 10%, transparent);
+  }
+
+  .bulk-order__upload {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 0.625rem;
   }
 
   /* Drop zone: the transparent file input sits on top, so clicks and drops reach it. */
@@ -378,21 +788,22 @@
     display: grid;
     place-content: center;
     justify-items: center;
-    gap: var(--gap-xs, 0.5rem);
-    min-block-size: 12rem;
-    padding: var(--padding-lg);
-    border: 2px dashed color-mix(in srgb, var(--bulk-accent) 40%, transparent);
-    border-radius: calc(var(--bulk-radius) - 0.25rem);
-    background: color-mix(in srgb, var(--bulk-accent) 6%, var(--color-background));
+    gap: var(--gap-sm, 1rem);
+    min-block-size: 16rem;
+    padding: clamp(1.5rem, 4cqi, 2.5rem);
+    border: 1.5px dashed color-mix(in srgb, var(--bulk-accent) 45%, transparent);
+    border-radius: calc(var(--bulk-radius) - 0.5rem);
+    background: color-mix(in srgb, var(--bulk-accent) 4%, var(--color-background));
     text-align: center;
-    transition: border-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
+    transition:
+      border-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
       background-color var(--animation-speed, 0.2s) var(--animation-easing, ease);
   }
 
   .bulk-order__drop:hover,
   .bulk-order__drop:focus-within {
     border-color: var(--bulk-accent);
-    background: color-mix(in srgb, var(--bulk-accent) 10%, var(--color-background));
+    background: color-mix(in srgb, var(--bulk-accent) 8%, var(--color-background));
   }
 
   .bulk-order__drop:focus-within {
@@ -412,15 +823,24 @@
   .bulk-order__drop-icon {
     display: grid;
     place-items: center;
-    inline-size: 3.5rem;
-    block-size: 3.5rem;
-    border-radius: 50%;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border: 1px solid color-mix(in srgb, var(--bulk-accent) 18%, transparent);
+    border-radius: var(--style-border-radius-50, 50%);
     color: var(--bulk-accent);
     background: var(--color-background);
-    box-shadow: 0 0.5rem 1.5rem rgb(var(--color-shadow-rgb) / var(--opacity-10));
+    box-shadow: 0 0.75rem 2rem rgb(var(--color-shadow-rgb) / var(--opacity-10));
+  }
+
+  .bulk-order__drop-copy {
+    display: grid;
+    justify-items: center;
+    gap: var(--gap-xs, 0.5rem);
+    max-width: 27rem;
   }
 
   .bulk-order__drop-label {
+    font-size: 1.125rem;
     font-weight: var(--font-weight-bold, 700);
     overflow-wrap: anywhere;
   }
@@ -428,7 +848,7 @@
   .bulk-order__drop-hint,
   .bulk-order__sample,
   .bulk-order__note,
-  .bulk-order__code,
+  .bulk-order__source-detail,
   .bulk-order__summary {
     font-size: var(--font-size--sm);
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
@@ -437,23 +857,118 @@
 
   .bulk-order__paste {
     display: grid;
-    gap: var(--gap-xs, 0.5rem);
-    min-width: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--gap-sm, 1rem);
+    padding: clamp(1.25rem, 3cqi, 2rem);
+  }
+
+  .bulk-order__paste-head {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm, 1rem);
+  }
+
+  .bulk-order__choice {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    block-size: 1px;
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+
+  @container (min-width: 46rem) {
+    .bulk-order__choice {
+      flex: none;
+      inline-size: 1px;
+      block-size: auto;
+      padding-block: var(--padding-lg, 1.5rem);
+    }
   }
 
   .bulk-order__paste-label {
+    font-size: 1.125rem;
     font-weight: var(--font-weight-bold, 700);
   }
 
   .bulk-order__textarea {
     inline-size: 100%;
-    min-block-size: 8rem;
+    min-block-size: 11rem;
+    padding: 1rem;
+    border-color: rgb(var(--color-foreground-rgb) / var(--opacity-20, 0.2));
+    border-radius: var(--style-border-radius-md, 0.75rem);
+    background: color-mix(in srgb, var(--color-foreground) 2%, var(--color-background));
     resize: vertical;
     font-family: var(--font-body--family);
+    line-height: 1.6;
+    transition:
+      border-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
+      box-shadow var(--animation-speed, 0.2s) var(--animation-easing, ease);
   }
 
-  .bulk-order__match {
-    justify-self: end;
+  .bulk-order__textarea:focus {
+    border-color: var(--bulk-accent);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--bulk-accent) 10%, transparent);
+    outline: none;
+  }
+
+  .button.bulk-order__match,
+  .button.bulk-order__add,
+  .button.bulk-order__confirm,
+  .button.bulk-order__search-button {
+    --button-color: #fff;
+    --button-background-color: var(--bulk-accent);
+    --button-border-color: var(--bulk-accent);
+  }
+
+  .button.bulk-order__match {
+    justify-content: space-between;
+    inline-size: 100%;
+    min-block-size: 3.25rem;
+  }
+
+  .button.bulk-order__match:hover,
+  .button.bulk-order__add:hover,
+  .button.bulk-order__confirm:hover,
+  .button.bulk-order__search-button:hover {
+    --button-color: #fff;
+    --button-background-color: color-mix(in srgb, var(--bulk-accent) 82%, #000);
+    --button-border-color: color-mix(in srgb, var(--bulk-accent) 82%, #000);
+  }
+
+  .bulk-order__confirm {
+    justify-self: start;
+    min-block-size: 2.75rem;
+  }
+
+  @container (max-width: 32rem) {
+    .bulk-order__card,
+    .bulk-order__results {
+      padding: 1rem;
+      border-radius: calc(var(--bulk-radius) - 0.25rem);
+    }
+
+    .bulk-order__drop {
+      min-block-size: 14rem;
+      padding: 1.25rem;
+    }
+
+    .bulk-order__paste {
+      padding: 1rem;
+    }
+
+    .bulk-order__sample,
+    .bulk-order__match {
+      min-block-size: 3.5rem;
+    }
+  }
+
+  .bulk-order__match svg {
+    flex: none;
+    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .bulk-order__match:hover svg {
+    transform: translateX(0.25rem);
   }
 
   .bulk-order__sheet {
@@ -475,9 +990,26 @@
   }
 
   .bulk-order__sample {
-    justify-self: center;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-xs, 0.5rem);
+    min-block-size: 3.25rem;
+    margin-block-start: 0.375rem;
+    padding-inline: var(--padding-sm, 1rem);
+    border-radius: calc(var(--bulk-radius) - 0.5rem);
+    color: var(--color-foreground);
+    font-weight: var(--font-weight-bold, 700);
+    text-decoration: none;
+  }
+
+  .bulk-order__sample:hover {
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+  }
+
+  .bulk-order__sample svg {
+    flex: none;
+    color: var(--bulk-accent);
   }
 
   .bulk-order__status {
@@ -503,90 +1035,403 @@
     margin: 0;
     padding: 0;
     list-style: none;
-    counter-reset: bulk-row;
   }
 
-  /* Narrow: source line on top, then the match, with quantity and remove beside it. */
+  .bulk-order__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-xs, 0.5rem);
+  }
+
+  .bulk-order__filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+    min-block-size: 2.75rem;
+    padding-inline: var(--padding-sm);
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--style-border-radius-buttons-primary, 0.5rem);
+    color: var(--color-foreground);
+    background: transparent;
+    font: inherit;
+    font-size: var(--font-size--sm);
+    cursor: pointer;
+  }
+
+  .bulk-order__filter[aria-pressed='true'] {
+    border-color: var(--bulk-accent);
+    box-shadow: inset 0 0 0 1px var(--bulk-accent);
+  }
+
+  .bulk-order__filter:disabled {
+    opacity: var(--opacity-subdued-text);
+    cursor: default;
+  }
+
+  /* Narrow: the customer's line on top, the suggestions under it. Wide: side by side, like a table. */
   .bulk-order__row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    grid-template-areas:
-      'source source source'
-      'match quantity remove';
-    align-items: center;
-    gap: var(--gap-xs, 0.5rem) var(--gap-sm);
-    padding-block: var(--padding-sm);
+    gap: var(--gap-sm);
+    padding-block: var(--padding-md, 1rem);
     border-block-end: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
-    counter-increment: bulk-row;
+  }
+
+  .bulk-order__row[hidden],
+  .bulk-order__list-head {
+    display: none;
   }
 
   .bulk-order__row:last-child {
     border-block-end: 0;
   }
 
-  @container (min-width: 40rem) {
-    .bulk-order__row {
-      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) auto auto;
-      grid-template-areas: 'source match quantity remove';
+  @container (min-width: 48rem) {
+    .bulk-order__row,
+    .bulk-order__list-head {
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+      column-gap: var(--gap-lg, 1.5rem);
+    }
+
+    .bulk-order__list-head {
+      display: grid;
+      padding-block-end: var(--padding-xs, 0.5rem);
+      border-block-end: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+      font-size: var(--font-size--sm);
+      font-weight: var(--font-weight-bold, 700);
     }
   }
 
-  .bulk-order__source {
-    grid-area: source;
-    margin: 0;
-    font-size: var(--font-size--sm);
-    overflow-wrap: anywhere;
-  }
-
-  .bulk-order__source::before {
-    content: counter(bulk-row) '.';
-    margin-inline-end: 0.5ch;
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-  }
-
-  .bulk-order__match-cell {
-    grid-area: match;
+  .bulk-order__item {
     display: grid;
+    align-content: start;
     gap: var(--gap-2xs, 0.25rem);
     min-width: 0;
   }
 
-  .bulk-order__product {
-    display: flex;
-    align-items: center;
-    gap: var(--gap-sm);
-    min-width: 0;
+  .bulk-order__source {
+    margin: 0;
+    font-weight: var(--font-weight-bold, 700);
+    overflow-wrap: anywhere;
   }
 
-  .bulk-order__product[hidden],
-  .bulk-order__choose[hidden],
-  .bulk-order__note[hidden] {
+  .bulk-order__source::before {
+    content: attr(data-line) '.';
+    margin-inline-end: 0.5ch;
+    font-weight: normal;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .bulk-order__source-detail {
+    margin: 0;
+  }
+
+  .bulk-order__source-detail[hidden] {
     display: none;
   }
 
-  .bulk-order__image {
-    flex: none;
-    inline-size: 3rem;
-    block-size: 3rem;
-    object-fit: contain;
-    border-radius: var(--style-border-radius-sm, 0.375rem);
-    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+  .bulk-order__quantity {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-xs, 0.5rem);
+    margin-block-start: var(--gap-2xs, 0.25rem);
   }
 
-  .bulk-order__product-text {
+  .bulk-order__quantity-label {
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .bulk-order__quantity-input {
+    inline-size: 5rem;
+    min-block-size: 2.75rem;
+    text-align: center;
+  }
+
+  .bulk-order__quantity-input:placeholder-shown {
+    border-color: var(--color-error, #b42318);
+  }
+
+  .bulk-order__match-cell {
     display: grid;
+    gap: var(--gap-xs, 0.5rem);
     min-width: 0;
   }
 
-  .bulk-order__title {
+  .bulk-order__search-form {
+    display: flex;
+    gap: var(--gap-xs, 0.5rem);
+  }
+
+  .bulk-order__search-field {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .bulk-order__search-field input {
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+  }
+
+  .bulk-order__search-button {
+    flex: none;
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    min-block-size: 2.75rem;
+    padding: 0;
+  }
+
+  .bulk-order__candidates {
+    display: grid;
+    gap: var(--gap-xs, 0.5rem);
+    min-width: 0;
+  }
+
+  .bulk-order__candidates[hidden],
+  .bulk-order__choose[hidden],
+  .bulk-order__picked[hidden],
+  .bulk-order__note[hidden],
+  .bulk-order__more[hidden],
+  .bulk-order__link[hidden] {
+    display: none;
+  }
+
+  .bulk-order__candidates-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gap-xs, 0.5rem);
+  }
+
+  .bulk-order__candidates-count {
+    margin: 0;
+    font-size: var(--font-size--sm);
     font-weight: var(--font-weight-bold, 700);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .bulk-order__candidate-list {
+    display: grid;
+    gap: var(--gap-xs, 0.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Image, details, then price and actions; the side column drops below on narrow rows. */
+  .bulk-order__candidate {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--gap-sm);
+    min-width: 0;
+    padding: var(--padding-sm);
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--style-border-radius-md, 0.75rem);
+  }
+
+  .bulk-order__candidate[data-picked] {
+    border-color: var(--bulk-accent);
+    box-shadow: inset 0 0 0 1px var(--bulk-accent);
+    background: color-mix(in srgb, var(--bulk-accent) 10%, var(--color-background));
+  }
+
+  .bulk-order__candidate-image {
+    inline-size: 4.5rem;
+    block-size: 4.5rem;
+    object-fit: contain;
+    border-radius: var(--style-border-radius-sm, 0.375rem);
+    /* Product photos are shot on white, so they keep it in dark color schemes too. */
+    background: #fff;
+  }
+
+  .bulk-order__candidate-image[hidden] {
+    display: block;
+    visibility: hidden;
+  }
+
+  .bulk-order__candidate-main {
+    display: grid;
+    align-content: center;
+    gap: var(--gap-2xs, 0.25rem);
+    min-width: 0;
+  }
+
+  .bulk-order__candidate-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    min-width: 0;
+  }
+
+  .bulk-order__candidate-sku {
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--bulk-accent);
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__candidate-title {
+    min-width: 0;
     color: inherit;
+    font-size: var(--font-size--sm);
     text-decoration: none;
     overflow-wrap: anywhere;
   }
 
-  .bulk-order__title:hover {
+  .bulk-order__candidate-title:hover {
     text-decoration: underline;
+  }
+
+  .bulk-order__candidate-meta {
+    margin: 0;
+    font-size: var(--font-size--xs, 0.75rem);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__candidate-meta[hidden] {
+    display: none;
+  }
+
+  .bulk-order__candidate-side {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-xs, 0.5rem);
+  }
+
+  @container (min-width: 40rem) {
+    .bulk-order__candidate {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .bulk-order__candidate-image {
+      inline-size: 6rem;
+      block-size: 6rem;
+    }
+
+    .bulk-order__candidate-side {
+      grid-column: auto;
+      display: grid;
+      justify-items: end;
+      align-content: center;
+      gap: var(--gap-2xs, 0.25rem);
+      text-align: end;
+    }
+
+    .bulk-order__candidate-side .bulk-order__small-button {
+      inline-size: 100%;
+    }
+  }
+
+  .bulk-order__candidate-price {
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  .bulk-order__candidate-price[hidden] {
+    display: none;
+  }
+
+  .bulk-order__candidate-stock {
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .bulk-order__candidate-stock[data-sold-out='true'] {
+    color: var(--color-error, #b42318);
+  }
+
+  .bulk-order__badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--style-border-radius-pills, 999px);
+    background: color-mix(in srgb, var(--bulk-accent) 18%, transparent);
+    font-size: var(--font-size--xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+  }
+
+  .bulk-order__badge:empty,
+  .bulk-order__badge[hidden] {
+    display: none;
+  }
+
+  .bulk-order__badge--warning {
+    color: var(--color-error, #b42318);
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+  }
+
+  /* Icon buttons stay small visually but keep a 24px target. */
+  .bulk-order__copy {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--style-border-radius-sm, 0.375rem);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .bulk-order__copy[hidden] {
+    display: none;
+  }
+
+  .bulk-order__copy:hover,
+  .bulk-order__copy[data-copied] {
+    color: var(--color-foreground);
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+
+  .bulk-order__small-button {
+    min-block-size: 2.25rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20, 0.2));
+    border-radius: var(--style-border-radius-buttons-primary, 0.5rem);
+    color: var(--color-foreground);
+    background: transparent;
+    font: inherit;
+    font-size: var(--font-size--xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    cursor: pointer;
+  }
+
+  .bulk-order__small-button:hover,
+  .bulk-order__small-button[data-copied] {
+    border-color: var(--color-foreground);
+  }
+
+  .bulk-order__pick[aria-pressed='true'] {
+    border-color: var(--color-error, #b42318);
+    color: var(--color-error, #b42318);
+  }
+
+  .bulk-order__more,
+  .bulk-order__picked {
+    margin: 0;
+    font-size: var(--font-size--sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__more {
+    text-align: center;
+  }
+
+  .bulk-order__choose {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-xs, 0.5rem);
+    font-size: var(--font-size--sm);
+  }
+
+  .bulk-order__choose .bulk-order__select {
+    flex: 1 1 12rem;
+    inline-size: auto;
   }
 
   .bulk-order__select {
@@ -600,27 +1445,22 @@
     font: inherit;
   }
 
-  .bulk-order__row[data-state='choose'] [data-field='options'] {
-    border-color: var(--bulk-accent);
-  }
-
   .bulk-order__note {
     margin: 0;
   }
 
-  .bulk-order__retry {
+  .bulk-order__link {
     justify-self: start;
+    min-block-size: 1.5rem;
     padding: 0;
     border: 0;
     background: none;
     color: inherit;
     font: inherit;
+    font-size: var(--font-size--sm);
     text-decoration: underline;
+    text-underline-offset: 0.2em;
     cursor: pointer;
-  }
-
-  .bulk-order__retry[hidden] {
-    display: none;
   }
 
   .bulk-order__row[data-guess] .bulk-order__note {
@@ -629,18 +1469,15 @@
 
   .bulk-order__row[data-state='missing'] .bulk-order__note,
   .bulk-order__row[data-state='failed'] .bulk-order__note,
+  .bulk-order__row[data-short] .bulk-order__note,
   .bulk-order__row[data-state='unavailable'] .bulk-order__note {
     color: var(--color-error, #b42318);
   }
 
-  .bulk-order__row[data-state='unavailable'] .bulk-order__product {
-    opacity: 0.6;
-  }
-
   .bulk-order__loading {
     display: none;
-    block-size: 2.75rem;
-    border-radius: var(--style-border-radius-sm, 0.375rem);
+    block-size: 6rem;
+    border-radius: var(--style-border-radius-md, 0.75rem);
     background: linear-gradient(
       90deg,
       rgb(var(--color-foreground-rgb) / var(--opacity-5)) 25%,
@@ -661,47 +1498,35 @@
     }
   }
 
-  .bulk-order__quantity {
-    grid-area: quantity;
-  }
-
-  .bulk-order__quantity-input {
-    inline-size: 5rem;
-    min-block-size: 2.75rem;
-    text-align: center;
-  }
-
-  .bulk-order__remove {
-    grid-area: remove;
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .bulk-order__remove:hover {
-    color: var(--color-foreground);
-    background: rgb(var(--color-foreground-rgb) / var(--opacity-5));
-  }
-
   .bulk-order__footer {
+    position: sticky;
+    z-index: 2;
+    inset-block-end: 1rem;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--gap-sm);
-    padding-block-start: var(--padding-sm);
-    border-block-start: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    padding: var(--padding-sm, 1rem);
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+    border-radius: var(--style-border-radius-md, 0.75rem);
+    background: var(--color-background);
+    box-shadow: 0 0.75rem 2rem rgb(var(--color-shadow-rgb) / var(--opacity-10));
   }
 
-  .bulk-order__summary {
+  .bulk-order__totals {
+    display: grid;
+    gap: var(--gap-2xs, 0.25rem);
+    min-width: 0;
+  }
+
+  .bulk-order__summary,
+  .bulk-order__total {
     margin: 0;
+  }
+
+  .bulk-order__total {
+    font-weight: var(--font-weight-bold, 700);
   }
 
   .bulk-order__footer-actions {
@@ -714,12 +1539,21 @@
     display: none;
   }
 
+  .bulk-order__action-status {
+    flex-basis: 100%;
+  }
+
+  .bulk-order__action-status:empty {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .bulk-order__loading {
       animation: none;
     }
 
-    .bulk-order__drop {
+    .bulk-order__drop,
+    .bulk-order__match svg {
       transition: none;
     }
   }

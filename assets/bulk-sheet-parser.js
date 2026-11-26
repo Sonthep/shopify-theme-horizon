@@ -2,7 +2,7 @@
 // workbooks (hotel OSE lists, two-row headers, supplier quotation templates). Keep them in step.
 
 /** @typedef {string | number | boolean | Date | null | undefined} CellValue */
-/** @typedef {{ code: string, text: string, spec: string, quantity: number }} BulkItem */
+/** @typedef {{ code: string, text: string, spec: string, quantity: number | null }} BulkItem */
 /** @typedef {{ name: string, items: BulkItem[] }} BulkSheet */
 
 // Header rows are looked for this far down; RFQs often open with a title and customer block.
@@ -155,7 +155,8 @@ export function parseSheetRows(rows) {
   rows.slice(header.index + 1).forEach((row, offset) => {
     const rowIndex = header.index + 1 + offset;
     if (supplierHeader) {
-      if (rowIndex <= supplierHeader.supplierRow || !cleanCell(row[header.name])) return;
+      if (rowIndex <= supplierHeader.supplierRow) return;
+      if (!cleanCell(row[header.name]) && !cleanCell(row[header.sku])) return;
     } else if (isSectionRow(row, header)) return;
 
     const name = header.name >= 0 ? cleanCell(row[header.name]) : '';
@@ -172,7 +173,8 @@ export function parseSheetRows(rows) {
       code: sku,
       text: [billName, sourceName === sku ? '' : sourceName].filter(Boolean).join(' '),
       spec: spec === sourceName ? '' : spec,
-      quantity: Number.isFinite(rawQuantity) && rawQuantity > 0 ? Math.max(1, Math.round(rawQuantity)) : 1,
+      // A quantity column left blank usually means undecided, so the customer fills it in.
+      quantity: Number.isFinite(rawQuantity) && rawQuantity > 0 ? Math.max(1, Math.round(rawQuantity)) : null,
     });
   });
   return items;

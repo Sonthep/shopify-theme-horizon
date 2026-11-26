@@ -11,8 +11,12 @@ const SHORT_LINK_HOSTS = ['me-qr.com'];
 // The previous website's product URLs end in the SKU: /en/product/<slug>/<sku>. Also read in main-404.liquid.
 const LEGACY_PRODUCT_PATH = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?\/product\/[^/]+\/([^/]+)\/?$/i;
 
+const PRIMARY_LOCALE_SEARCH_PATH = '/search/suggest';
+
 // Shared so parallel lookups all pause together instead of each extending the limit.
 let rateLimitedUntil = 0;
+// Set once predictive search rejects this locale, so a long list doesn't spend a request per lookup finding out again.
+let localeSearchRejected = false;
 
 /**
  * Works out what a scanned or typed code refers to.
@@ -66,14 +70,15 @@ function wait(milliseconds, signal) {
  * Fetches a storefront URL, waiting out rate limits. The last 429 is returned for the caller to handle.
  * @param {string | URL} url
  * @param {AbortSignal} signal
+ * @param {RequestInit} [init]
  * @returns {Promise<Response>}
  */
-async function fetchStorefront(url, signal) {
+export async function fetchStorefront(url, signal, init = {}) {
   for (let attempt = 0; ; attempt += 1) {
     const remaining = rateLimitedUntil - Date.now();
     if (remaining > 0) await wait(remaining, signal);
 
-    const response = await fetch(url, { signal });
+    const response = await fetch(url, { ...init, signal });
     if (response.status !== 429 || attempt === MAX_RATE_LIMIT_RETRIES) return response;
 
     const retryAfter = Number(response.headers.get('Retry-After')) * 1000;
@@ -95,15 +100,48 @@ export async function searchProducts(query, signal, { skuOnly = false, limit = S
   url.searchParams.set('resources[type]', 'product');
   url.searchParams.set('resources[limit]', String(limit));
   if (skuOnly) url.searchParams.set('resources[options][fields]', 'variants.sku');
+  const response = await fetchPredictiveSearch(url, signal);
+  const data = await response.json();
+  return data.resources?.results?.products ?? [];
+}
+
+/**
+ * Searches products with predictive search, rendered by a section that returns what the search JSON leaves
+ * out, such as variant SKUs and stock. The section puts a JSON array in `data-results`.
+ * @param {string} query
+ * @param {AbortSignal} signal
+ * @param {{ sectionId: string, limit?: number }} options
+ * @returns {Promise<any[]>}
+ */
+export async function searchProductDetails(query, signal, { sectionId, limit = SEARCH_LIMIT }) {
+  const url = new URL(Theme.routes.predictive_search_url, location.origin);
+  url.searchParams.set('q', query);
+  url.searchParams.set('resources[type]', 'product');
+  url.searchParams.set('resources[limit]', String(limit));
+  url.searchParams.set('section_id', sectionId);
+  const response = await fetchPredictiveSearch(url, signal);
+  const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+  const results = html.querySelector('[data-results]')?.getAttribute('data-results');
+  if (!results) throw new Error('Search section returned no results element');
+  return JSON.parse(results);
+}
+
+/**
+ * @param {URL} url - A predictive search URL, as JSON or a section render.
+ * @param {AbortSignal} signal
+ */
+async function fetchPredictiveSearch(url, signal) {
+  const primaryPath = `${PRIMARY_LOCALE_SEARCH_PATH}${url.pathname.endsWith('.json') ? '.json' : ''}`;
+  if (localeSearchRejected) url.pathname = primaryPath;
   let response = await fetchStorefront(url, signal);
   // Predictive search rejects some languages, Thai included, with 417; the primary locale still answers.
-  if (response.status === 417 && url.pathname !== '/search/suggest.json') {
-    url.pathname = '/search/suggest.json';
+  if (response.status === 417 && url.pathname !== primaryPath) {
+    localeSearchRejected = true;
+    url.pathname = primaryPath;
     response = await fetchStorefront(url, signal);
   }
   if (!response.ok) throw new Error(`Predictive search failed with ${response.status}`);
-  const data = await response.json();
-  return data.resources?.results?.products ?? [];
+  return response;
 }
 
 /**
