@@ -4,24 +4,90 @@
   quantities, matches each line to a store product by SKU, or by name when no SKU matches, and
   adds every matched line to the cart at once. Customers can review lines by group and search for
   the right product on any line. Matching uses predictive search, so it needs no app.
+  Only signed-in customers can use it; guests see a sign-in prompt instead, and the theme editor
+  always shows the tool so merchants can configure it.
   @example
   <!-- Add the "Bulk order" section to a page template, e.g. page.bulk-order -->
 {% endcomment %}
 
-<script
-  type="module"
-  src="{{ 'bulk-order.js' | asset_url }}"
-></script>
-
 {%- liquid
+  assign can_use = false
+  if customer or request.design_mode
+    assign can_use = true
+  endif
   assign sample_csv = 'sku,name,quantity%0A' | append: 'ABC-1234,,2%0A' | append: ',Stainless steel bowl 30 cm,5%0A'
 -%}
+
+{%- if can_use -%}
+  <script
+    type="module"
+    src="{{ 'bulk-order.js' | asset_url }}"
+  ></script>
+{%- endif -%}
+
+{%- capture intro -%}
+  {%- if section.settings.heading != blank or section.settings.text != blank -%}
+    <div class="bulk-order__intro">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="bulk-order__heading">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="bulk-order__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endcapture -%}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
   class="section section--{{ section.settings.section_width }} spacing-style color-{{ section.settings.color_scheme }}"
   style="{% render 'spacing-padding', settings: section.settings %}"
 >
+  {%- unless can_use -%}
+    {%- liquid
+      # New customer accounts' login URL already has a query string, so the return path joins it.
+      assign separator = '?'
+      if routes.account_login_url contains '?'
+        assign separator = '&'
+      endif
+      assign return_path = request.path | url_encode
+      assign login_url = routes.account_login_url | append: separator | append: 'return_url=' | append: return_path | append: '&return_to=' | append: return_path
+    -%}
+    <div class="bulk-order">
+      <div class="bulk-order__card bulk-order__gate">
+        {{ intro }}
+        <span class="bulk-order__drop-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+          </svg>
+        </span>
+        <h3 class="bulk-order__gate-title">{{ 'content.bulk_login_title' | t }}</h3>
+        <p class="bulk-order__gate-text">{{ 'content.bulk_login_text' | t }}</p>
+        {%- if shop.customer_accounts_enabled -%}
+          <div class="bulk-order__gate-actions">
+            <a
+              class="button bulk-order__gate-login"
+              href="{{ login_url }}"
+            >
+              {{- 'content.bulk_login' | t -}}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- else -%}
   <bulk-order
     class="bulk-order"
     data-reader-url="{{ 'xlsx.full.min.js' | asset_url }}"
@@ -70,16 +136,7 @@
     data-label-file-source="{{ 'content.bulk_file_source' | t: name: '[name]', count: '[count]' }}"
   >
     <div class="bulk-order__card">
-      {%- if section.settings.heading != blank or section.settings.text != blank -%}
-        <div class="bulk-order__intro">
-          {%- if section.settings.heading != blank -%}
-            <h2 class="bulk-order__heading">{{ section.settings.heading | escape }}</h2>
-          {%- endif -%}
-          {%- if section.settings.text != blank -%}
-            <div class="bulk-order__text rte">{{ section.settings.text }}</div>
-          {%- endif -%}
-        </div>
-      {%- endif -%}
+      {{ intro }}
 
       <div
         class="bulk-order__compact"
@@ -605,6 +662,7 @@
       </li>
     </template>
   </bulk-order>
+  {%- endunless -%}
 </div>
 
 {% stylesheet %}
@@ -912,6 +970,7 @@
   }
 
   .button.bulk-order__match,
+  .button.bulk-order__gate-login,
   .button.bulk-order__add,
   .button.bulk-order__confirm,
   .button.bulk-order__search-button {
@@ -920,10 +979,48 @@
     --button-border-color: var(--bulk-accent);
   }
 
+  /* Text and arrow on one row; the base button layout would stack them. */
   .button.bulk-order__match {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
     justify-content: space-between;
     inline-size: 100%;
     min-block-size: 3.25rem;
+  }
+
+  .bulk-order__match svg {
+    flex: none;
+  }
+
+  /* The arrow points the way the text reads. */
+  .bulk-order__match svg:dir(rtl) {
+    transform: scaleX(-1);
+  }
+
+  /* Sign-in prompt shown to guests in place of the tool. */
+  .bulk-order__gate {
+    justify-items: center;
+    padding-block: var(--padding-4xl, 3rem);
+    text-align: center;
+  }
+
+  .bulk-order__gate-title,
+  .bulk-order__gate-text {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .bulk-order__gate-text {
+    max-inline-size: 36rem;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .bulk-order__gate-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap-sm);
   }
 
   .button.bulk-order__match:hover,

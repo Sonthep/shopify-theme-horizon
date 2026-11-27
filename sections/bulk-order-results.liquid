@@ -3,6 +3,7 @@
   Returns predictive search products as JSON for the bulk order page, with each variant's SKU, price
   and tracked stock, which the predictive search JSON leaves out. Shaped like the product JSON at
   /products/<handle>.js so assets/bulk-order.js treats both alike. Not added to templates.
+  Bulk order is for signed-in customers, so guests get an empty list and can't read stock here.
   @example
   <!-- Fetched by assets/product-lookup.js searchProductDetails():
        /search/suggest?q=mixer&resources[type]=product&section_id=bulk-order-results -->
@@ -10,6 +11,7 @@
 
 {%- capture results -%}
   [
+  {%- if customer -%}
   {%- for product in predictive_search.resources.products -%}
     {%- liquid
       assign image = product.featured_media.preview_image
@@ -42,6 +44,7 @@
     }
     {%- unless forloop.last %},{% endunless -%}
   {%- endfor -%}
+  {%- endif -%}
   ]
 {%- endcapture -%}
 
